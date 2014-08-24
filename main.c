@@ -8,6 +8,7 @@
 #include "mtimer.h"
 #include "i2c.h"
 #include "ds1307.h"
+#include "ds18x20.h"
 
 #define BIPER_DDR	DDRD
 #define BIPER_PORT	PORTD
@@ -42,6 +43,37 @@ uint8_t *monthLabel[] = {
 	(uint8_t*)"октября",
 	(uint8_t*)"ноября",
 };
+
+uint8_t *mkTempNumString(int16_t value, uint8_t width, uint8_t prec)
+{
+	uint8_t sign = ' ';
+	int8_t pos;
+
+	if (value < 0) {
+		sign = '-';
+		value = -value;
+	}
+
+	/* Clear buffer and go to it's tail */
+	for (pos = 0; pos < width + prec; pos++)
+		strbuf[pos] = ' ';
+	strbuf[width + prec] = '\0';
+	pos = width + prec - 1;
+
+	/* Fill buffer from right to left */
+	while (value > 0 || pos > width - 2) {
+		if (prec && (width - pos - 1 == 0))
+			strbuf[pos--] = '.';
+		strbuf[pos] = value % 10 + 0x30;
+		pos--;
+		value /= 10;
+	}
+
+	if (pos >= 0)
+		strbuf[pos] = sign;
+
+	return strbuf;
+}
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 {
@@ -103,15 +135,15 @@ void showTime(uint32_t mask)
 	return;
 }
 
-int main(void)
+void hwInit(void)
 {
 	max7219Init();
 	max7219Fill(0x00);
 	max7219LoadFont(font_ks0066_ru_08);
 
 	I2CInit();
-
 	mTimerInit();
+
 	sei();
 
 	uint8_t i;
@@ -123,9 +155,18 @@ int main(void)
 		_delay_ms(20);
 	}
 
+	return;
+}
+
+int main(void)
+{
+	hwInit();
+	ds18x20Process();
+
 	showTime(0xFFFFFF);
 
 	while(1) {
+		ds18x20Process();
 
 		dateTime = readTime();
 
@@ -150,7 +191,7 @@ int main(void)
 		if (dateTime[SEC] == 40) {
 			max7219SetX(0);
 			max7219LoadString((uint8_t*)" Температура ");
-			max7219LoadString((uint8_t*)"24.1");
+			max7219LoadString(mkTempNumString(ds18x20GetTemp(0), 4, 1));
 			max7219LoadString((uint8_t*)"·C ");
 			max7219Scroll();
 			dateTime = readTime();
