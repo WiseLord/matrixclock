@@ -213,6 +213,8 @@ void max7219LoadString(uint8_t *string)
 	while(_col < 512)
 		strBuf[_col++] = 0x00;
 
+	_col = _end;
+
 	return;
 }
 

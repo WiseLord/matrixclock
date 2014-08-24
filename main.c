@@ -17,6 +17,32 @@ int8_t *dateTime;
 
 uint8_t strbuf[20];
 
+
+/* TODO: Read labels from EEPROM */
+uint8_t *weekLabel[] = {
+	(uint8_t*)"Воскресенье",
+	(uint8_t*)"Понедельник",
+	(uint8_t*)"Вторник",
+	(uint8_t*)"Среда",
+	(uint8_t*)"Четверг",
+	(uint8_t*)"Пятница",
+	(uint8_t*)"Суббота",
+};
+uint8_t *monthLabel[] = {
+	(uint8_t*)"декабря",
+	(uint8_t*)"января",
+	(uint8_t*)"февраля",
+	(uint8_t*)"марта",
+	(uint8_t*)"апреля",
+	(uint8_t*)"мая",
+	(uint8_t*)"июня",
+	(uint8_t*)"июля",
+	(uint8_t*)"августа",
+	(uint8_t*)"сентября",
+	(uint8_t*)"октября",
+	(uint8_t*)"ноября",
+};
+
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 {
 	uint8_t numdiv;
@@ -107,7 +133,15 @@ int main(void)
 
 		if (dateTime[SEC] == 10) {
 			max7219SetX(0);
-			max7219LoadString((uint8_t*)" ПОНЕДЕЛЬНИК, 4 АВГУСТА 2014г. ");
+			max7219LoadString((uint8_t*)" ");
+			max7219LoadString(weekLabel[dateTime[WEEK] % 7]);
+			max7219LoadString((uint8_t*)", ");
+			max7219LoadString(mkNumString(dateTime[DAY], 2, 0));
+			max7219LoadString((uint8_t*)" ");
+			max7219LoadString(monthLabel[dateTime[MONTH] % 12]);
+			max7219LoadString((uint8_t*)" 20");
+			max7219LoadString(mkNumString(dateTime[YEAR], 2, 0));
+			max7219LoadString((uint8_t*)"г. ");
 			max7219Scroll();
 			dateTime = readTime();
 			showTime(0xFFFFFF);
@@ -115,7 +149,9 @@ int main(void)
 
 		if (dateTime[SEC] == 40) {
 			max7219SetX(0);
-			max7219LoadString((uint8_t*)" Температура 24.1·C ");
+			max7219LoadString((uint8_t*)" Температура ");
+			max7219LoadString((uint8_t*)"24.1");
+			max7219LoadString((uint8_t*)"·C ");
 			max7219Scroll();
 			dateTime = readTime();
 			showTime(0xFFFFFF);
