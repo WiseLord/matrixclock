@@ -6,12 +6,14 @@
 #include "max7219.h"
 #include "fonts.h"
 #include "mtimer.h"
+#include "i2c.h"
+#include "ds1307.h"
 
 #define BIPER_DDR	DDRD
 #define BIPER_PORT	PORTD
 #define BIPER_PIN	(1<<PD5)
 
-clock time;
+int8_t *dateTime;
 
 uint8_t strbuf[20];
 
@@ -48,29 +50,29 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 
 void showTime(uint32_t mask)
 {
-	static clock oldtime;
+	static int8_t oldDateTime[7];
 
 	max7219SetX(0);
-	max7219LoadString(mkNumString(time.hour, 2, '0'));
+	max7219LoadString(mkNumString(dateTime[HOUR], 2, '0'));
 	max7219SetX(12);
-	max7219LoadString(mkNumString(time.min, 2, '0'));
+	max7219LoadString(mkNumString(dateTime[MIN], 2, '0'));
 
-	if (oldtime.hour / 10 != time.hour / 10)
+	if (oldDateTime[HOUR] / 10 != dateTime[HOUR] / 10)
 		mask  |= 0xF00000;
-	if (oldtime.hour % 10 != time.hour % 10)
+	if (oldDateTime[HOUR] % 10 != dateTime[HOUR] % 10)
 		mask  |= 0x078000;
-	if (oldtime.min / 10 != time.min / 10)
+	if (oldDateTime[MIN] / 10 != dateTime[MIN] / 10)
 		mask  |= 0x000F00;
-	if (oldtime.min % 10 != time.min % 10)
+	if (oldDateTime[MIN] % 10 != dateTime[MIN] % 10)
 		mask  |= 0x000078;
 
-	max7219PosData(10, time.sec & 0x01 ? 0x14 : 0x00);
-	max7219PosData(23, time.sec);
+	max7219PosData(10, dateTime[SEC] & 0x01 ? 0x00 : 0x24);
+	max7219PosData(23, dateTime[SEC]);
 
 	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
-	oldtime.hour = time.hour;
-	oldtime.min = time.min;
+	oldDateTime[HOUR] = dateTime[HOUR];
+	oldDateTime[MIN] = dateTime[MIN];
 
 	return;
 }
@@ -80,6 +82,8 @@ int main(void)
 	max7219Init();
 	max7219Fill(0x00);
 	max7219LoadFont(font_ks0066_ru_08);
+
+	I2CInit();
 
 	mTimerInit();
 	sei();
@@ -93,26 +97,27 @@ int main(void)
 		_delay_ms(20);
 	}
 
+	showTime(0xFFFFFF);
 
 	while(1) {
 
-		getClock(&time);
+		dateTime = readTime();
 
 		showTime(0x000000);
 
-		if (time.sec == 10) {
+		if (dateTime[SEC] == 10) {
 			max7219SetX(0);
 			max7219LoadString((uint8_t*)" ПОНЕДЕЛЬНИК, 4 АВГУСТА 2014г. ");
 			max7219Scroll();
-			getClock(&time);
+			dateTime = readTime();
 			showTime(0xFFFFFF);
 		}
 
-		if (time.sec == 40) {
+		if (dateTime[SEC] == 40) {
 			max7219SetX(0);
 			max7219LoadString((uint8_t*)" Температура 24.1·C ");
 			max7219Scroll();
-			getClock(&time);
+			dateTime = readTime();
 			showTime(0xFFFFFF);
 		}
 	}
