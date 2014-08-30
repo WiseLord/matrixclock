@@ -203,7 +203,7 @@ void max7219LoadChar(uint8_t code)
 	return;
 }
 
-void max7219LoadString(uint8_t *string)
+void max7219LoadString(char *string)
 {
 	while(*string)
 		max7219LoadChar(*string++);

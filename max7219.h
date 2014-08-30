@@ -58,7 +58,7 @@ void max7219SetX(int16_t x);
 
 void max7219LoadChar(uint8_t code);
 
-void max7219LoadString(uint8_t *string);
+void max7219LoadString(char *string);
 
 void max7219LoadFont(const uint8_t *font);
 

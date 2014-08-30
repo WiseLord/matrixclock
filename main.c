@@ -13,35 +13,35 @@
 
 int8_t *dateTime;
 
-uint8_t strbuf[20];
+char strbuf[20];
 
 
 /* TODO: Read labels from EEPROM */
-uint8_t *weekLabel[] = {
-	(uint8_t*)"Воскресенье",
-	(uint8_t*)"Понедельник",
-	(uint8_t*)"Вторник",
-	(uint8_t*)"Среда",
-	(uint8_t*)"Четверг",
-	(uint8_t*)"Пятница",
-	(uint8_t*)"Суббота",
+char *weekLabel[] = {
+	"Воскресенье",
+	"Понедельник",
+	"Вторник",
+	"Среда",
+	"Четверг",
+	"Пятница",
+	"Суббота",
 };
-uint8_t *monthLabel[] = {
-	(uint8_t*)"декабря",
-	(uint8_t*)"января",
-	(uint8_t*)"февраля",
-	(uint8_t*)"марта",
-	(uint8_t*)"апреля",
-	(uint8_t*)"мая",
-	(uint8_t*)"июня",
-	(uint8_t*)"июля",
-	(uint8_t*)"августа",
-	(uint8_t*)"сентября",
-	(uint8_t*)"октября",
-	(uint8_t*)"ноября",
+char *monthLabel[] = {
+	"декабря",
+	"января",
+	"февраля",
+	"марта",
+	"апреля",
+	"мая",
+	"июня",
+	"июля",
+	"августа",
+	"сентября",
+	"октября",
+	"ноября",
 };
 
-uint8_t *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
+char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
 	int8_t pos;
@@ -130,15 +130,15 @@ void hwInit(void)
 void loadDateString(void)
 {
 	max7219SetX(0);
-	max7219LoadString((uint8_t*)" ");
+	max7219LoadString(" ");
 	max7219LoadString(weekLabel[dateTime[WEEK] % 7]);
-	max7219LoadString((uint8_t*)", ");
+	max7219LoadString(", ");
 	max7219LoadString(mkNumberString(dateTime[DAY], 2, 0, ' '));
-	max7219LoadString((uint8_t*)" ");
+	max7219LoadString(" ");
 	max7219LoadString(monthLabel[dateTime[MONTH] % 12]);
-	max7219LoadString((uint8_t*)" 20");
+	max7219LoadString(" 20");
 	max7219LoadString(mkNumberString(dateTime[YEAR], 2, 0, ' '));
-	max7219LoadString((uint8_t*)"г. ");
+	max7219LoadString("г. ");
 
 	return;
 }
@@ -146,11 +146,11 @@ void loadDateString(void)
 void loadTempString(void)
 {
 	max7219SetX(0);
-	max7219LoadString((uint8_t*)" ");
+	max7219LoadString(" ");
 	max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-	max7219LoadString((uint8_t*)"·C в комнате, ");
+	max7219LoadString("·C в комнате, ");
 	max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
-	max7219LoadString((uint8_t*)"·C на улице");
+	max7219LoadString("·C на улице");
 
 	return;
 }
