@@ -19,4 +19,7 @@ void setTempConvertTimer(uint16_t val);
 uint16_t getTempStartTimer(void);
 void setTempStartTimer(uint16_t val);
 
+void startBeeper(uint16_t time);
+void stopBeeper(void);
+
 #endif /* MTIMER_H */

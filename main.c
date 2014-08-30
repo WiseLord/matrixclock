@@ -113,14 +113,7 @@ void hwInit(void)
 
 	sei();
 
-//	uint8_t i;
-//	BEEPER_DDR |= BEEPER_PIN;
-//	for (i = 0; i < 10; i++) {
-//		BEEPER_PORT &= ~BEEPER_PIN;
-//		_delay_ms(20);
-//		BEEPER_PORT |= BEEPER_PIN;
-//		_delay_ms(20);
-//	}
+	startBeeper(3000);
 
 	return;
 }
