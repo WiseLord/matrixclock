@@ -127,6 +127,24 @@ void loadTempString(void)
 	return;
 }
 
+void scrollDate(void)
+{
+	loadDateString();
+	max7219StartHwScroll();
+	timeMask = 0xFFFFFF;
+
+	return;
+}
+
+void scrollTemp(void)
+{
+	loadTempString();
+	max7219StartHwScroll();
+	timeMask = 0xFFFFFF;
+
+	return;
+}
+
 void showMainScreen(void)
 {
 	if (getTempStartTimer() == 0) {
@@ -137,13 +155,9 @@ void showMainScreen(void)
 	if (getScrollMode() == 0) {
 		showTime(timeMask);
 		if (dateTime[SEC] == 10) {
-			loadDateString();
-			max7219StartHwScroll();
-			timeMask = 0xFFFFFF;
+			scrollDate();
 		} else if (dateTime[SEC] == 40) {
-			loadTempString();
-			max7219StartHwScroll();
-			timeMask = 0xFFFFFF;
+			scrollTemp();
 		} else {
 			timeMask = 0x000000;
 		}

@@ -29,26 +29,48 @@ void hwInit(void)
 int main(void)
 {
 	uint8_t cmd = CMD_EMPTY;
+	uint8_t dispMode = MODE_MAIN;
 
 	hwInit();
 
 	while(1) {
 		cmd = getBtnCmd();
 
+		/* Beep on command */
+		if (cmd != CMD_EMPTY) {
+			if (cmd < CMD_BTN_1_LONG)
+				startBeeper(80);
+			else
+				startBeeper(160);
+		}
+
+		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
-			startBeeper(1000);
 			break;
 		case CMD_BTN_2:
-			startBeeper(2000);
+			scrollDate();
 			break;
 		case CMD_BTN_3:
-			startBeeper(3000);
+			scrollTemp();
+			break;
+		case CMD_BTN_1_LONG:
+			break;
+		case CMD_BTN_2_LONG:
+			break;
+		case CMD_BTN_3_LONG:
+			break;
 		default:
 			break;
 		}
 
-		showMainScreen();
+		/* Show things */
+		switch (dispMode) {
+		case MODE_MAIN:
+			showMainScreen();
+			break;
+		}
+
 	}
 
 	return 0;
