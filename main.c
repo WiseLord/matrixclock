@@ -10,36 +10,34 @@
 #include "ds1307.h"
 #include "ds18x20.h"
 
-
 int8_t *dateTime;
 
 char strbuf[20];
 
+const char wd0[] PROGMEM = "Воскресенье";
+const char wd1[] PROGMEM = "Понедельник";
+const char wd2[] PROGMEM = "Вторник";
+const char wd3[] PROGMEM = "Среда";
+const char wd4[] PROGMEM = "Четверг";
+const char wd5[] PROGMEM = "Пятница";
+const char wd6[] PROGMEM = "Суббота";
 
-/* TODO: Read labels from EEPROM */
-char *weekLabel[] = {
-	"Воскресенье",
-	"Понедельник",
-	"Вторник",
-	"Среда",
-	"Четверг",
-	"Пятница",
-	"Суббота",
-};
-char *monthLabel[] = {
-	"декабря",
-	"января",
-	"февраля",
-	"марта",
-	"апреля",
-	"мая",
-	"июня",
-	"июля",
-	"августа",
-	"сентября",
-	"октября",
-	"ноября",
-};
+const char *weekLabel[] = {wd0, wd1, wd2, wd3, wd4, wd5, wd6};
+
+const char m0[] PROGMEM = "декабря";
+const char m1[] PROGMEM = "января";
+const char m2[] PROGMEM = "февраля";
+const char m3[] PROGMEM = "марта";
+const char m4[] PROGMEM = "апреля";
+const char m5[] PROGMEM = "мая";
+const char m6[] PROGMEM = "июня";
+const char m7[] PROGMEM = "июля";
+const char m8[] PROGMEM = "августа";
+const char m9[] PROGMEM = "сентября";
+const char m10[] PROGMEM = "октября";
+const char m11[] PROGMEM = "ноября";
+
+const char *monthLabel[] = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
 char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
@@ -131,11 +129,11 @@ void loadDateString(void)
 {
 	max7219SetX(0);
 	max7219LoadString(" ");
-	max7219LoadString(weekLabel[dateTime[WEEK] % 7]);
+	max7219LoadStringPgm(weekLabel[dateTime[WEEK] % 7]);
 	max7219LoadString(", ");
 	max7219LoadString(mkNumberString(dateTime[DAY], 2, 0, ' '));
 	max7219LoadString(" ");
-	max7219LoadString(monthLabel[dateTime[MONTH] % 12]);
+	max7219LoadStringPgm(monthLabel[dateTime[MONTH] % 12]);
 	max7219LoadString(" 20");
 	max7219LoadString(mkNumberString(dateTime[YEAR], 2, 0, ' '));
 	max7219LoadString("г. ");

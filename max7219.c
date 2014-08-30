@@ -209,10 +209,27 @@ void max7219LoadString(char *string)
 		max7219LoadChar(*string++);
 
 	_end = _col;
-
 	while(_col < 512)
 		strBuf[_col++] = 0x00;
+	_col = _end;
 
+	return;
+}
+
+void max7219LoadStringPgm(const char *string)
+{
+	char ch;
+	uint8_t i = 0;
+
+	ch = pgm_read_byte(&string[i++]);
+	while(ch) {
+		max7219LoadChar(ch);
+		ch = pgm_read_byte(&string[i++]);
+	}
+
+	_end = _col;
+	while(_col < 512)
+		strBuf[_col++] = 0x00;
 	_col = _end;
 
 	return;
