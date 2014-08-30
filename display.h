@@ -5,7 +5,9 @@
 
 /* Display modes */
 enum {
-	MODE_MAIN
+	MODE_MAIN,
+
+	MODE_EDIT_TIME
 };
 
 void scrollDate(void);

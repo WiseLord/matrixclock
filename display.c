@@ -130,7 +130,7 @@ void loadTempString(void)
 void scrollDate(void)
 {
 	loadDateString();
-	max7219StartHwScroll();
+	max7219HwScroll(MAX7219_SCROLL_START);
 	timeMask = 0xFFFFFF;
 
 	return;
@@ -139,7 +139,7 @@ void scrollDate(void)
 void scrollTemp(void)
 {
 	loadTempString();
-	max7219StartHwScroll();
+	max7219HwScroll(MAX7219_SCROLL_START);
 	timeMask = 0xFFFFFF;
 
 	return;
@@ -147,11 +147,6 @@ void scrollTemp(void)
 
 void showMainScreen(void)
 {
-	if (getTempStartTimer() == 0) {
-		setTempStartTimer(TEMP_POLL_INTERVAL);
-		ds18x20Process();
-	}
-
 	if (getScrollMode() == 0) {
 		showTime(timeMask);
 		if (dateTime[SEC] == 10) {

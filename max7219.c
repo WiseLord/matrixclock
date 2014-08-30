@@ -301,10 +301,10 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 	return;
 }
 
-void max7219StartHwScroll(void)
+void max7219HwScroll(uint8_t status)
 {
 	scrollPos = 0;
-	scrollMode = 1;
+	scrollMode = status;
 
 	return;
 }

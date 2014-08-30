@@ -8,6 +8,7 @@
 #include "i2c.h"
 #include "mtimer.h"
 #include "display.h"
+#include "ds18x20.h"
 
 void hwInit(void)
 {
@@ -30,10 +31,16 @@ int main(void)
 {
 	uint8_t cmd = CMD_EMPTY;
 	uint8_t dispMode = MODE_MAIN;
+	uint8_t dispModePrev = dispMode;
 
 	hwInit();
 
 	while(1) {
+		if (getTempStartTimer() == 0) {
+			setTempStartTimer(TEMP_POLL_INTERVAL);
+			ds18x20Process();
+		}
+
 		cmd = getBtnCmd();
 
 		/* Beep on command */
@@ -49,12 +56,18 @@ int main(void)
 		case CMD_BTN_1:
 			break;
 		case CMD_BTN_2:
-			scrollDate();
+			if (dispMode == MODE_MAIN)
+				scrollDate();
 			break;
 		case CMD_BTN_3:
-			scrollTemp();
+			if (dispMode == MODE_MAIN)
+				scrollTemp();
 			break;
 		case CMD_BTN_1_LONG:
+			if (dispMode == MODE_MAIN)
+				dispMode = MODE_EDIT_TIME;
+			else
+				dispMode = MODE_MAIN;
 			break;
 		case CMD_BTN_2_LONG:
 			break;
@@ -64,12 +77,24 @@ int main(void)
 			break;
 		}
 
+		/* Clear screen if mode has changed */
+		if (dispMode != dispModePrev) {
+			max7219HwScroll(MAX7219_SCROLL_STOP);
+			max7219Fill(0x00);
+		}
+
 		/* Show things */
 		switch (dispMode) {
 		case MODE_MAIN:
 			showMainScreen();
 			break;
+		case MODE_EDIT_TIME:
+			break;
 		}
+
+		/* Save current mode */
+		dispModePrev = dispMode;
+
 
 	}
 
