@@ -39,6 +39,16 @@ const char m11[] PROGMEM = "ноября";
 
 const char *monthLabel[] = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
+const char p0[] PROGMEM = "се";
+const char p1[] PROGMEM = "ми";
+const char p2[] PROGMEM = "ча";
+const char p3[] PROGMEM = "не";
+const char p4[] PROGMEM = "чи";
+const char p5[] PROGMEM = "ме";
+const char p6[] PROGMEM = "го";
+
+const char *parLabel[] = {p0, p1, p2, p3, p4, p5, p6};
+
 char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
@@ -175,15 +185,16 @@ void showTimeEdit(int8_t ch_dir)
 	etm = getEtm();
 	time = getTime(etm);
 
-	max7219SetX(0);
+	max7219SetX(1);
 	max7219LoadString(mkNumberString(time, 2, 0, '0'));
-	max7219SetX(11);
-	max7219LoadString(mkNumberString(etm, 2, 0, '0'));
+	max7219SetX(12);
+	max7219LoadStringPgm(parLabel[etm]);
+
 
 	if (timeOld / 10 != time / 10)
-		mask  |= 0xF00000;
+		mask  |= 0x780000;
 	if (timeOld % 10 != time % 10)
-		mask  |= 0x078000;
+		mask  |= 0x03C000;
 
 	if (etmOld != etm)
 		mask |= 0xFFFFFF;
