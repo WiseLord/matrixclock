@@ -110,10 +110,11 @@ void hwInit(void)
 
 	I2CInit();
 	mTimerInit();
+	scrollTimerInit();
 
 	sei();
 
-	startBeeper(3000);
+//	startBeeper(3000);
 
 	return;
 }
@@ -148,10 +149,9 @@ void loadTempString(void)
 
 int main(void)
 {
-	hwInit();
-	ds18x20Process();
+	uint32_t timeMask = 0xFFFFFF;
 
-	showTime(0xFFFFFF);
+	hwInit();
 
 	while(1) {
 		if (getTempStartTimer() == 0) {
@@ -159,18 +159,19 @@ int main(void)
 			ds18x20Process();
 		}
 
-		showTime(0x000000);
-
-		if (dateTime[SEC] == 10) {
-			loadDateString();
-			max7219Scroll();
-			showTime(0xFFFFFF);
-		}
-
-		if (dateTime[SEC] == 40) {
-			loadTempString();
-			max7219Scroll();
-			showTime(0xFFFFFF);
+		if (getScrollMode() == 0) {
+			showTime(timeMask);
+			if (dateTime[SEC] == 10) {
+				loadDateString();
+				max7219StartHwScroll();
+				timeMask = 0xFFFFFF;
+			} else if (dateTime[SEC] == 40) {
+				loadTempString();
+				max7219StartHwScroll();
+				timeMask = 0xFFFFFF;
+			} else {
+				timeMask = 0x000000;
+			}
 		}
 
 	}

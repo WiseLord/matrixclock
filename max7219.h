@@ -64,6 +64,12 @@ void max7219LoadStringPgm(const char *string);
 
 void max7219LoadFont(const uint8_t *font);
 
-void max7219Scroll(void);
+//void max7219Scroll(void);
+
+void scrollTimerInit(void);
+
+void max7219StartHwScroll(void);
+
+uint8_t getScrollMode(void);
 
 #endif /* MAX7219_H */

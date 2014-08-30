@@ -3,6 +3,7 @@
 
 #include <util/delay.h>
 #include <avr/pgmspace.h>
+#include <avr/interrupt.h>
 
 static int16_t _col;
 static int16_t _end;
@@ -12,6 +13,9 @@ static uint8_t fp[FONT_PARAM_COUNT];
 
 static uint8_t scrBuf[MAX7219_ICNUMBER * 8];
 static uint8_t strBuf[512];
+
+static volatile int16_t scrollPos = 0;
+static volatile uint8_t scrollMode = 0;
 
 void max7219Init(void)
 {
@@ -161,7 +165,7 @@ void max7219SwitchBuf(uint32_t mask, uint8_t effect)
 				}
 			}
 		}
-		_delay_ms(20);
+		_delay_ms(25);
 		max7219Show();
 	}
 
@@ -244,23 +248,68 @@ void max7219LoadFont(const uint8_t *font)
 		fp[i] = pgm_read_byte(font + i);
 }
 
-void max7219Scroll(void)
+//void max7219Scroll(void)
+//{
+//	int16_t i;
+//	int8_t j;
+
+//	int16_t end = _end + 23;
+//	if (end > 512)
+//		end = 512;
+
+//	for (i = 0; i < end; i++) {
+//		for (j = 0; j < 23; j++) {
+//			scrBuf[j] = scrBuf[j + 1];
+//		}
+//		scrBuf[23] = strBuf[i];
+//		max7219Show();
+//		_delay_ms(30);
+//	}
+
+//	return;
+//}
+
+void scrollTimerInit(void)
 {
-	int16_t i;
-	int8_t j;
+	TIMSK |= (1<<TOIE2);							/* Enable Timer0 overflow interrupt */
+	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);		/* Set timer prescaller to 1024 (7812 Hz) */
 
-	int16_t end = _end + 23;
-	if (end > 512)
-		end = 512;
+	return;
+}
 
-	for (i = 0; i < end; i++) {
-		for (j = 0; j < 23; j++) {
-			scrBuf[j] = scrBuf[j + 1];
+ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
+{
+
+	if (scrollMode) {
+		int8_t i;
+
+		for (i = 0; i < 23; i++) {
+			scrBuf[i] = scrBuf[i + 1];
 		}
-		scrBuf[23] = strBuf[i];
+		scrBuf[23] = strBuf[scrollPos];
 		max7219Show();
-		_delay_ms(30);
+
+		scrollPos++;
+
+		if (scrollPos >= _end + 23 || scrollPos >= 512) {
+			scrollMode = 0;
+			scrollPos = 0;
+		}
+
 	}
 
 	return;
+}
+
+void max7219StartHwScroll(void)
+{
+	scrollPos = 0;
+	scrollMode = 1;
+
+	return;
+}
+
+uint8_t getScrollMode(void)
+{
+	return scrollMode;
 }

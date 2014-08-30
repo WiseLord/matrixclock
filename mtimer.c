@@ -74,7 +74,8 @@ void setTempStartTimer(uint16_t val)
 
 void startBeeper(uint16_t time)
 {
-	beepTimer = time;
+	if (!beepTimer)
+		beepTimer = time;
 
 	return;
 }
@@ -85,3 +86,4 @@ void stopBeeper(void)
 
 	return;
 }
+
