@@ -10,6 +10,7 @@
 #include "display.h"
 #include "ds18x20.h"
 #include "ds1307.h"
+#include "alarm.h"
 
 void hwInit(void)
 {
@@ -20,6 +21,8 @@ void hwInit(void)
 	I2CInit();
 	mTimerInit();
 	scrollTimerInit();
+
+	initAlarm();
 
 	sei();
 
@@ -35,6 +38,8 @@ int main(void)
 	uint8_t dispModePrev = dispMode;
 	int8_t lastParam = PARAM_UP;
 
+	uint32_t alarmMask = 0xFFFFFF;
+
 	hwInit();
 
 	while(1) {
@@ -44,6 +49,7 @@ int main(void)
 		}
 
 		cmd = getBtnCmd();
+		checkAlarm();
 
 		/* Beep on command */
 		if (cmd != CMD_EMPTY) {
@@ -56,53 +62,106 @@ int main(void)
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
-			if (dispMode == MODE_MAIN) {
+			switch (dispMode) {
+			case MODE_MAIN:
 				max7219HwScroll(MAX7219_SCROLL_STOP);
-				showTime(0xFFFFFF);
-			} else if (dispMode == MODE_EDIT_TIME) {
+				if (dispModePrev != dispMode)
+					showTime(0xFFFFFF);
+				break;
+			case MODE_EDIT_TIME:
 				editTime();
+				lastParam = PARAM_UP;
+				break;
+			case MODE_ALARM:
+				dispMode = MODE_EDIT_ALARM;
+				editAlarm();
+				lastParam = PARAM_UP;
+				break;
+			case MODE_EDIT_ALARM:
+				editAlarm();
+				lastParam = PARAM_UP;
+				break;
 			}
 			break;
 		case CMD_BTN_2:
-			if (dispMode == MODE_MAIN) {
+			switch (dispMode) {
+			case MODE_MAIN:
 				scrollDate();
-			} else {
+				break;
+			case MODE_EDIT_TIME:
 				changeTime(PARAM_UP);
 				lastParam = PARAM_UP;
+				break;
+			case MODE_EDIT_ALARM:
+				changeAlarm(PARAM_UP);
+				lastParam = PARAM_UP;
+				break;
 			}
 			break;
 		case CMD_BTN_3:
-			if (dispMode == MODE_MAIN) {
+			switch (dispMode) {
+			case MODE_MAIN:
 				scrollTemp();
-			} else {
+				break;
+			case MODE_EDIT_TIME:
 				changeTime(PARAM_DOWN);
 				lastParam = PARAM_DOWN;
+				break;
+			case MODE_EDIT_ALARM:
+				changeAlarm(PARAM_DOWN);
+				lastParam = PARAM_DOWN;
+				break;
 			}
 			break;
 		case CMD_BTN_1_LONG:
-			if (dispMode == MODE_MAIN) {
+			switch (dispMode) {
+			case MODE_MAIN:
 				dispMode = MODE_EDIT_TIME;
 				editTime();
 				lastParam = PARAM_UP;
-			} else {
+				break;
+			case MODE_EDIT_TIME:
 				stopEditTime();
 				resetEtmOld();
 				dispMode = MODE_MAIN;
 				showTime(0xFFFFFF);
+				break;
+			case MODE_ALARM:
+				dispMode = MODE_EDIT_ALARM;
+				editAlarm();
+				lastParam = PARAM_UP;
+				break;
+			case MODE_EDIT_ALARM:
+				stopEditAlarm();
+				resetAmOld();
+				writeAlarm();
+				dispMode = MODE_ALARM;
+				showAlarm(0xFFFFFF);
+				break;
 			}
 			break;
 		case CMD_BTN_2_LONG:
+			switch (dispMode) {
+			case MODE_MAIN:
+				dispMode = MODE_ALARM;
+				alarmMask = 0xFFFFFF;
+				break;
+			case MODE_ALARM:
+			case MODE_EDIT_ALARM:
+				dispMode = MODE_MAIN;
+				setTimeMask(0x000000);
+				showTime(0xFFFFFF);
+				writeAlarm();
+				break;
+			}
 			break;
 		case CMD_BTN_3_LONG:
 			break;
-		default:
-			break;
 		}
 
-		/* Clear screen if mode has changed */
+		/* Stop scroll if mode has changed */
 		if (dispMode != dispModePrev) {
 			max7219HwScroll(MAX7219_SCROLL_STOP);
-			max7219Fill(0x00);
 		}
 
 		/* Show things */
@@ -113,11 +172,17 @@ int main(void)
 		case MODE_EDIT_TIME:
 			showTimeEdit(lastParam);
 			break;
+		case MODE_ALARM:
+			showAlarm(alarmMask);
+			alarmMask = 0x000000;
+			break;
+		case MODE_EDIT_ALARM:
+			showAlarmEdit(lastParam);
+			break;
 		}
 
 		/* Save current mode */
 		dispModePrev = dispMode;
-
 
 	}
 

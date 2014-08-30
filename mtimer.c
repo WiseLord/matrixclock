@@ -21,6 +21,7 @@ void mTimerInit(void)
 	tempConvertTimer = 0;
 
 	BEEPER_DDR |= BEEPER_PIN;
+	BEEPER_PORT |= BEEPER_PIN;
 
 	/* Setup buttons as inputs with pull-up resistors */
 	BTN_DDR &= ~(BTN_MASK);
@@ -130,6 +131,11 @@ void startBeeper(uint16_t time)
 	beepTimer = time;
 
 	return;
+}
+
+uint16_t getBeepTimer(void)
+{
+	return beepTimer;
 }
 
 void stopBeeper(void)

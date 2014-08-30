@@ -44,6 +44,7 @@ uint16_t getTempStartTimer(void);
 void setTempStartTimer(uint16_t val);
 
 void startBeeper(uint16_t time);
+uint16_t getBeepTimer(void);
 void stopBeeper(void);
 
 uint8_t getBtnCmd(void);

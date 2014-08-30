@@ -9,14 +9,14 @@
 #define D2BD(x)			(((x / 10) << 4) + (x % 10))
 
 typedef enum {
-	SEC   = 0,
-	MIN   = 1,
-	HOUR  = 2,
-	WEEK  = 3,
-	DAY   = 4,
-	MONTH = 5,
-	YEAR  = 6,
-	NOEDIT = 7
+	T_SEC   = 0,
+	T_MIN   = 1,
+	T_HOUR  = 2,
+	T_WEEK  = 3,
+	T_DAY   = 4,
+	T_MONTH = 5,
+	T_YEAR  = 6,
+	T_NOEDIT = 7
 } timeMode;
 
 int8_t getTime(timeMode tm);
@@ -26,6 +26,6 @@ int8_t *readTime(void);
 void stopEditTime(void);
 uint8_t isETM(void);
 void editTime(void);
-void changeTime(int diff);
+void changeTime(int8_t diff);
 
 #endif /* DS1307_H */

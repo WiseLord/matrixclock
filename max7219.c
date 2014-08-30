@@ -248,27 +248,6 @@ void max7219LoadFont(const uint8_t *font)
 		fp[i] = pgm_read_byte(font + i);
 }
 
-//void max7219Scroll(void)
-//{
-//	int16_t i;
-//	int8_t j;
-
-//	int16_t end = _end + 23;
-//	if (end > 512)
-//		end = 512;
-
-//	for (i = 0; i < end; i++) {
-//		for (j = 0; j < 23; j++) {
-//			scrBuf[j] = scrBuf[j + 1];
-//		}
-//		scrBuf[23] = strBuf[i];
-//		max7219Show();
-//		_delay_ms(30);
-//	}
-
-//	return;
-//}
-
 void scrollTimerInit(void)
 {
 	TIMSK |= (1<<TOIE2);							/* Enable Timer0 overflow interrupt */
