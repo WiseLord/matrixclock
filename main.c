@@ -11,6 +11,7 @@
 #include "ds18x20.h"
 
 int8_t *dateTime;
+static uint32_t timeMask = 0xFFFFFF;
 
 char strbuf[20];
 
@@ -102,23 +103,6 @@ void showTime(uint32_t mask)
 	return;
 }
 
-void hwInit(void)
-{
-	max7219Init();
-	max7219Fill(0x00);
-	max7219LoadFont(font_ks0066_ru_08);
-
-	I2CInit();
-	mTimerInit();
-	scrollTimerInit();
-
-	sei();
-
-//	startBeeper(3000);
-
-	return;
-}
-
 void loadDateString(void)
 {
 	max7219SetX(0);
@@ -147,33 +131,71 @@ void loadTempString(void)
 	return;
 }
 
+void showMainScreen(void)
+{
+	if (getTempStartTimer() == 0) {
+		setTempStartTimer(TEMP_POLL_INTERVAL);
+		ds18x20Process();
+	}
+
+	if (getScrollMode() == 0) {
+		showTime(timeMask);
+		if (dateTime[SEC] == 10) {
+			loadDateString();
+			max7219StartHwScroll();
+			timeMask = 0xFFFFFF;
+		} else if (dateTime[SEC] == 40) {
+			loadTempString();
+			max7219StartHwScroll();
+			timeMask = 0xFFFFFF;
+		} else {
+			timeMask = 0x000000;
+		}
+	}
+
+	return;
+}
+
+void hwInit(void)
+{
+	max7219Init();
+	max7219Fill(0x00);
+	max7219LoadFont(font_ks0066_ru_08);
+
+	I2CInit();
+	mTimerInit();
+	scrollTimerInit();
+
+	sei();
+
+	startBeeper(1000);
+
+	return;
+}
+
 int main(void)
 {
-	uint32_t timeMask = 0xFFFFFF;
+	uint8_t cmd = CMD_EMPTY;
 
 	hwInit();
 
 	while(1) {
-		if (getTempStartTimer() == 0) {
-			setTempStartTimer(TEMP_POLL_INTERVAL);
-			ds18x20Process();
+		cmd = getBtnCmd();
+
+		switch (cmd) {
+		case CMD_BTN_1:
+			startBeeper(1000);
+			break;
+		case CMD_BTN_2:
+			startBeeper(2000);
+			break;
+		case CMD_BTN_3:
+			startBeeper(3000);
+		default:
+			break;
 		}
 
-		if (getScrollMode() == 0) {
-			showTime(timeMask);
-			if (dateTime[SEC] == 10) {
-				loadDateString();
-				max7219StartHwScroll();
-				timeMask = 0xFFFFFF;
-			} else if (dateTime[SEC] == 40) {
-				loadTempString();
-				max7219StartHwScroll();
-				timeMask = 0xFFFFFF;
-			} else {
-				timeMask = 0x000000;
-			}
-		}
-
+		showMainScreen();
 	}
 
 	return 0;
