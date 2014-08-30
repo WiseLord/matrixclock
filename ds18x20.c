@@ -179,7 +179,7 @@ uint8_t ds18x20Process(void)
 	uint8_t lastDeviation;
 	uint8_t count = 0;
 
-	if (getTempTimer() == 0) {
+	if (getTempConvertTimer() == 0) {
 
 		getAllTemps();
 
@@ -216,7 +216,7 @@ uint8_t ds18x20Process(void)
 		/* Convert temperature */
 		if (ds18x20IsOnBus()) {
 			convertTemp();
-			setTempTimer(750);
+			setTempConvertTimer(TEMP_MEASURE_TIME);
 		}
 	}
 

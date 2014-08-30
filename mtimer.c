@@ -2,32 +2,46 @@
 
 #include <avr/interrupt.h>
 
-static volatile uint16_t tempTimer;				/* Timer of temperature measuring process */
+static volatile uint16_t tempConvertTimer = 0;
+static volatile uint16_t tempStartTimer = 0;
 
 void mTimerInit(void)
 {
 	TIMSK |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
 	TCCR0 |= (0<<CS02) | (1<<CS01) | (1<<CS00);		/* Set timer prescaller to 64 (125kHz) */
 
-	tempTimer = 0;
+	tempConvertTimer = 0;
 
 	return;
 }
 
-ISR (TIMER0_OVF_vect)								/* 125kHz / 256 = 488 polls/sec */
+ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 {
-	if (tempTimer)
-		tempTimer--;
+	TCNT0 = 131;
+
+	if (tempConvertTimer)
+		tempConvertTimer--;
+
+	if (tempStartTimer)
+		tempStartTimer--;
 
 	return;
 }
 
-uint16_t getTempTimer()
+uint16_t getTempConvertTimer(void)
 {
-	return tempTimer;
+	return tempConvertTimer;
+}
+void setTempConvertTimer(uint16_t val)
+{
+	tempConvertTimer = val;
 }
 
-void setTempTimer(uint16_t val)
+uint16_t getTempStartTimer(void)
 {
-	tempTimer = val;
+	return tempStartTimer;
+}
+void setTempStartTimer(uint16_t val)
+{
+	tempStartTimer = val;
 }
