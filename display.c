@@ -8,6 +8,9 @@
 
 int8_t *dateTime;
 
+static int8_t timeOld = 0;
+static timeMode etmOld = NOEDIT;
+
 char strbuf[20];
 static uint32_t timeMask = 0xFFFFFF;
 
@@ -157,6 +160,48 @@ void showMainScreen(void)
 			timeMask = 0x000000;
 		}
 	}
+
+	return;
+}
+
+void showTimeEdit(int8_t ch_dir)
+{
+	uint32_t mask = 0x000000;
+
+	int8_t time;
+	timeMode etm;
+
+	readTime();
+	etm = getEtm();
+	time = getTime(etm);
+
+	max7219SetX(0);
+	max7219LoadString(mkNumberString(time, 2, 0, '0'));
+	max7219SetX(11);
+	max7219LoadString(mkNumberString(etm, 2, 0, '0'));
+
+	if (timeOld / 10 != time / 10)
+		mask  |= 0xF00000;
+	if (timeOld % 10 != time % 10)
+		mask  |= 0x078000;
+
+	if (etmOld != etm)
+		mask |= 0xFFFFFF;
+
+	if (ch_dir == PARAM_UP)
+		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	else
+		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
+
+	timeOld = time;
+	etmOld = etm;
+
+	return;
+}
+
+void resetEtmOld(void)
+{
+	etmOld = NOEDIT;
 
 	return;
 }

@@ -102,15 +102,22 @@ void editTime(void)
 		_etm = HOUR;
 		break;
 	case HOUR:
+		_etm = MIN;
+		break;
 	case MIN:
-		_etm--;
+		_etm = SEC;
 		break;
 	case SEC:
 		_etm = DAY;
 		break;
 	case DAY:
+		_etm = MONTH;
+		break;
 	case MONTH:
-		_etm++;
+		_etm = YEAR;
+		break;
+	case YEAR:
+		_etm = HOUR;
 		break;
 	default:
 		_etm = NOEDIT;

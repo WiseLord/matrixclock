@@ -9,6 +9,7 @@
 #include "mtimer.h"
 #include "display.h"
 #include "ds18x20.h"
+#include "ds1307.h"
 
 void hwInit(void)
 {
@@ -22,7 +23,7 @@ void hwInit(void)
 
 	sei();
 
-	startBeeper(1000);
+//	startBeeper(1000);
 
 	return;
 }
@@ -32,6 +33,7 @@ int main(void)
 	uint8_t cmd = CMD_EMPTY;
 	uint8_t dispMode = MODE_MAIN;
 	uint8_t dispModePrev = dispMode;
+	int8_t lastParam = PARAM_UP;
 
 	hwInit();
 
@@ -54,20 +56,40 @@ int main(void)
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
+			if (dispMode == MODE_MAIN) {
+				max7219HwScroll(MAX7219_SCROLL_STOP);
+				showTime(0xFFFFFF);
+			} else if (dispMode == MODE_EDIT_TIME) {
+				editTime();
+			}
 			break;
 		case CMD_BTN_2:
-			if (dispMode == MODE_MAIN)
+			if (dispMode == MODE_MAIN) {
 				scrollDate();
+			} else {
+				changeTime(PARAM_UP);
+				lastParam = PARAM_UP;
+			}
 			break;
 		case CMD_BTN_3:
-			if (dispMode == MODE_MAIN)
+			if (dispMode == MODE_MAIN) {
 				scrollTemp();
+			} else {
+				changeTime(PARAM_DOWN);
+				lastParam = PARAM_DOWN;
+			}
 			break;
 		case CMD_BTN_1_LONG:
-			if (dispMode == MODE_MAIN)
+			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_EDIT_TIME;
-			else
+				editTime();
+				lastParam = PARAM_UP;
+			} else {
+				stopEditTime();
+				resetEtmOld();
 				dispMode = MODE_MAIN;
+				showTime(0xFFFFFF);
+			}
 			break;
 		case CMD_BTN_2_LONG:
 			break;
@@ -89,6 +111,7 @@ int main(void)
 			showMainScreen();
 			break;
 		case MODE_EDIT_TIME:
+			showTimeEdit(lastParam);
 			break;
 		}
 
