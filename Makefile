@@ -1,6 +1,6 @@
 TARG=max7219lib
 
-SRCS = main.c max7219.c font-ks0066-ru-08.c mtimer.c i2c.c ds1307.c ds18x20.c
+SRCS = main.c max7219.c font-ks0066-ru-08.c mtimer.c i2c.c ds1307.c ds18x20.c display.c
 MCU = atmega8
 F_CPU = 8000000L
 
