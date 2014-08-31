@@ -6,7 +6,7 @@ F_CPU = 8000000L
 
 CS = -fexec-charset=ks0066-ru
 
-OPTIMIZE = -Os -mcall-prologues
+OPTIMIZE = -Os -mcall-prologues -fshort-enums
 CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
 OBJS = $(SRCS:.c=.o)

@@ -180,6 +180,9 @@ int main(void)
 				break;
 			}
 			break;
+		case CMD_BTN_1_2_3_LONG:
+			max7219ScreenRotate();
+			break;
 		}
 
 		/* Stop scroll if mode has changed */

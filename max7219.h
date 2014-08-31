@@ -3,6 +3,8 @@
 
 #include <avr/io.h>
 
+#define EEPROM_SCREEN_ROTATE	((void*)0x03)
+
 #define MAX7219_DDR				DDRD
 #define MAX7219_PORT			PORTD
 
@@ -43,6 +45,8 @@ enum {
 	MAX7219_EFFECT_SCROLL_UP = 2,
 	MAX7219_EFFECT_SCROLL_BOTH = 3
 };
+
+void max7219ScreenRotate(void);
 
 void max7219Init(void);
 

@@ -33,6 +33,7 @@ enum {
 	CMD_BTN_1_LONG,
 	CMD_BTN_2_LONG,
 	CMD_BTN_3_LONG,
+	CMD_BTN_1_2_3_LONG,
 	CMD_EMPTY = 0xFF
 };
 

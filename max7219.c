@@ -3,7 +3,10 @@
 
 #include <util/delay.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 #include <avr/interrupt.h>
+
+static uint8_t rotate = 0;
 
 static int16_t _col;
 static int16_t _end;
@@ -17,6 +20,14 @@ static uint8_t strBuf[512];
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = 0;
 
+void max7219ScreenRotate(void)
+{
+	rotate = !rotate;
+	eeprom_write_byte(EEPROM_SCREEN_ROTATE, rotate);
+
+	return;
+}
+
 void max7219Init(void)
 {
 	uint8_t ic;
@@ -25,6 +36,8 @@ void max7219Init(void)
 
 	MAX7219_PORT |= (MAX7219_LOAD1 | MAX7219_LOAD2 | MAX7219_LOAD3);
 	MAX7219_PORT &= ~(MAX7219_CLK | MAX7219_DIN);
+
+	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
 
 	for(ic = 0; ic < MAX7219_ICNUMBER; ic++) {
 		max7219Send(ic, MAX7219_SHUTDOWN, 1);		/* Power on */
@@ -75,8 +88,25 @@ static void max7219SendByte(uint8_t data)
 	return;
 }
 
+static uint8_t revBits(uint8_t data)
+{
+	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
+	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
+	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
+
+	return data;
+}
+
 void max7219Send(uint8_t ic, uint8_t reg, uint8_t data)
 {
+	if (rotate) {
+		ic = MAX7219_ICNUMBER - 1 - ic;
+		if (reg >= MAX7219_DIGIT_0 && reg <= MAX7219_DIGIT_7) {
+			reg = MAX7219_DIGIT_7 + 1 - reg;
+			data = revBits(data);
+		}
+	}
+
 	switch (ic) {
 	case 0:
 		MAX7219_PORT &= ~MAX7219_LOAD1;

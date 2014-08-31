@@ -56,6 +56,9 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 				case BTN_3:
 					cmdBuf = CMD_BTN_3_LONG;
 					break;
+				case (BTN_1 | BTN_2 | BTN_3):
+					cmdBuf = CMD_BTN_1_2_3_LONG;
+					break;
 				}
 			}
 		} else {

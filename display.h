@@ -6,7 +6,7 @@
 #define PARAM_UP			1
 #define PARAM_DOWN			-1
 
-#define EEPROM_BR_ADDR		((void*)0x02)
+#define EEPROM_BR_ADDR		((void*)0x08)
 
 /* Display modes */
 enum {
