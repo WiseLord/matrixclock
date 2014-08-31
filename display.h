@@ -6,13 +6,20 @@
 #define PARAM_UP			1
 #define PARAM_DOWN			-1
 
+#define EEPROM_BR_ADDR		((void*)0x02)
+
 /* Display modes */
 enum {
 	MODE_MAIN,
 	MODE_EDIT_TIME,
 	MODE_ALARM,
-	MODE_EDIT_ALARM
+	MODE_EDIT_ALARM,
+	MODE_BRIGHTNESS
 };
+
+void initBrightness(void);
+
+void writeBrightness(void);
 
 void scrollDate(void);
 
@@ -34,6 +41,14 @@ void showAlarm(uint32_t mask);
 
 void showAlarmEdit(int8_t ch_dir);
 
-void checkAlarm(void);
+void setBrightnessHour(void);
+
+void incBrightnessHour(void);
+
+void changeBrightness(int8_t diff);
+
+void showBrightness(int8_t ch_dir, uint32_t mask);
+
+void checkAlarmAndBrightness(void);
 
 #endif /* DISPLAY_H */

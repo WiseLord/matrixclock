@@ -30,7 +30,7 @@ void max7219Init(void)
 		max7219Send(ic, MAX7219_SHUTDOWN, 1);		/* Power on */
 		max7219Send(ic, MAX7219_DISP_TEST, 0);		/* Test mode off */
 		max7219Send(ic, MAX7219_DEC_MODE, 0);		/* Use led matrix */
-		max7219Send(ic, MAX7219_INTENSITY, 15);		/* Set max. brightness */
+		max7219Send(ic, MAX7219_INTENSITY, 0);		/* Set min. brightness */
 		max7219Send(ic, MAX7219_SCAN_LIMIT, 7);		/* Scan all 8 digits (cols) */
 	}
 

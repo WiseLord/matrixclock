@@ -23,10 +23,9 @@ void hwInit(void)
 	scrollTimerInit();
 
 	initAlarm();
+	initBrightness();
 
 	sei();
-
-//	startBeeper(1000);
 
 	return;
 }
@@ -38,7 +37,7 @@ int main(void)
 	uint8_t dispModePrev = dispMode;
 	int8_t lastParam = PARAM_UP;
 
-	uint32_t alarmMask = 0xFFFFFF;
+	uint32_t mask = 0xFFFFFF;
 
 	hwInit();
 
@@ -49,7 +48,6 @@ int main(void)
 		}
 
 		cmd = getBtnCmd();
-		checkAlarm();
 
 		/* Beep on command */
 		if (cmd != CMD_EMPTY) {
@@ -81,6 +79,10 @@ int main(void)
 				editAlarm();
 				lastParam = PARAM_UP;
 				break;
+			case MODE_BRIGHTNESS:
+				incBrightnessHour();
+				lastParam = PARAM_UP;
+				break;
 			}
 			break;
 		case CMD_BTN_2:
@@ -96,6 +98,10 @@ int main(void)
 				changeAlarm(PARAM_UP);
 				lastParam = PARAM_UP;
 				break;
+			case MODE_BRIGHTNESS:
+				changeBrightness(PARAM_UP);
+				lastParam = PARAM_UP;
+				break;
 			}
 			break;
 		case CMD_BTN_3:
@@ -109,6 +115,10 @@ int main(void)
 				break;
 			case MODE_EDIT_ALARM:
 				changeAlarm(PARAM_DOWN);
+				lastParam = PARAM_DOWN;
+				break;
+			case MODE_BRIGHTNESS:
+				changeBrightness(PARAM_DOWN);
 				lastParam = PARAM_DOWN;
 				break;
 			}
@@ -144,7 +154,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_MAIN:
 				dispMode = MODE_ALARM;
-				alarmMask = 0xFFFFFF;
+				mask = 0xFFFFFF;
 				break;
 			case MODE_ALARM:
 			case MODE_EDIT_ALARM:
@@ -156,6 +166,19 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3_LONG:
+			switch (dispMode) {
+			case MODE_MAIN:
+				dispMode = MODE_BRIGHTNESS;
+				mask = 0xFFFFFF;
+				setBrightnessHour();
+				break;
+			case MODE_BRIGHTNESS:
+				dispMode = MODE_MAIN;
+				setTimeMask(0x000000);
+				showTime(0xFFFFFF);
+				writeBrightness();
+				break;
+			}
 			break;
 		}
 
@@ -168,16 +191,21 @@ int main(void)
 		switch (dispMode) {
 		case MODE_MAIN:
 			showMainScreen();
+			checkAlarmAndBrightness();
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(lastParam);
 			break;
 		case MODE_ALARM:
-			showAlarm(alarmMask);
-			alarmMask = 0x000000;
+			showAlarm(mask);
+			mask = 0x000000;
 			break;
 		case MODE_EDIT_ALARM:
 			showAlarmEdit(lastParam);
+			break;
+		case MODE_BRIGHTNESS:
+			showBrightness(lastParam, mask);
+			mask = 0x000000;
 			break;
 		}
 

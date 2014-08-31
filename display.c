@@ -6,6 +6,7 @@
 #include "alarm.h"
 
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 
 int8_t *dateTime;
 int8_t *alarm;
@@ -18,6 +19,8 @@ static alarmMode amOld = A_NOEDIT;
 
 char strbuf[20];
 static uint32_t timeMask = 0xFFFFFF;
+
+static int8_t brHour;
 
 const char wd0[] PROGMEM = "Воскресенье";
 const char wd1[] PROGMEM = "Понедельник";
@@ -63,6 +66,28 @@ const char ws5[] PROGMEM = "пт";
 const char ws6[] PROGMEM = "сб";
 
 const char *wsLabel[] = {p2, p1, ws1, ws2, ws3, ws4, ws5, ws6, ws0};
+
+static int8_t brArray[24] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 14, 13, 12, 11, 10, 9, 8, 7};
+
+void initBrightness(void)
+{
+	uint8_t i;
+
+	for (i = 0; i <= 24; i++)
+		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
+
+	return;
+}
+
+void writeBrightness(void)
+{
+	uint8_t i;
+
+	for (i = 0; i <= 24; i++)
+		eeprom_update_byte(EEPROM_BR_ADDR + i, brArray[i]);
+
+	return;
+}
 
 char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
@@ -328,17 +353,85 @@ void showAlarmEdit(int8_t ch_dir)
 	return;
 }
 
-void checkAlarm(void)
+void setBrightnessHour(void)
+{
+	dateTime = readTime();
+	brHour = dateTime[T_HOUR];
+
+	max7219SetBrightness(brArray[brHour]);
+
+	return;
+}
+
+void incBrightnessHour(void)
+{
+	brHour++;
+	if (brHour >= 24)
+		brHour = 0;
+
+	max7219SetBrightness(brArray[brHour]);
+
+	return;
+}
+
+void changeBrightness(int8_t diff)
+{
+	brArray[brHour] += diff;
+
+	if (brArray[brHour] >= MAX7219_MAX_BRIGHTNESS)
+		brArray[brHour] = MAX7219_MAX_BRIGHTNESS;
+	if (brArray[brHour] <= MAX7219_MIN_BRIGHTNESS)
+		brArray[brHour] = MAX7219_MIN_BRIGHTNESS;
+
+	max7219SetBrightness(brArray[brHour]);
+
+	return;
+}
+
+void showBrightness(int8_t ch_dir, uint32_t mask)
+{
+	static int8_t oldHour;
+	static uint8_t oldBrightness;
+
+	max7219SetX(0);
+	max7219LoadString(mkNumberString(brHour, 2, 0, '0'));
+	max7219SetX(15);
+	max7219LoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
+
+	if (oldHour / 10 != brHour / 10)
+		mask  |= 0xF00000;
+	if (oldHour % 10 != brHour % 10)
+		mask  |= 0x078000;
+	if (oldBrightness / 10 != brArray[brHour] / 10)
+		mask  |= 0x0001E0;
+	if (oldBrightness % 10 != brArray[brHour] % 10)
+		mask  |= 0x00000F;
+
+	max7219PosData(10, 0x7F);
+	max7219PosData(11, 0x7F);
+	max7219PosData(12, 0x7F);
+	max7219PosData(13, 0x7F);
+
+	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+
+	oldHour = brHour;
+	oldBrightness = brArray[brHour];
+
+	return;
+}
+
+void checkAlarmAndBrightness(void)
 {
 	static uint8_t alarmFlag = 1;
-	uint8_t rawWeekday;
+	uint8_t rwd;
 
+	/* Check alarm */
 	dateTime = readTime();
 	alarm = readAlarm();
-	rawWeekday = getRawWeekday();
+	rwd = getRawWeekday();
 
 	if (dateTime[T_HOUR] == alarm[A_HOUR] && dateTime[T_MIN] == alarm[A_MIN]) {
-		if (rawWeekday & (1 << (dateTime[T_WEEK] - 1))) {
+		if (rwd & (1 << (dateTime[T_WEEK] - 1))) {
 			if (getBeepTimer() == 0 && alarmFlag) {
 				alarmFlag = 0;
 				startBeeper(60000);
@@ -347,6 +440,9 @@ void checkAlarm(void)
 	} else {
 		alarmFlag = 1;
 	}
+
+	/* Check brightness */
+	max7219SetBrightness(brArray[dateTime[T_HOUR]]);
 
 	return;
 }
