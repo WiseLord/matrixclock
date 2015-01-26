@@ -9,7 +9,7 @@
 #define BEEPER_PIN			(1<<PD5)
 
 #define TEMP_MEASURE_TIME	750
-#define TEMP_POLL_INTERVAL	10000
+#define TEMP_POLL_INTERVAL	1000
 
 /* Buttons definitions */
 #define BTN_DDR		DDRB

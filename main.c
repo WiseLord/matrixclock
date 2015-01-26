@@ -12,8 +12,15 @@
 #include "ds1307.h"
 #include "alarm.h"
 
+static uint8_t dsOnBus = 0;
+
 void hwInit(void)
 {
+	_delay_ms(100);
+	sei();
+	ds18x20SearchDevices();
+
+
 	max7219Init();
 	max7219Fill(0x00);
 	max7219LoadFont(font_ks0066_ru_08);
@@ -25,7 +32,7 @@ void hwInit(void)
 	initAlarm();
 	initBrightness();
 
-	sei();
+	dsOnBus = ds18x20Process();			/* Try to find temperature sensor */
 
 	return;
 }

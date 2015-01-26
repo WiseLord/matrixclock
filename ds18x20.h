@@ -1,13 +1,8 @@
 #ifndef DS18X20_H
 #define DS18X20_H
 
-#include <avr/io.h>
-
-#define DS18X20_PORT				PORTD
-#define DS18X20_DDR					DDRD
-#define DS18X20_PIN					PIND
-
-#define DS18X20_WIRE				(1<<PD6)
+#include <inttypes.h>
+#include "pins.h"
 
 #define DS18X20_PARASITE_POWER
 
@@ -31,10 +26,13 @@
 
 typedef struct {
 	uint8_t id[8];		/* 64 bit ds18x20 device ID. */
-	int16_t tempData;	/* Raw temperature value */
+	uint8_t sp[9];		/* Scratchpad memory */
 } ds18x20Dev;
 
+void ds18x20SearchDevices(void);
 uint8_t ds18x20Process(void);
 int16_t ds18x20GetTemp(uint8_t num);
+ds18x20Dev ds18x20GetDev(uint8_t num);
+uint8_t getDevCount(void);
 
 #endif /* DS18X20_H */

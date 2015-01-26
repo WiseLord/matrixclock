@@ -73,7 +73,7 @@ void initBrightness(void)
 {
 	uint8_t i;
 
-	for (i = 0; i <= 24; i++)
+	for (i = 0; i < 24; i++)
 		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
 
 	return;
@@ -83,7 +83,7 @@ void writeBrightness(void)
 {
 	uint8_t i;
 
-	for (i = 0; i <= 24; i++)
+	for (i = 0; i < 24; i++)
 		eeprom_update_byte(EEPROM_BR_ADDR + i, brArray[i]);
 
 	return;
@@ -170,12 +170,18 @@ void loadDateString(void)
 
 void loadTempString(void)
 {
+	uint8_t devCount = getDevCount();
+
 	max7219SetX(0);
-	max7219LoadString(" ");
-	max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-	max7219LoadString("·C в комнате, ");
-	max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
-	max7219LoadString("·C на улице");
+	if (devCount > 0) {
+		max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
+		max7219LoadString("·C в комнате");
+	}
+	if (devCount > 1) {
+		max7219LoadString(" ,");
+		max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
+		max7219LoadString("·C на улице");
+	}
 
 	return;
 }
@@ -392,6 +398,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 {
 	static int8_t oldHour;
 	static uint8_t oldBrightness;
+	uint8_t i;
 
 	max7219SetX(0);
 	max7219LoadString(mkNumberString(brHour, 2, 0, '0'));
@@ -407,10 +414,8 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	if (oldBrightness % 10 != brArray[brHour] % 10)
 		mask  |= 0x00000F;
 
-	max7219PosData(10, 0x7F);
-	max7219PosData(11, 0x7F);
-	max7219PosData(12, 0x7F);
-	max7219PosData(13, 0x7F);
+	for (i = 10; i <= 13; i++)
+		max7219PosData(i, 0x7F);
 
 	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
