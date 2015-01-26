@@ -178,7 +178,7 @@ void loadTempString(void)
 		max7219LoadString("·C в комнате");
 	}
 	if (devCount > 1) {
-		max7219LoadString(" ,");
+		max7219LoadString(", ");
 		max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
 		max7219LoadString("·C на улице");
 	}
