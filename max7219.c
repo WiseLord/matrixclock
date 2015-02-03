@@ -30,20 +30,18 @@ void max7219ScreenRotate(void)
 
 void max7219Init(void)
 {
-	uint8_t ic;
+	uint8_t ic = 0;
 
-	MAX7219_DDR |= (MAX7219_CLK | MAX7219_LOAD1 | MAX7219_LOAD2 | MAX7219_LOAD3 | MAX7219_DIN);
+	MAX7219_DDR |= (MAX7219_CLK | MAX7219_LOAD | MAX7219_DIN);
 
-	MAX7219_PORT |= (MAX7219_LOAD1 | MAX7219_LOAD2 | MAX7219_LOAD3);
+	MAX7219_PORT |= MAX7219_LOAD;
 	MAX7219_PORT &= ~(MAX7219_CLK | MAX7219_DIN);
-
-	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
 
 	for(ic = 0; ic < MAX7219_ICNUMBER; ic++) {
 		max7219Send(ic, MAX7219_SHUTDOWN, 1);		/* Power on */
 		max7219Send(ic, MAX7219_DISP_TEST, 0);		/* Test mode off */
 		max7219Send(ic, MAX7219_DEC_MODE, 0);		/* Use led matrix */
-		max7219Send(ic, MAX7219_INTENSITY, 0);		/* Set min. brightness */
+		max7219Send(ic, MAX7219_INTENSITY, 15);		/* Set brightness */
 		max7219Send(ic, MAX7219_SCAN_LIMIT, 7);		/* Scan all 8 digits (cols) */
 	}
 
@@ -107,25 +105,28 @@ void max7219Send(uint8_t ic, uint8_t reg, uint8_t data)
 		}
 	}
 
-	switch (ic) {
-	case 0:
-		MAX7219_PORT &= ~MAX7219_LOAD1;
+	uint8_t i = 0;
+
+	if (ic < MAX7219_ICNUMBER) {
+		MAX7219_PORT &= ~MAX7219_LOAD;
+
+		/* Send NO_OP to following ics */
+		for(i = ic; i < (MAX7219_ICNUMBER - 1); i++) {
+			max7219SendByte(MAX7219_NO_OP); /* NO_OP reg */
+			max7219SendByte(MAX7219_NO_OP); /* NO_OP data */
+		}
+
+		/* Send info to selected ic */
 		max7219SendByte(reg);
 		max7219SendByte(data);
-		MAX7219_PORT |= MAX7219_LOAD1;
-		break;
-	case 1:
-		MAX7219_PORT &= ~MAX7219_LOAD2;
-		max7219SendByte(reg);
-		max7219SendByte(data);
-		MAX7219_PORT |= MAX7219_LOAD2;
-		break;
-	case 2:
-		MAX7219_PORT &= ~MAX7219_LOAD3;
-		max7219SendByte(reg);
-		max7219SendByte(data);
-		MAX7219_PORT |= MAX7219_LOAD3;
-		break;
+
+		/* Send NO_OP to previous ics */
+		for(i=0; i<ic; i++) {
+			max7219SendByte(MAX7219_NO_OP); /* NO_OP reg */
+			max7219SendByte(MAX7219_NO_OP); /* NO_OP data */
+		}
+
+		MAX7219_PORT |= MAX7219_LOAD;
 	}
 
 	return;

@@ -8,9 +8,7 @@
 #define MAX7219_DDR				DDRD
 #define MAX7219_PORT			PORTD
 
-#define MAX7219_LOAD1			(1<<PD4)
-#define MAX7219_LOAD2			(1<<PD3)
-#define MAX7219_LOAD3			(1<<PD2)
+#define MAX7219_LOAD			((1<<PD4) | (1<<PD3) | (1<<PD2))
 #define MAX7219_CLK				(1<<PD1)
 #define MAX7219_DIN				(1<<PD0)
 
