@@ -7,37 +7,41 @@ F_CPU = 8000000L
 CS = -fexec-charset=ks0066-ru
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums
-CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
-OBJS = $(SRCS:.c=.o)
+DEBUG = -g -Wall -Werror
+CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(CS)
+LDFLAGS = $(DEBUG) -mmcu=$(MCU)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 
 AVRDUDE = avrdude
 AD_MCU = -p $(MCU)
-#AD_PROG = -c avr109
-#AD_PORT = -P /dev/ttyACM0
-#AD_PROG = -c usbasp
-#AD_PORT = -P usbasp
+#AD_PROG = -c stk500v2
+#AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
+
+OBJDIR = obj
+OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
+ELF = $(OBJDIR)/$(TARG).elf
 
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
-	./size.sh $@.elf
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
+	mkdir -p flash
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
+	./size.sh $(ELF)
 
-%.o: %.c
+obj/%.o: %.c
+	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f $(TARG).elf $(TARG).bin $(TARG).hex $(OBJS) *.map
+	rm -rf $(OBJDIR)
 
 flash: $(TARG)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 eeprom:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:$(TARG).eep:r
