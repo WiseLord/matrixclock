@@ -28,7 +28,7 @@ alarmMode getAlarmMode();
 
 int8_t *readAlarm(void);
 
-int8_t getRawWeekday(void);
+int8_t getRawAlarmWeekday(void);
 
 void writeAlarm(void);
 

@@ -39,17 +39,14 @@ int8_t *readAlarm(void)
 	return alarm;
 }
 
-int8_t getRawWeekday(void)
+int8_t getRawAlarmWeekday(void)
 {
 	int8_t rawWeekday = 0x00;
+	uint8_t i;
 
-	if (alarm[A_MONDAY]) rawWeekday |= 0x01;
-	if (alarm[A_TUESDAY]) rawWeekday |= 0x02;
-	if (alarm[A_WEDNESDAY]) rawWeekday |= 0x04;
-	if (alarm[A_THURSDAY]) rawWeekday |= 0x08;
-	if (alarm[A_FRIDAY]) rawWeekday |= 0x10;
-	if (alarm[A_SATURDAY]) rawWeekday |= 0x20;
-	if (alarm[A_SUNDAY]) rawWeekday |= 0x40;
+	for (i = 0; i <= A_SUNDAY - A_MONDAY; i++)
+		if (alarm[A_MONDAY + i])
+			rawWeekday |= (1<<i);
 
 	return rawWeekday;
 }
@@ -58,7 +55,7 @@ void writeAlarm(void)
 {
 	eeprom_update_byte(EEPROM_A_HOUR, alarm[A_HOUR]);
 	eeprom_update_byte(EEPROM_A_MIN, alarm[A_MIN]);
-	eeprom_update_byte(EEPROM_A_DAYS, getRawWeekday());
+	eeprom_update_byte(EEPROM_A_DAYS, getRawAlarmWeekday());
 
 	return;
 }

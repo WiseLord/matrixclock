@@ -69,27 +69,7 @@ const char *wsLabel[] = {p2, p1, ws1, ws2, ws3, ws4, ws5, ws6, ws0};
 
 static int8_t brArray[24] = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 12, 9, 7, 5, 4, 3, 2, 1, 0};
 
-void initBrightness(void)
-{
-	uint8_t i;
-
-	for (i = 0; i < 24; i++)
-		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
-
-	return;
-}
-
-void writeBrightness(void)
-{
-	uint8_t i;
-
-	for (i = 0; i < 24; i++)
-		eeprom_update_byte(EEPROM_BR_ADDR + i, brArray[i]);
-
-	return;
-}
-
-char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
+static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
 	int8_t pos;
@@ -120,6 +100,64 @@ char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 	return strbuf;
 }
 
+static void loadDateString(void)
+{
+	max7219SetX(0);
+	max7219LoadString(" ");
+	max7219LoadStringPgm(weekLabel[dateTime[T_WEEK] % 7]);
+	max7219LoadString(", ");
+	max7219LoadString(mkNumberString(dateTime[T_DAY], 2, 0, ' '));
+	max7219LoadString(" ");
+	max7219LoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
+	max7219LoadString(" 20");
+	max7219LoadString(mkNumberString(dateTime[T_YEAR], 2, 0, ' '));
+	max7219LoadString("г. ");
+
+	return;
+}
+
+static void loadTempString(void)
+{
+	uint8_t devCount = getDevCount();
+
+	max7219SetX(0);
+	if (devCount > 0) {
+		max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
+		max7219LoadString("·C в комнате");
+	}
+	if (devCount > 1) {
+		max7219LoadString(", ");
+		max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
+		max7219LoadString("·C на улице");
+	}
+
+	return;
+}
+
+static uint8_t checkIfAlarmToday(void)
+{
+	return getRawAlarmWeekday() & (1 << (dateTime[T_WEEK] - 1));
+}
+
+void initBrightness(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < 24; i++)
+		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
+
+	return;
+}
+
+void writeBrightness(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < 24; i++)
+		eeprom_update_byte(EEPROM_BR_ADDR + i, brArray[i]);
+
+	return;
+}
 
 void showTime(uint32_t mask)
 {
@@ -142,46 +180,12 @@ void showTime(uint32_t mask)
 		mask  |= 0x000078;
 
 	max7219PosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
-	max7219PosData(23, dateTime[T_SEC]);
+	max7219PosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
 
 	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
 	oldDateTime[T_HOUR] = dateTime[T_HOUR];
 	oldDateTime[T_MIN] = dateTime[T_MIN];
-
-	return;
-}
-
-void loadDateString(void)
-{
-	max7219SetX(0);
-	max7219LoadString(" ");
-	max7219LoadStringPgm(weekLabel[dateTime[T_WEEK] % 7]);
-	max7219LoadString(", ");
-	max7219LoadString(mkNumberString(dateTime[T_DAY], 2, 0, ' '));
-	max7219LoadString(" ");
-	max7219LoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
-	max7219LoadString(" 20");
-	max7219LoadString(mkNumberString(dateTime[T_YEAR], 2, 0, ' '));
-	max7219LoadString("г. ");
-
-	return;
-}
-
-void loadTempString(void)
-{
-	uint8_t devCount = getDevCount();
-
-	max7219SetX(0);
-	if (devCount > 0) {
-		max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-		max7219LoadString("·C в комнате");
-	}
-	if (devCount > 1) {
-		max7219LoadString(", ");
-		max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
-		max7219LoadString("·C на улице");
-	}
 
 	return;
 }
@@ -295,7 +299,7 @@ void showAlarm(uint32_t mask)
 		mask  |= 0x000078;
 
 	max7219PosData(10, 0x24);
-	max7219PosData(23, getRawWeekday());
+	max7219PosData(23, getRawAlarmWeekday());
 
 	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
@@ -428,15 +432,13 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 void checkAlarmAndBrightness(void)
 {
 	static uint8_t alarmFlag = 1;
-	uint8_t rwd;
 
 	/* Check alarm */
 	dateTime = readTime();
 	alarm = readAlarm();
-	rwd = getRawWeekday();
 
 	if (dateTime[T_HOUR] == alarm[A_HOUR] && dateTime[T_MIN] == alarm[A_MIN]) {
-		if (rwd & (1 << (dateTime[T_WEEK] - 1))) {
+		if (checkIfAlarmToday()) {
 			if (getBeepTimer() == 0 && alarmFlag) {
 				alarmFlag = 0;
 				startBeeper(60000);

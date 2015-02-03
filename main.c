@@ -141,6 +141,8 @@ int main(void)
 				dispMode = MODE_MAIN;
 				setTimeMask(0x000000);
 				showTime(0xFFFFFF);
+				stopEditAlarm();
+				resetAmOld();
 				writeAlarm();
 			} else {
 				stopEditTime();
