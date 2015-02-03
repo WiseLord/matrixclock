@@ -3,7 +3,7 @@
 
 #include <avr/io.h>
 
-#define EEPROM_SCREEN_ROTATE	((void*)0x03)
+#define EEPROM_SCREEN_ROTATE	((void*)0x04)
 
 #define MAX7219_DDR				DDRD
 #define MAX7219_PORT			PORTD
