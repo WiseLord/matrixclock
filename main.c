@@ -67,6 +67,7 @@ int main(void)
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
+			lastParam = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
 				max7219HwScroll(MAX7219_SCROLL_STOP);
@@ -75,116 +76,90 @@ int main(void)
 				break;
 			case MODE_EDIT_TIME:
 				editTime();
-				lastParam = PARAM_UP;
 				break;
 			case MODE_ALARM:
 				dispMode = MODE_EDIT_ALARM;
 				editAlarm();
-				lastParam = PARAM_UP;
 				break;
 			case MODE_EDIT_ALARM:
 				editAlarm();
-				lastParam = PARAM_UP;
 				break;
 			case MODE_BRIGHTNESS:
 				incBrightnessHour();
-				lastParam = PARAM_UP;
 				break;
 			}
 			break;
 		case CMD_BTN_2:
+			lastParam = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
 				scrollDate();
 				break;
 			case MODE_EDIT_TIME:
 				changeTime(PARAM_UP);
-				lastParam = PARAM_UP;
 				break;
 			case MODE_EDIT_ALARM:
 				changeAlarm(PARAM_UP);
-				lastParam = PARAM_UP;
 				break;
 			case MODE_BRIGHTNESS:
 				changeBrightness(PARAM_UP);
-				lastParam = PARAM_UP;
 				break;
 			}
 			break;
 		case CMD_BTN_3:
+			lastParam = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
 				scrollTemp();
 				break;
 			case MODE_EDIT_TIME:
 				changeTime(PARAM_DOWN);
-				lastParam = PARAM_DOWN;
 				break;
 			case MODE_EDIT_ALARM:
 				changeAlarm(PARAM_DOWN);
-				lastParam = PARAM_DOWN;
 				break;
 			case MODE_BRIGHTNESS:
 				changeBrightness(PARAM_DOWN);
-				lastParam = PARAM_DOWN;
 				break;
 			}
 			break;
 		case CMD_BTN_1_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
-				dispMode = MODE_EDIT_TIME;
-				editTime();
-				lastParam = PARAM_UP;
-				break;
-			case MODE_EDIT_TIME:
+			if (dispMode == MODE_EDIT_TIME) {
 				stopEditTime();
 				resetEtmOld();
 				dispMode = MODE_MAIN;
 				showTime(0xFFFFFF);
-				break;
-			case MODE_ALARM:
-				dispMode = MODE_EDIT_ALARM;
-				editAlarm();
-				lastParam = PARAM_UP;
-				break;
-			case MODE_EDIT_ALARM:
+			} else {
+				dispMode = MODE_EDIT_TIME;
+				editTime();
 				stopEditAlarm();
 				resetAmOld();
-				writeAlarm();
-				dispMode = MODE_ALARM;
-				showAlarm(0xFFFFFF);
-				break;
 			}
 			break;
 		case CMD_BTN_2_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
-				dispMode = MODE_ALARM;
-				mask = 0xFFFFFF;
-				break;
-			case MODE_ALARM:
-			case MODE_EDIT_ALARM:
+			if (dispMode == MODE_ALARM || dispMode == MODE_EDIT_ALARM) {
 				dispMode = MODE_MAIN;
 				setTimeMask(0x000000);
 				showTime(0xFFFFFF);
 				writeAlarm();
+			} else {
+				stopEditTime();
+				resetEtmOld();
+				dispMode = MODE_ALARM;
+				mask = 0xFFFFFF;
 				break;
 			}
 			break;
 		case CMD_BTN_3_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
-				dispMode = MODE_BRIGHTNESS;
-				mask = 0xFFFFFF;
-				setBrightnessHour();
-				break;
-			case MODE_BRIGHTNESS:
+			if (dispMode == MODE_BRIGHTNESS) {
 				dispMode = MODE_MAIN;
 				setTimeMask(0x000000);
 				showTime(0xFFFFFF);
 				writeBrightness();
-				break;
+			} else {
+				dispMode = MODE_BRIGHTNESS;
+				mask = 0xFFFFFF;
+				setBrightnessHour();
 			}
 			break;
 		case CMD_BTN_1_2_3_LONG:
@@ -205,13 +180,16 @@ int main(void)
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(lastParam);
+			checkAlarmAndBrightness();
 			break;
 		case MODE_ALARM:
 			showAlarm(mask);
 			mask = 0x000000;
+			checkAlarmAndBrightness();
 			break;
 		case MODE_EDIT_ALARM:
 			showAlarmEdit(lastParam);
+			checkAlarmAndBrightness();
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(lastParam, mask);
