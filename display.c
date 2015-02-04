@@ -110,7 +110,7 @@ static void loadDateString(void)
 	max7219LoadString(" ");
 	max7219LoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
 	max7219LoadString(" 20");
-	max7219LoadString(mkNumberString(dateTime[T_YEAR], 2, 0, ' '));
+	max7219LoadString(mkNumberString(dateTime[T_YEAR], 2, 0, '0'));
 	max7219LoadString("г. ");
 
 	return;
