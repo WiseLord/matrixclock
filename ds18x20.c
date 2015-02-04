@@ -34,14 +34,14 @@ static uint8_t ds18x20IsOnBus(void)
 
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(485);										/* Reset */
+	_delay_us(500);										/* Reset */
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(65);										/* Wait for response */
+	_delay_us(60);										/* Wait for response */
 
 	ret = !(PIN(ONE_WIRE) & ONE_WIRE_LINE);
 
-	_delay_us(420);
+	_delay_us(440);
 
 	return ret;
 }
@@ -52,12 +52,12 @@ static void ds18x20SendBit(uint8_t bit)
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
 	_delay_us(5);
 	if (!bit)
-		_delay_us(50);
+		_delay_us(60);
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
 	_delay_us(5);
 	if (bit)
-		_delay_us(50);
+		_delay_us(60);
 
 	return;
 }
@@ -68,14 +68,14 @@ static uint8_t ds18x20GetBit(void)
 
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(2);										/* Strob */
+	_delay_us(5);										/* Strob */
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(7);
+	_delay_us(5);
 
 	ret = PIN(ONE_WIRE) & ONE_WIRE_LINE;
 
-	_delay_us(50);
+	_delay_us(60);
 
 	return ret;
 }
