@@ -6,10 +6,10 @@ F_CPU = 8000000L
 
 CS = -fexec-charset=ks0066-ru
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(CS)
-LDFLAGS = $(DEBUG) -mmcu=$(MCU)
+LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
