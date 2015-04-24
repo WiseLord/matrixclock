@@ -281,7 +281,7 @@ void max7219LoadFont(const uint8_t *font)
 
 void scrollTimerInit(void)
 {
-	TIMSK |= (1<<TOIE2);							/* Enable Timer0 overflow interrupt */
+	TIMSK |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
 	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);		/* Set timer prescaller to 1024 (7812 Hz) */
 
 	return;
