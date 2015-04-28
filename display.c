@@ -47,13 +47,13 @@ const char m11[] PROGMEM = "ноября";
 
 const char *monthLabel[] = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
 
-const char p0[] PROGMEM = "се";
-const char p1[] PROGMEM = "ми";
-const char p2[] PROGMEM = "ча";
-const char p3[] PROGMEM = "не";
-const char p4[] PROGMEM = "чи";
-const char p5[] PROGMEM = "ме";
-const char p6[] PROGMEM = "го";
+const char p0[] PROGMEM = "сек";
+const char p1[] PROGMEM = "мин";
+const char p2[] PROGMEM = "час";
+const char p3[] PROGMEM = "нед";
+const char p4[] PROGMEM = "чис";
+const char p5[] PROGMEM = "мес";
+const char p6[] PROGMEM = "год";
 
 const char *parLabel[] = {p0, p1, p2, p3, p4, p5, p6};
 
@@ -171,13 +171,13 @@ void showTime(uint32_t mask)
 	max7219LoadString(mkNumberString(dateTime[T_MIN], 2, 0, '0'));
 
 	if (oldDateTime[T_HOUR] / 10 != dateTime[T_HOUR] / 10)
-		mask  |= 0xF00000;
+		mask  |= 0xF0000000;
 	if (oldDateTime[T_HOUR] % 10 != dateTime[T_HOUR] % 10)
-		mask  |= 0x078000;
+		mask  |= 0x07800000;
 	if (oldDateTime[T_MIN] / 10 != dateTime[T_MIN] / 10)
-		mask  |= 0x000F00;
+		mask  |= 0x000F0000;
 	if (oldDateTime[T_MIN] % 10 != dateTime[T_MIN] % 10)
-		mask  |= 0x000078;
+		mask  |= 0x00007800;
 
 	max7219PosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
 	max7219PosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
@@ -194,7 +194,7 @@ void scrollDate(void)
 {
 	loadDateString();
 	max7219HwScroll(MAX7219_SCROLL_START);
-	timeMask = 0xFFFFFF;
+	timeMask = 0xFFFFFFFF;
 
 	return;
 }
@@ -203,7 +203,7 @@ void scrollTemp(void)
 {
 	loadTempString();
 	max7219HwScroll(MAX7219_SCROLL_START);
-	timeMask = 0xFFFFFF;
+	timeMask = 0xFFFFFFFF;
 
 	return;
 }
@@ -222,7 +222,7 @@ void showMainScreen(void)
 		} else if (dateTime[T_SEC] == 40) {
 			scrollTemp();
 		} else {
-			timeMask = 0x000000;
+			timeMask = 0x0000000;
 		}
 	}
 
@@ -231,7 +231,7 @@ void showMainScreen(void)
 
 void showTimeEdit(int8_t ch_dir)
 {
-	uint32_t mask = 0x000000;
+	uint32_t mask = 0x00000000;
 
 	int8_t time;
 	timeMode etm;
@@ -242,16 +242,16 @@ void showTimeEdit(int8_t ch_dir)
 
 	max7219SetX(0);
 	max7219LoadString(mkNumberString(time, 2, 0, '0'));
-	max7219SetX(12);
+	max7219SetX(13);
 	max7219LoadStringPgm(parLabel[etm]);
 
 	if (timeOld / 10 != time / 10)
-		mask  |= 0xF00000;
+		mask  |= 0xF0000000;
 	if (timeOld % 10 != time % 10)
-		mask  |= 0x078000;
+		mask  |= 0x07800000;
 
 	if (etmOld != etm)
-		mask |= 0xFFFFFF;
+		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
 		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
@@ -290,13 +290,13 @@ void showAlarm(uint32_t mask)
 	max7219LoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
 
 	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
-		mask  |= 0xF00000;
+		mask  |= 0xF0000000;
 	if (oldAlarm[A_HOUR] % 10 != alarm[A_HOUR] % 10)
-		mask  |= 0x078000;
+		mask  |= 0x07800000;
 	if (oldAlarm[A_MIN] / 10 != alarm[A_MIN] / 10)
-		mask  |= 0x000F00;
+		mask  |= 0x000F0000;
 	if (oldAlarm[A_MIN] % 10 != alarm[A_MIN] % 10)
-		mask  |= 0x000078;
+		mask  |= 0x00007800;
 
 	max7219PosData(10, 0x24);
 	max7219PosData(23, getRawAlarmWeekday());
@@ -311,7 +311,7 @@ void showAlarm(uint32_t mask)
 
 void showAlarmEdit(int8_t ch_dir)
 {
-	uint32_t mask = 0x000000;
+	uint32_t mask = 0x00000000;
 
 	int8_t alarm;
 	alarmMode am;
@@ -325,12 +325,12 @@ void showAlarmEdit(int8_t ch_dir)
 	switch (am) {
 	case A_HOUR:
 		max7219LoadString(mkNumberString(alarm, 2, 0, '0'));
-		max7219SetX(12);
+		max7219SetX(13);
 		max7219LoadStringPgm(p2);
 		break;
 	case A_MIN:
 		max7219LoadString(mkNumberString(alarm, 2, 0, '0'));
-		max7219SetX(12);
+		max7219SetX(13);
 		max7219LoadStringPgm(p1);
 		break;
 	default:
@@ -339,18 +339,18 @@ void showAlarmEdit(int8_t ch_dir)
 		else {
 			max7219LoadString("   ");
 		}
-		max7219SetX(12);
+		max7219SetX(13);
 		max7219LoadStringPgm(wsLabel[am]);
 		break;
 	}
 
 	if (alarmOld / 10 != alarm / 10)
-		mask  |= 0xF00000;
+		mask  |= 0xF0000000;
 	if (alarmOld % 10 != alarm % 10)
-		mask  |= 0x07C000;
+		mask  |= 0x07C00000;
 
 	if (amOld != am)
-		mask |= 0xFFFFFF;
+		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
 		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
@@ -410,13 +410,13 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	max7219LoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
 
 	if (oldHour / 10 != brHour / 10)
-		mask  |= 0xF00000;
+		mask  |= 0xF0000000;
 	if (oldHour % 10 != brHour % 10)
-		mask  |= 0x078000;
+		mask  |= 0x07800000;
 	if (oldBrightness / 10 != brArray[brHour] / 10)
-		mask  |= 0x0001E0;
+		mask  |= 0x0001E000;
 	if (oldBrightness % 10 != brArray[brHour] % 10)
-		mask  |= 0x00000F;
+		mask  |= 0x00000F00;
 
 	for (i = 10; i <= 13; i++)
 		max7219PosData(i, 0x7F);

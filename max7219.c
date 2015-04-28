@@ -143,17 +143,6 @@ void max7219Show(void)
 	return;
 }
 
-void max7219LoadScr(uint8_t *buf)
-{
-	uint8_t i;
-
-	for (i = 0; i < MAX7219_ICNUMBER * 8; i++) {
-		scrBuf[i] = buf[i];
-	}
-
-	return;
-}
-
 void max7219PosData(uint8_t pos, uint8_t data)
 {
 	scrBuf[pos] = data;
@@ -293,15 +282,15 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 	if (scrollMode) {
 		int8_t i;
 
-		for (i = 0; i < 23; i++) {
+		for (i = 0; i < MAX7219_ICNUMBER * 8 - 1; i++) {
 			scrBuf[i] = scrBuf[i + 1];
 		}
-		scrBuf[23] = strBuf[scrollPos];
+		scrBuf[MAX7219_ICNUMBER * 8 - 1] = strBuf[scrollPos];
 		max7219Show();
 
 		scrollPos++;
 
-		if (scrollPos >= _end + 23 || scrollPos >= 512) {
+		if (scrollPos >= _end + MAX7219_ICNUMBER * 8 - 1 || scrollPos >= 512) {
 			scrollMode = 0;
 			scrollPos = 0;
 		}

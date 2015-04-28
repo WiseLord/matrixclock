@@ -13,7 +13,7 @@
 #define MAX7219_DIN				(1<<PD0)
 
 // Number of chips
-#define MAX7219_ICNUMBER		3
+#define MAX7219_ICNUMBER		4
 
 // Registers
 #define MAX7219_NO_OP			0x00
@@ -55,8 +55,6 @@ void max7219Fill(uint8_t data);
 void max7219Send(uint8_t ic, uint8_t reg, uint8_t data);
 
 void max7219Show(void);
-
-void max7219LoadScr(uint8_t *buf);
 
 void max7219PosData(uint8_t pos, uint8_t data);
 
