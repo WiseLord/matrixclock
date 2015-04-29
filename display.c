@@ -18,7 +18,7 @@ static int8_t alarmOld = 0;
 static alarmMode amOld = A_NOEDIT;
 
 char strbuf[20];
-static uint32_t timeMask = 0xFFFFFF;
+static uint32_t timeMask = 0xFFFFFFFF;
 
 static int8_t brHour;
 
