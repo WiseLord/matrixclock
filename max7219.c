@@ -160,7 +160,7 @@ void max7219SwitchBuf(uint32_t mask, uint8_t effect)
 				switch (effect) {
 				case MAX7219_EFFECT_SCROLL_DOWN:
 					scrBuf[j] <<= 1;
-					if (strBuf[j] & (1<<(7 - i)))
+					if (strBuf[j] & (128>>i))
 						scrBuf[j] |= 0x01;
 					break;
 				case MAX7219_EFFECT_SCROLL_UP:
@@ -171,7 +171,7 @@ void max7219SwitchBuf(uint32_t mask, uint8_t effect)
 				case MAX7219_EFFECT_SCROLL_BOTH:
 					if (j & 0x01) {
 						scrBuf[j] <<= 1;
-						if (strBuf[j] & (1<<(7 - i)))
+						if (strBuf[j] & (128 >> i))
 							scrBuf[j] |= 0x01;
 					} else {
 						scrBuf[j] >>= 1;
@@ -227,15 +227,32 @@ void max7219LoadChar(uint8_t code)
 	return;
 }
 
+static void max7219ClearBufTail(void)
+{
+	_end = _col;
+	while(_col < 512)
+		strBuf[_col++] = 0x00;
+	_col = _end;
+
+	return;
+}
+
 void max7219LoadString(char *string)
 {
 	while(*string)
 		max7219LoadChar(*string++);
 
-	_end = _col;
-	while(_col < 512)
-		strBuf[_col++] = 0x00;
-	_col = _end;
+	max7219ClearBufTail();
+
+	return;
+}
+
+void max7219LoadNumString(char *string)
+{
+	while(*string)
+		max7219LoadChar(0xC0 + *string++);
+
+	max7219ClearBufTail();
 
 	return;
 }
@@ -251,10 +268,7 @@ void max7219LoadStringPgm(const char *string)
 		ch = pgm_read_byte(&string[i++]);
 	}
 
-	_end = _col;
-	while(_col < 512)
-		strBuf[_col++] = 0x00;
-	_col = _end;
+	max7219ClearBufTail();
 
 	return;
 }

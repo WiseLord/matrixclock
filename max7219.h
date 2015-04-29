@@ -66,6 +66,8 @@ void max7219LoadChar(uint8_t code);
 
 void max7219LoadString(char *string);
 
+void max7219LoadNumString(char *string);
+
 void max7219LoadStringPgm(const char *string);
 
 void max7219LoadFont(const uint8_t *font);

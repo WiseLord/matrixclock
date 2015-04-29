@@ -169,6 +169,8 @@ void showTime(uint32_t mask)
 	max7219LoadString(mkNumberString(dateTime[T_HOUR], 2, 0, '0'));
 	max7219SetX(12);
 	max7219LoadString(mkNumberString(dateTime[T_MIN], 2, 0, '0'));
+	max7219SetX(25);
+	max7219LoadNumString(mkNumberString(dateTime[T_SEC], 2, 0, '0'));
 
 	if (oldDateTime[T_HOUR] / 10 != dateTime[T_HOUR] / 10)
 		mask  |= 0xF0000000;
@@ -178,6 +180,10 @@ void showTime(uint32_t mask)
 		mask  |= 0x000F0000;
 	if (oldDateTime[T_MIN] % 10 != dateTime[T_MIN] % 10)
 		mask  |= 0x00007800;
+	if (oldDateTime[T_SEC] / 10 != dateTime[T_SEC] / 10)
+		mask  |= 0x00000070;
+	if (oldDateTime[T_SEC] % 10 != dateTime[T_SEC] % 10)
+		mask  |= 0x00000007;
 
 	max7219PosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
 	max7219PosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
@@ -186,6 +192,7 @@ void showTime(uint32_t mask)
 
 	oldDateTime[T_HOUR] = dateTime[T_HOUR];
 	oldDateTime[T_MIN] = dateTime[T_MIN];
+	oldDateTime[T_SEC] = dateTime[T_SEC];
 
 	return;
 }
