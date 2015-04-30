@@ -70,7 +70,7 @@ int main(void)
 			lastParam = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
-				matrixHwScroll(MAX7219_SCROLL_STOP);
+				matrixHwScroll(MATRIX_SCROLL_STOP);
 				if (dispModePrev != dispMode)
 					showTime(0xFFFFFFFF);
 				break;
@@ -171,7 +171,7 @@ int main(void)
 
 		/* Stop scroll if mode has changed */
 		if (dispMode != dispModePrev) {
-			matrixHwScroll(MAX7219_SCROLL_STOP);
+			matrixHwScroll(MATRIX_SCROLL_STOP);
 		}
 
 		/* Show things */

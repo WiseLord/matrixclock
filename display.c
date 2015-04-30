@@ -200,7 +200,7 @@ void showTime(uint32_t mask)
 void scrollDate(void)
 {
 	loadDateString();
-	matrixHwScroll(MAX7219_SCROLL_START);
+	matrixHwScroll(MATRIX_SCROLL_START);
 	timeMask = 0xFFFFFFFF;
 
 	return;
@@ -209,7 +209,7 @@ void scrollDate(void)
 void scrollTemp(void)
 {
 	loadTempString();
-	matrixHwScroll(MAX7219_SCROLL_START);
+	matrixHwScroll(MATRIX_SCROLL_START);
 	timeMask = 0xFFFFFFFF;
 
 	return;
@@ -395,10 +395,10 @@ void changeBrightness(int8_t diff)
 {
 	brArray[brHour] += diff;
 
-	if (brArray[brHour] >= MAX7219_MAX_BRIGHTNESS)
-		brArray[brHour] = MAX7219_MAX_BRIGHTNESS;
-	if (brArray[brHour] <= MAX7219_MIN_BRIGHTNESS)
-		brArray[brHour] = MAX7219_MIN_BRIGHTNESS;
+	if (brArray[brHour] >= MATRIX_MAX_BRIGHTNESS)
+		brArray[brHour] = MATRIX_MAX_BRIGHTNESS;
+	if (brArray[brHour] <= MAXTRIX_MIN_BRIGHTNESS)
+		brArray[brHour] = MAXTRIX_MIN_BRIGHTNESS;
 
 	matrixSetBrightness(brArray[brHour]);
 

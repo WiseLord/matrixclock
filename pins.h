@@ -9,8 +9,15 @@
 #define PORT(x)				CONCAT(PORT,x)
 #define PIN(x)				CONCAT(PIN,x)
 
-/* 1-wire definitions */
+
 #define ONE_WIRE			D
 #define ONE_WIRE_LINE		(1<<6)
+
+#define MAX7219_LOAD		D
+#define MAX7219_LOAD_LINE	(1<<4)
+#define MAX7219_CLK			D
+#define MAX7219_CLK_LINE	(1<<1)
+#define MAX7219_DIN			D
+#define MAX7219_DIN_LINE	(1<<0)
 
 #endif /* PINS_H */
