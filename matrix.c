@@ -1,6 +1,8 @@
 #include "matrix.h"
+
 #include "fonts.h"
 #include "max7219.h"
+#include "eeprom.h"
 
 #include <util/delay.h>
 #include <avr/pgmspace.h>

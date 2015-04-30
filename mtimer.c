@@ -20,12 +20,17 @@ void mTimerInit(void)
 
 	tempConvertTimer = 0;
 
-	BEEPER_DDR |= BEEPER_PIN;
-	BEEPER_PORT |= BEEPER_PIN;
+	DDR(BEEPER) |= BEEPER_LINE;
+	PORT(BEEPER) |= BEEPER_LINE;
 
 	/* Setup buttons as inputs with pull-up resistors */
-	BTN_DDR &= ~(BTN_MASK);
-	BTN_PORT |= BTN_MASK;
+	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
+	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
+	DDR(BUTTON_3) &= ~BUTTON_3_LINE;
+
+	PORT(BUTTON_1) |= BUTTON_1_LINE;
+	PORT(BUTTON_2) |= BUTTON_2_LINE;
+	PORT(BUTTON_3) |= BUTTON_3_LINE;
 
 	cmdBuf = CMD_EMPTY;
 
@@ -36,10 +41,17 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 {
 	TCNT0 = 131;
 
-	static int16_t btnCnt = 0;					/* Buttons press duration value */
-	static uint8_t btnPrev = 0;					/* Previous buttons state */
+	static int16_t btnCnt = 0;						/* Buttons press duration value */
+	static uint8_t btnPrev = 0;						/* Previous buttons state */
 
-	uint8_t btnNow = ~BTN_PIN & BTN_MASK;		/* Current buttons state */
+	uint8_t btnNow = BTN_STATE_0;
+
+	if (~PIN(BUTTON_1) & BUTTON_1_LINE)
+		btnNow |= BTN_1;
+	if (~PIN(BUTTON_2) & BUTTON_2_LINE)
+		btnNow |= BTN_2;
+	if (~PIN(BUTTON_3) & BUTTON_3_LINE)
+		btnNow |= BTN_3;
 
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
@@ -98,9 +110,10 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 
 	if (((beepTimer >> 3) & 7) > 4) {
 		if (beepSecTimer > 500)
-			BEEPER_PORT &= ~BEEPER_PIN;
+			PORT(BEEPER) &= ~BEEPER_LINE;
 	} else {
-		BEEPER_PORT |= BEEPER_PIN;
+		PORT(BEEPER) |= BEEPER_LINE;
+
 	}
 
 	return;

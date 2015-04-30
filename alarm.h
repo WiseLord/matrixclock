@@ -3,10 +3,6 @@
 
 #include <inttypes.h>
 
-#define EEPROM_A_HOUR		((void*)0x00)
-#define EEPROM_A_MIN		((void*)0x01)
-#define EEPROM_A_DAYS		((void*)0x02)
-
 typedef enum {
 	A_HOUR  = 0,
 	A_MIN   = 1,

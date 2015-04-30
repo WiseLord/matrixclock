@@ -4,8 +4,6 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define EEPROM_SCREEN_ROTATE		((void*)0x04)
-
 #define MATRIX_SCROLL_STOP			0
 #define MATRIX_SCROLL_START			1
 

@@ -1,9 +1,11 @@
 #include "display.h"
+
 #include "ds1307.h"
 #include "matrix.h"
 #include "ds18x20.h"
 #include "mtimer.h"
 #include "alarm.h"
+#include "eeprom.h"
 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>

@@ -1,4 +1,6 @@
 #include "alarm.h"
+
+#include "eeprom.h"
 #include <avr/eeprom.h>
 
 static int8_t alarm[9];
