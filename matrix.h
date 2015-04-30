@@ -8,9 +8,9 @@
 #define MAX7219_DDR				DDRD
 #define MAX7219_PORT			PORTD
 
-#define MAX7219_LOAD			((1<<PD4) | (1<<PD3) | (1<<PD2))
-#define MAX7219_CLK				(1<<PD1)
-#define MAX7219_DIN				(1<<PD0)
+#define MAX7219_LOAD_			(1<<PD4)
+#define MAX7219_CLK_			(1<<PD1)
+#define MAX7219_DIN_			(1<<PD0)
 
 // Number of chips
 #define MAX7219_ICNUMBER		4
@@ -44,38 +44,38 @@ enum {
 	MAX7219_EFFECT_SCROLL_BOTH = 3
 };
 
-void max7219ScreenRotate(void);
+void matrixScreenRotate(void);
 
-void max7219Init(void);
+void matrixInit(void);
 
-void max7219SetBrightness(uint8_t brightness);
+void matrixSetBrightness(uint8_t brightness);
 
-void max7219Fill(uint8_t data);
+void matrixFill(uint8_t data);
 
-void max7219Send(uint8_t ic, uint8_t reg, uint8_t data);
+void matrixSend(uint8_t ic, uint8_t reg, uint8_t data);
 
-void max7219Show(void);
+void matrixShow(void);
 
-void max7219PosData(uint8_t pos, uint8_t data);
+void matrixPosData(uint8_t pos, uint8_t data);
 
-void max7219SwitchBuf(uint32_t mask, uint8_t effect);
+void matrixSwitchBuf(uint32_t mask, uint8_t effect);
 
-void max7219SetX(int16_t x);
+void matrixSetX(int16_t x);
 
-void max7219LoadChar(uint8_t code);
+void matrixLoadChar(uint8_t code);
 
-void max7219LoadString(char *string);
+void matrixLoadString(char *string);
 
-void max7219LoadNumString(char *string);
+void matrixLoadNumString(char *string);
 
-void max7219LoadStringPgm(const char *string);
+void matrixLoadStringPgm(const char *string);
 
-void max7219LoadFont(const uint8_t *font);
+void matrixLoadFont(const uint8_t *font);
 
-void scrollTimerInit(void);
+void matrixScrollTimerInit(void);
 
-void max7219HwScroll(uint8_t status);
+void matrixHwScroll(uint8_t status);
 
-uint8_t getScrollMode(void);
+uint8_t matrixGetScrollMode(void);
 
 #endif /* MAX7219_H */

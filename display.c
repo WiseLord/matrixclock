@@ -1,6 +1,6 @@
 #include "display.h"
 #include "ds1307.h"
-#include "max7219.h"
+#include "matrix.h"
 #include "ds18x20.h"
 #include "mtimer.h"
 #include "alarm.h"
@@ -102,16 +102,16 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 
 static void loadDateString(void)
 {
-	max7219SetX(0);
-	max7219LoadString(" ");
-	max7219LoadStringPgm(weekLabel[dateTime[T_WEEK] % 7]);
-	max7219LoadString(", ");
-	max7219LoadString(mkNumberString(dateTime[T_DAY], 2, 0, ' '));
-	max7219LoadString(" ");
-	max7219LoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
-	max7219LoadString(" 20");
-	max7219LoadString(mkNumberString(dateTime[T_YEAR], 2, 0, '0'));
-	max7219LoadString("г. ");
+	matrixSetX(0);
+	matrixLoadString(" ");
+	matrixLoadStringPgm(weekLabel[dateTime[T_WEEK] % 7]);
+	matrixLoadString(", ");
+	matrixLoadString(mkNumberString(dateTime[T_DAY], 2, 0, ' '));
+	matrixLoadString(" ");
+	matrixLoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
+	matrixLoadString(" 20");
+	matrixLoadString(mkNumberString(dateTime[T_YEAR], 2, 0, '0'));
+	matrixLoadString("г. ");
 
 	return;
 }
@@ -120,15 +120,15 @@ static void loadTempString(void)
 {
 	uint8_t devCount = getDevCount();
 
-	max7219SetX(0);
+	matrixSetX(0);
 	if (devCount > 0) {
-		max7219LoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-		max7219LoadString("·C в комнате");
+		matrixLoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
+		matrixLoadString("·C в комнате");
 	}
 	if (devCount > 1) {
-		max7219LoadString(", ");
-		max7219LoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
-		max7219LoadString("·C на улице");
+		matrixLoadString(", ");
+		matrixLoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
+		matrixLoadString("·C на улице");
 	}
 
 	return;
@@ -165,12 +165,12 @@ void showTime(uint32_t mask)
 
 	dateTime = readTime();
 
-	max7219SetX(0);
-	max7219LoadString(mkNumberString(dateTime[T_HOUR], 2, 0, '0'));
-	max7219SetX(12);
-	max7219LoadString(mkNumberString(dateTime[T_MIN], 2, 0, '0'));
-	max7219SetX(25);
-	max7219LoadNumString(mkNumberString(dateTime[T_SEC], 2, 0, '0'));
+	matrixSetX(0);
+	matrixLoadString(mkNumberString(dateTime[T_HOUR], 2, 0, '0'));
+	matrixSetX(12);
+	matrixLoadString(mkNumberString(dateTime[T_MIN], 2, 0, '0'));
+	matrixSetX(25);
+	matrixLoadNumString(mkNumberString(dateTime[T_SEC], 2, 0, '0'));
 
 	if (oldDateTime[T_HOUR] / 10 != dateTime[T_HOUR] / 10)
 		mask  |= 0xF0000000;
@@ -185,10 +185,10 @@ void showTime(uint32_t mask)
 	if (oldDateTime[T_SEC] % 10 != dateTime[T_SEC] % 10)
 		mask  |= 0x00000007;
 
-	max7219PosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
-	max7219PosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
+	matrixPosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
+	matrixPosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
 
-	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
 	oldDateTime[T_HOUR] = dateTime[T_HOUR];
 	oldDateTime[T_MIN] = dateTime[T_MIN];
@@ -200,7 +200,7 @@ void showTime(uint32_t mask)
 void scrollDate(void)
 {
 	loadDateString();
-	max7219HwScroll(MAX7219_SCROLL_START);
+	matrixHwScroll(MAX7219_SCROLL_START);
 	timeMask = 0xFFFFFFFF;
 
 	return;
@@ -209,7 +209,7 @@ void scrollDate(void)
 void scrollTemp(void)
 {
 	loadTempString();
-	max7219HwScroll(MAX7219_SCROLL_START);
+	matrixHwScroll(MAX7219_SCROLL_START);
 	timeMask = 0xFFFFFFFF;
 
 	return;
@@ -222,7 +222,7 @@ void setTimeMask(uint32_t tmsk)
 
 void showMainScreen(void)
 {
-	if (getScrollMode() == 0) {
+	if (matrixGetScrollMode() == 0) {
 		showTime(timeMask);
 		if (dateTime[T_SEC] == 10) {
 			scrollDate();
@@ -247,10 +247,10 @@ void showTimeEdit(int8_t ch_dir)
 	etm = getEtm();
 	time = getTime(etm);
 
-	max7219SetX(0);
-	max7219LoadString(mkNumberString(time, 2, 0, '0'));
-	max7219SetX(13);
-	max7219LoadStringPgm(parLabel[etm]);
+	matrixSetX(0);
+	matrixLoadString(mkNumberString(time, 2, 0, '0'));
+	matrixSetX(13);
+	matrixLoadStringPgm(parLabel[etm]);
 
 	if (timeOld / 10 != time / 10)
 		mask  |= 0xF0000000;
@@ -261,9 +261,9 @@ void showTimeEdit(int8_t ch_dir)
 		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
-		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 	else
-		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
+		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
 
 	timeOld = time;
 	etmOld = etm;
@@ -291,10 +291,10 @@ void showAlarm(uint32_t mask)
 
 	alarm = readAlarm();
 
-	max7219SetX(0);
-	max7219LoadString(mkNumberString(alarm[A_HOUR], 2, 0, '0'));
-	max7219SetX(12);
-	max7219LoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
+	matrixSetX(0);
+	matrixLoadString(mkNumberString(alarm[A_HOUR], 2, 0, '0'));
+	matrixSetX(12);
+	matrixLoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
 
 	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
 		mask  |= 0xF0000000;
@@ -305,10 +305,10 @@ void showAlarm(uint32_t mask)
 	if (oldAlarm[A_MIN] % 10 != alarm[A_MIN] % 10)
 		mask  |= 0x00007800;
 
-	max7219PosData(10, 0x24);
-	max7219PosData(23, getRawAlarmWeekday());
+	matrixPosData(10, 0x24);
+	matrixPosData(23, getRawAlarmWeekday());
 
-	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
 	oldAlarm[A_HOUR] = alarm[A_HOUR];
 	oldAlarm[A_MIN] = alarm[A_MIN];
@@ -327,27 +327,27 @@ void showAlarmEdit(int8_t ch_dir)
 	am = getAlarmMode();
 	alarm = getAlarm(am);
 
-	max7219SetX(0);
+	matrixSetX(0);
 
 	switch (am) {
 	case A_HOUR:
-		max7219LoadString(mkNumberString(alarm, 2, 0, '0'));
-		max7219SetX(13);
-		max7219LoadStringPgm(p2);
+		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
+		matrixSetX(13);
+		matrixLoadStringPgm(p2);
 		break;
 	case A_MIN:
-		max7219LoadString(mkNumberString(alarm, 2, 0, '0'));
-		max7219SetX(13);
-		max7219LoadStringPgm(p1);
+		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
+		matrixSetX(13);
+		matrixLoadStringPgm(p1);
 		break;
 	default:
 		if (alarm)
-			max7219LoadString(" ♩ ");
+			matrixLoadString(" ♩ ");
 		else {
-			max7219LoadString("   ");
+			matrixLoadString("   ");
 		}
-		max7219SetX(13);
-		max7219LoadStringPgm(wsLabel[am]);
+		matrixSetX(13);
+		matrixLoadStringPgm(wsLabel[am]);
 		break;
 	}
 
@@ -360,9 +360,9 @@ void showAlarmEdit(int8_t ch_dir)
 		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
-		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 	else
-		max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
+		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
 
 	alarmOld = alarm;
 	amOld = am;
@@ -375,7 +375,7 @@ void setBrightnessHour(void)
 	dateTime = readTime();
 	brHour = dateTime[T_HOUR];
 
-	max7219SetBrightness(brArray[brHour]);
+	matrixSetBrightness(brArray[brHour]);
 
 	return;
 }
@@ -386,7 +386,7 @@ void incBrightnessHour(void)
 	if (brHour >= 24)
 		brHour = 0;
 
-	max7219SetBrightness(brArray[brHour]);
+	matrixSetBrightness(brArray[brHour]);
 
 	return;
 }
@@ -400,7 +400,7 @@ void changeBrightness(int8_t diff)
 	if (brArray[brHour] <= MAX7219_MIN_BRIGHTNESS)
 		brArray[brHour] = MAX7219_MIN_BRIGHTNESS;
 
-	max7219SetBrightness(brArray[brHour]);
+	matrixSetBrightness(brArray[brHour]);
 
 	return;
 }
@@ -411,10 +411,10 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	static uint8_t oldBrightness;
 	uint8_t i;
 
-	max7219SetX(0);
-	max7219LoadString(mkNumberString(brHour, 2, 0, '0'));
-	max7219SetX(15);
-	max7219LoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
+	matrixSetX(0);
+	matrixLoadString(mkNumberString(brHour, 2, 0, '0'));
+	matrixSetX(15);
+	matrixLoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
 
 	if (oldHour / 10 != brHour / 10)
 		mask  |= 0xF0000000;
@@ -426,9 +426,9 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 		mask  |= 0x00000F00;
 
 	for (i = 10; i <= 13; i++)
-		max7219PosData(i, 0x7F);
+		matrixPosData(i, 0x7F);
 
-	max7219SwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
 
 	oldHour = brHour;
 	oldBrightness = brArray[brHour];
@@ -456,7 +456,7 @@ void checkAlarmAndBrightness(void)
 	}
 
 	/* Check brightness */
-	max7219SetBrightness(brArray[dateTime[T_HOUR]]);
+	matrixSetBrightness(brArray[dateTime[T_HOUR]]);
 
 	return;
 }

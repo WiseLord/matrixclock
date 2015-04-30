@@ -1,16 +1,22 @@
 TARG=matrixclock
 
-SRCS = main.c max7219.c font-ks0066-ru-08.c mtimer.c i2c.c ds1307.c ds18x20.c display.c alarm.c
+LED_DRIVER = MAX7219
+
 MCU = atmega8
 F_CPU = 8000000L
 
+# Source files
+SRCS = $(wildcard *.c)
+
 CS = -fexec-charset=ks0066-ru
 
+# Compiler options
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(CS)
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
+# AVR toolchain and flasher
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 

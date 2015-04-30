@@ -1,4 +1,4 @@
-#include "max7219.h"
+#include "matrix.h"
 #include "fonts.h"
 
 #include <util/delay.h>
@@ -20,7 +20,7 @@ static uint8_t strBuf[512];
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = 0;
 
-void max7219ScreenRotate(void)
+void matrixScreenRotate(void)
 {
 	rotate = !rotate;
 	eeprom_write_byte(EEPROM_SCREEN_ROTATE, rotate);
@@ -28,43 +28,43 @@ void max7219ScreenRotate(void)
 	return;
 }
 
-void max7219Init(void)
+void matrixInit(void)
 {
 	uint8_t ic = 0;
 
-	MAX7219_DDR |= (MAX7219_CLK | MAX7219_LOAD | MAX7219_DIN);
+	MAX7219_DDR |= (MAX7219_CLK_ | MAX7219_LOAD_ | MAX7219_DIN_);
 
-	MAX7219_PORT |= MAX7219_LOAD;
-	MAX7219_PORT &= ~(MAX7219_CLK | MAX7219_DIN);
+	MAX7219_PORT |= MAX7219_LOAD_;
+	MAX7219_PORT &= ~(MAX7219_CLK_ | MAX7219_DIN_);
 
 	for(ic = 0; ic < MAX7219_ICNUMBER; ic++) {
-		max7219Send(ic, MAX7219_SHUTDOWN, 1);		/* Power on */
-		max7219Send(ic, MAX7219_DISP_TEST, 0);		/* Test mode off */
-		max7219Send(ic, MAX7219_DEC_MODE, 0);		/* Use led matrix */
-		max7219Send(ic, MAX7219_INTENSITY, 15);		/* Set brightness */
-		max7219Send(ic, MAX7219_SCAN_LIMIT, 7);		/* Scan all 8 digits (cols) */
+		matrixSend(ic, MAX7219_SHUTDOWN, 1);		/* Power on */
+		matrixSend(ic, MAX7219_DISP_TEST, 0);		/* Test mode off */
+		matrixSend(ic, MAX7219_DEC_MODE, 0);		/* Use led matrix */
+		matrixSend(ic, MAX7219_INTENSITY, 15);		/* Set brightness */
+		matrixSend(ic, MAX7219_SCAN_LIMIT, 7);		/* Scan all 8 digits (cols) */
 	}
 
 	return;
 }
 
-void max7219SetBrightness(uint8_t brightness)
+void matrixSetBrightness(uint8_t brightness)
 {
 	uint8_t ic;
 
 	for(ic = 0; ic < MAX7219_ICNUMBER; ic++) {
-		max7219Send(ic, MAX7219_INTENSITY, brightness);
+		matrixSend(ic, MAX7219_INTENSITY, brightness);
 	}
 
 	return;
 }
 
-void max7219Fill(uint8_t data)
+void matrixFill(uint8_t data)
 {
 	uint8_t i;
 
 	for (i = 0; i < MAX7219_ICNUMBER * 8; i++) {
-		max7219Send(i / 8, MAX7219_DIGIT_0 + (i % 8), data);
+		matrixSend(i / 8, MAX7219_DIGIT_0 + (i % 8), data);
 	}
 
 	return;
@@ -75,12 +75,12 @@ static void max7219SendByte(uint8_t data)
 	int8_t j = 0;
 
 	for(j = 7; j >= 0; j--) {
-		MAX7219_PORT &= ~MAX7219_CLK;
+		MAX7219_PORT &= ~MAX7219_CLK_;
 		if (data & (1<<j))
-			MAX7219_PORT |= MAX7219_DIN;
+			MAX7219_PORT |= MAX7219_DIN_;
 		else
-			MAX7219_PORT &= ~MAX7219_DIN;
-		MAX7219_PORT |= MAX7219_CLK;
+			MAX7219_PORT &= ~MAX7219_DIN_;
+		MAX7219_PORT |= MAX7219_CLK_;
 	}
 
 	return;
@@ -95,7 +95,7 @@ static uint8_t revBits(uint8_t data)
 	return data;
 }
 
-void max7219Send(uint8_t ic, uint8_t reg, uint8_t data)
+void matrixSend(uint8_t ic, uint8_t reg, uint8_t data)
 {
 	if (rotate) {
 		ic = MAX7219_ICNUMBER - 1 - ic;
@@ -108,7 +108,7 @@ void max7219Send(uint8_t ic, uint8_t reg, uint8_t data)
 	uint8_t i = 0;
 
 	if (ic < MAX7219_ICNUMBER) {
-		MAX7219_PORT &= ~MAX7219_LOAD;
+		MAX7219_PORT &= ~MAX7219_LOAD_;
 
 		/* Send NO_OP to following ics */
 		for(i = ic; i < (MAX7219_ICNUMBER - 1); i++) {
@@ -126,31 +126,31 @@ void max7219Send(uint8_t ic, uint8_t reg, uint8_t data)
 			max7219SendByte(MAX7219_NO_OP); /* NO_OP data */
 		}
 
-		MAX7219_PORT |= MAX7219_LOAD;
+		MAX7219_PORT |= MAX7219_LOAD_;
 	}
 
 	return;
 }
 
-void max7219Show(void)
+void matrixShow(void)
 {
 	uint8_t i;
 
 	for (i = 0; i < MAX7219_ICNUMBER * 8; i++) {
-		max7219Send(i / 8, MAX7219_DIGIT_0 + (i % 8), scrBuf[i]);
+		matrixSend(i / 8, MAX7219_DIGIT_0 + (i % 8), scrBuf[i]);
 	}
 
 	return;
 }
 
-void max7219PosData(uint8_t pos, uint8_t data)
+void matrixPosData(uint8_t pos, uint8_t data)
 {
 	scrBuf[pos] = data;
 
 	return;
 }
 
-void max7219SwitchBuf(uint32_t mask, uint8_t effect)
+void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 {
 	uint8_t i, j;
 
@@ -186,20 +186,20 @@ void max7219SwitchBuf(uint32_t mask, uint8_t effect)
 			}
 		}
 		_delay_ms(25);
-		max7219Show();
+		matrixShow();
 	}
 
 	return;
 }
 
-void max7219SetX(int16_t x)
+void matrixSetX(int16_t x)
 {
 	_col = x;
 
 	return;
 }
 
-void max7219LoadChar(uint8_t code)
+void matrixLoadChar(uint8_t code)
 {
 	uint8_t i;
 	uint8_t pgmData;
@@ -237,34 +237,34 @@ static void max7219ClearBufTail(void)
 	return;
 }
 
-void max7219LoadString(char *string)
+void matrixLoadString(char *string)
 {
 	while(*string)
-		max7219LoadChar(*string++);
+		matrixLoadChar(*string++);
 
 	max7219ClearBufTail();
 
 	return;
 }
 
-void max7219LoadNumString(char *string)
+void matrixLoadNumString(char *string)
 {
 	while(*string)
-		max7219LoadChar(0xC0 + *string++);
+		matrixLoadChar(0xC0 + *string++);
 
 	max7219ClearBufTail();
 
 	return;
 }
 
-void max7219LoadStringPgm(const char *string)
+void matrixLoadStringPgm(const char *string)
 {
 	char ch;
 	uint8_t i = 0;
 
 	ch = pgm_read_byte(&string[i++]);
 	while(ch) {
-		max7219LoadChar(ch);
+		matrixLoadChar(ch);
 		ch = pgm_read_byte(&string[i++]);
 	}
 
@@ -273,7 +273,7 @@ void max7219LoadStringPgm(const char *string)
 	return;
 }
 
-void max7219LoadFont(const uint8_t *font)
+void matrixLoadFont(const uint8_t *font)
 {
 	uint8_t i;
 
@@ -282,7 +282,7 @@ void max7219LoadFont(const uint8_t *font)
 		fp[i] = pgm_read_byte(font + i);
 }
 
-void scrollTimerInit(void)
+void matrixScrollTimerInit(void)
 {
 	TIMSK |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
 	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);		/* Set timer prescaller to 1024 (7812 Hz) */
@@ -300,7 +300,7 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 			scrBuf[i] = scrBuf[i + 1];
 		}
 		scrBuf[MAX7219_ICNUMBER * 8 - 1] = strBuf[scrollPos];
-		max7219Show();
+		matrixShow();
 
 		scrollPos++;
 
@@ -314,7 +314,7 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 	return;
 }
 
-void max7219HwScroll(uint8_t status)
+void matrixHwScroll(uint8_t status)
 {
 	scrollPos = 0;
 	scrollMode = status;
@@ -322,7 +322,7 @@ void max7219HwScroll(uint8_t status)
 	return;
 }
 
-uint8_t getScrollMode(void)
+uint8_t matrixGetScrollMode(void)
 {
 	return scrollMode;
 }

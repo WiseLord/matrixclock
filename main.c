@@ -3,7 +3,7 @@
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
 
-#include "max7219.h"
+#include "matrix.h"
 #include "fonts.h"
 #include "i2c.h"
 #include "mtimer.h"
@@ -21,13 +21,13 @@ void hwInit(void)
 	ds18x20SearchDevices();
 
 
-	max7219Init();
-	max7219Fill(0x00);
-	max7219LoadFont(font_ks0066_ru_08);
+	matrixInit();
+	matrixFill(0x00);
+	matrixLoadFont(font_ks0066_ru_08);
 
 	I2CInit();
 	mTimerInit();
-	scrollTimerInit();
+	matrixScrollTimerInit();
 
 	initAlarm();
 	initBrightness();
@@ -70,7 +70,7 @@ int main(void)
 			lastParam = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
-				max7219HwScroll(MAX7219_SCROLL_STOP);
+				matrixHwScroll(MAX7219_SCROLL_STOP);
 				if (dispModePrev != dispMode)
 					showTime(0xFFFFFFFF);
 				break;
@@ -165,13 +165,13 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_1_2_3_LONG:
-			max7219ScreenRotate();
+			matrixScreenRotate();
 			break;
 		}
 
 		/* Stop scroll if mode has changed */
 		if (dispMode != dispModePrev) {
-			max7219HwScroll(MAX7219_SCROLL_STOP);
+			matrixHwScroll(MAX7219_SCROLL_STOP);
 		}
 
 		/* Show things */
