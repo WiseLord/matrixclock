@@ -1,6 +1,7 @@
 #include "matrix.h"
 
 #include "fonts.h"
+#include "ht1632.h"
 #include "max7219.h"
 #include "eeprom.h"
 
@@ -17,7 +18,7 @@ static int16_t _end;
 const uint8_t *_font;
 static uint8_t fp[FONT_PARAM_COUNT];
 
-static uint8_t fb[MAX7219_ICNUMBER * 8];
+static uint8_t fb[32];
 static uint8_t strBuf[512];
 
 static volatile int16_t scrollPos = 0;
@@ -72,9 +73,38 @@ static void matrixClearBufTail(void)
 	return;
 }
 
+static void matrixUpdate(void)
+{
+#if defined(HT1632)
+	uint8_t i, j, ind;
+	uint8_t *fbInd = fb;
+	static uint8_t data[8];
+
+	ht1632SetAddr(0);
+
+	for (ind = 0; ind < 4; ind++, fbInd += 8) {
+		for (i = 0; i < 8; i++) {
+			data[i] = 0;
+			for (j = 0; j < 8; j++)
+				if (fbInd[j] & (1 << i))
+					data[i] |= (0x80 >> j);
+		}
+		ht1632SendByteSeq(data, sizeof(data));
+	}
+#else
+	max7219SendDataBuf(fb);
+#endif
+
+	return;
+}
+
 void matrixInit(void)
 {
+#if defined(HT1632)
+	ht1632Init();
+#else
 	max7219Init();
+#endif
 
 	return;
 }
@@ -89,7 +119,11 @@ void matrixScreenRotate(void)
 
 void matrixSetBrightness(uint8_t brightness)
 {
+#if defined(HT1632)
+	ht1632SetBrightness(brightness);
+#else
 	max7219SendCmd(MAX7219_INTENSITY, brightness);
+#endif
 
 	return;
 }
@@ -101,7 +135,7 @@ void matrixFill(uint8_t data)
 	for (i = 0; i < sizeof(fb); i++)
 		fb[i] = data;
 
-	max7219SendDataBuf(fb);
+	matrixUpdate();
 
 	return;
 }
@@ -121,17 +155,17 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 		for (j = 0; j < MAX7219_ICNUMBER * 8; j++) {
 			if (mask & (1UL<<(MAX7219_ICNUMBER * 8 - 1 - j))) {
 				switch (effect) {
-				case MAX7219_EFFECT_SCROLL_DOWN:
+				case MATRIX_EFFECT_SCROLL_DOWN:
 					fb[j] <<= 1;
 					if (strBuf[j] & (128>>i))
 						fb[j] |= 0x01;
 					break;
-				case MAX7219_EFFECT_SCROLL_UP:
+				case MATRIX_EFFECT_SCROLL_UP:
 					fb[j] >>= 1;
 					if (strBuf[j] & (1<<i))
 						fb[j] |= 0x80;
 					break;
-				case MAX7219_EFFECT_SCROLL_BOTH:
+				case MATRIX_EFFECT_SCROLL_BOTH:
 					if (j & 0x01) {
 						fb[j] <<= 1;
 						if (strBuf[j] & (128 >> i))
@@ -149,7 +183,7 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 			}
 		}
 		_delay_ms(20);
-		max7219SendDataBuf(fb);
+		matrixUpdate();
 	}
 
 	return;
@@ -225,7 +259,7 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 			fb[i] = fb[i + 1];
 		}
 		fb[MAX7219_ICNUMBER * 8 - 1] = strBuf[scrollPos];
-		max7219SendDataBuf(fb);
+		matrixUpdate();
 
 		scrollPos++;
 

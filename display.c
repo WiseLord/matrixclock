@@ -190,7 +190,7 @@ void showTime(uint32_t mask)
 	matrixPosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
 	matrixPosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
 
-	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
 	oldDateTime[T_HOUR] = dateTime[T_HOUR];
 	oldDateTime[T_MIN] = dateTime[T_MIN];
@@ -263,9 +263,9 @@ void showTimeEdit(int8_t ch_dir)
 		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
-		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 	else
-		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
+		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
 	timeOld = time;
 	etmOld = etm;
@@ -310,7 +310,7 @@ void showAlarm(uint32_t mask)
 	matrixPosData(10, 0x24);
 	matrixPosData(23, getRawAlarmWeekday());
 
-	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
 	oldAlarm[A_HOUR] = alarm[A_HOUR];
 	oldAlarm[A_MIN] = alarm[A_MIN];
@@ -362,9 +362,9 @@ void showAlarmEdit(int8_t ch_dir)
 		mask |= 0xFFFFFFFF;
 
 	if (ch_dir == PARAM_UP)
-		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 	else
-		matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_UP);
+		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
 	alarmOld = alarm;
 	amOld = am;
@@ -430,7 +430,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	for (i = 10; i <= 13; i++)
 		matrixPosData(i, 0x7F);
 
-	matrixSwitchBuf(mask, MAX7219_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
 	oldHour = brHour;
 	oldBrightness = brArray[brHour];

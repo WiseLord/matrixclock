@@ -41,7 +41,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(LED_DRIVER) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)
