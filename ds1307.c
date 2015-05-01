@@ -1,6 +1,6 @@
 #include "ds1307.h"
 
-#include "i2c.h"
+#include "i2csw.h"
 
 static int8_t time[7];
 static uint8_t _etm = NOEDIT;

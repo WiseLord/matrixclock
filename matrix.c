@@ -120,7 +120,7 @@ void matrixScreenRotate(void)
 void matrixSetBrightness(uint8_t brightness)
 {
 #if defined(HT1632)
-	ht1632SetBrightness(brightness);
+	ht1632SendCmd(HT1632_CMD_DUTY | brightness);
 #else
 	max7219SendCmd(MAX7219_INTENSITY, brightness);
 #endif

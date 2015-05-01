@@ -5,7 +5,6 @@
 
 #include "matrix.h"
 #include "fonts.h"
-#include "i2c.h"
 #include "mtimer.h"
 #include "display.h"
 #include "ds18x20.h"
@@ -25,7 +24,6 @@ void hwInit(void)
 	matrixFill(0x00);
 	matrixLoadFont(font_ks0066_ru_08);
 
-	I2CInit();
 	mTimerInit();
 	matrixScrollTimerInit();
 

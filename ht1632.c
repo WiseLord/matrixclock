@@ -32,7 +32,7 @@ static void ht1632SendBits(uint8_t bits, uint8_t cnt)
 	return;
 }
 
-static void ht1632SendCmd(uint8_t cmd)
+void ht1632SendCmd(uint8_t cmd)
 {
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
 	ht1632SendBits(HT1632_MODE_COMMAND, 3);
@@ -57,16 +57,6 @@ void ht1632Init(void)
 
 	for (i = 0; i < sizeof(initCmdSeq); i++)
 		ht1632SendCmd(pgm_read_byte(&initCmdSeq[i]));
-
-	return;
-}
-
-void ht1632SetBrightness(uint8_t value)
-{
-	if (value > HT1632_DUTY_MAX)
-		value = HT1632_DUTY_MAX;
-
-	ht1632SendCmd(HT1632_CMD_DUTY | value);
 
 	return;
 }

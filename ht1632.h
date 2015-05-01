@@ -25,11 +25,9 @@
 
 #define HT1632_DUTY_MAX				0x0F
 
+void ht1632SendCmd(uint8_t cmd);
 void ht1632Init(void);
-void ht1632SetBrightness(uint8_t value);
-
 void ht1632SetAddr(uint8_t addr);
-
 void ht1632SendByteSeq(uint8_t *data, uint8_t cnt);
 
 
