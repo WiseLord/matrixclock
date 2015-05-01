@@ -10,7 +10,7 @@
 #define PIN(x)				CONCAT(PIN,x)
 
 #if !defined(HT1632) && !defined(MAX7219)
-#define HT1632
+#define MAX7219
 #endif
 
 #if defined(HT1632)
@@ -28,6 +28,11 @@
 #define BUTTON_3			D
 #define BUTTON_3_LINE		(1<<5)
 
+#define I2C_SCL				B
+#define I2C_SCL_LINE		(1<<0)
+#define I2C_SDA				B
+#define I2C_SDA_LINE		(1<<2)
+
 #else
 
 #define ONE_WIRE			D
@@ -42,6 +47,11 @@
 #define BUTTON_2_LINE		(1<<4)
 #define BUTTON_3			B
 #define BUTTON_3_LINE		(1<<5)
+
+#define I2C_SCL				C
+#define I2C_SCL_LINE		(1<<5)
+#define I2C_SDA				C
+#define I2C_SDA_LINE		(1<<4)
 
 #endif
 
