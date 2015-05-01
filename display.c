@@ -14,7 +14,7 @@ int8_t *dateTime;
 int8_t *alarm;
 
 static int8_t timeOld = 0;
-static timeMode etmOld = T_NOEDIT;
+static uint8_t etmOld = NOEDIT;
 
 static int8_t alarmOld = 0;
 static alarmMode amOld = A_NOEDIT;
@@ -106,13 +106,13 @@ static void loadDateString(void)
 {
 	matrixSetX(0);
 	matrixLoadString(" ");
-	matrixLoadStringPgm(weekLabel[dateTime[T_WEEK] % 7]);
+	matrixLoadStringPgm(weekLabel[dateTime[DS1307_WDAY] % 7]);
 	matrixLoadString(", ");
-	matrixLoadString(mkNumberString(dateTime[T_DAY], 2, 0, ' '));
+	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
 	matrixLoadString(" ");
-	matrixLoadStringPgm(monthLabel[dateTime[T_MONTH] % 12]);
+	matrixLoadStringPgm(monthLabel[dateTime[DS1307_MONTH] % 12]);
 	matrixLoadString(" 20");
-	matrixLoadString(mkNumberString(dateTime[T_YEAR], 2, 0, '0'));
+	matrixLoadString(mkNumberString(dateTime[DS1307_YEAR], 2, 0, '0'));
 	matrixLoadString("г. ");
 
 	return;
@@ -138,7 +138,7 @@ static void loadTempString(void)
 
 static uint8_t checkIfAlarmToday(void)
 {
-	return getRawAlarmWeekday() & (1 << (dateTime[T_WEEK] - 1));
+	return getRawAlarmWeekday() & (1 << (dateTime[DS1307_WDAY] - 1));
 }
 
 void initBrightness(void)
@@ -168,33 +168,33 @@ void showTime(uint32_t mask)
 	dateTime = readTime();
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(dateTime[T_HOUR], 2, 0, '0'));
+	matrixLoadString(mkNumberString(dateTime[DS1307_HOUR], 2, 0, '0'));
 	matrixSetX(12);
-	matrixLoadString(mkNumberString(dateTime[T_MIN], 2, 0, '0'));
+	matrixLoadString(mkNumberString(dateTime[DS1307_MIN], 2, 0, '0'));
 	matrixSetX(25);
-	matrixLoadNumString(mkNumberString(dateTime[T_SEC], 2, 0, '0'));
+	matrixLoadNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
 
-	if (oldDateTime[T_HOUR] / 10 != dateTime[T_HOUR] / 10)
+	if (oldDateTime[DS1307_HOUR] / 10 != dateTime[DS1307_HOUR] / 10)
 		mask  |= 0xF0000000;
-	if (oldDateTime[T_HOUR] % 10 != dateTime[T_HOUR] % 10)
+	if (oldDateTime[DS1307_HOUR] % 10 != dateTime[DS1307_HOUR] % 10)
 		mask  |= 0x07800000;
-	if (oldDateTime[T_MIN] / 10 != dateTime[T_MIN] / 10)
+	if (oldDateTime[DS1307_MIN] / 10 != dateTime[DS1307_MIN] / 10)
 		mask  |= 0x000F0000;
-	if (oldDateTime[T_MIN] % 10 != dateTime[T_MIN] % 10)
+	if (oldDateTime[DS1307_MIN] % 10 != dateTime[DS1307_MIN] % 10)
 		mask  |= 0x00007800;
-	if (oldDateTime[T_SEC] / 10 != dateTime[T_SEC] / 10)
+	if (oldDateTime[DS1307_SEC] / 10 != dateTime[DS1307_SEC] / 10)
 		mask  |= 0x00000070;
-	if (oldDateTime[T_SEC] % 10 != dateTime[T_SEC] % 10)
+	if (oldDateTime[DS1307_SEC] % 10 != dateTime[DS1307_SEC] % 10)
 		mask  |= 0x00000007;
 
-	matrixPosData(10, dateTime[T_SEC] & 0x01 ? 0x00 : 0x24);
-	matrixPosData(23, checkIfAlarmToday() ? dateTime[T_SEC] | 0x80 : dateTime[T_SEC]);
+	matrixPosData(10, dateTime[DS1307_SEC] & 0x01 ? 0x00 : 0x24);
+	matrixPosData(23, checkIfAlarmToday() ? dateTime[DS1307_SEC] | 0x80 : dateTime[DS1307_SEC]);
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
-	oldDateTime[T_HOUR] = dateTime[T_HOUR];
-	oldDateTime[T_MIN] = dateTime[T_MIN];
-	oldDateTime[T_SEC] = dateTime[T_SEC];
+	oldDateTime[DS1307_HOUR] = dateTime[DS1307_HOUR];
+	oldDateTime[DS1307_MIN] = dateTime[DS1307_MIN];
+	oldDateTime[DS1307_SEC] = dateTime[DS1307_SEC];
 
 	return;
 }
@@ -226,9 +226,9 @@ void showMainScreen(void)
 {
 	if (matrixGetScrollMode() == 0) {
 		showTime(timeMask);
-		if (dateTime[T_SEC] == 10) {
+		if (dateTime[DS1307_SEC] == 10) {
 			scrollDate();
-		} else if (dateTime[T_SEC] == 40) {
+		} else if (dateTime[DS1307_SEC] == 40) {
 			scrollTemp();
 		} else {
 			timeMask = 0x0000000;
@@ -243,7 +243,7 @@ void showTimeEdit(int8_t ch_dir)
 	uint32_t mask = 0x00000000;
 
 	int8_t time;
-	timeMode etm;
+	uint8_t etm;
 
 	readTime();
 	etm = getEtm();
@@ -275,7 +275,7 @@ void showTimeEdit(int8_t ch_dir)
 
 void resetEtmOld(void)
 {
-	etmOld = T_NOEDIT;
+	etmOld = NOEDIT;
 
 	return;
 }
@@ -375,7 +375,7 @@ void showAlarmEdit(int8_t ch_dir)
 void setBrightnessHour(void)
 {
 	dateTime = readTime();
-	brHour = dateTime[T_HOUR];
+	brHour = dateTime[DS1307_HOUR];
 
 	matrixSetBrightness(brArray[brHour]);
 
@@ -446,7 +446,7 @@ void checkAlarmAndBrightness(void)
 	dateTime = readTime();
 	alarm = readAlarm();
 
-	if (dateTime[T_HOUR] == alarm[A_HOUR] && dateTime[T_MIN] == alarm[A_MIN]) {
+	if (dateTime[DS1307_HOUR] == alarm[A_HOUR] && dateTime[DS1307_MIN] == alarm[A_MIN]) {
 		if (checkIfAlarmToday()) {
 			if (getBeepTimer() == 0 && alarmFlag) {
 				alarmFlag = 0;
@@ -458,7 +458,7 @@ void checkAlarmAndBrightness(void)
 	}
 
 	/* Check brightness */
-	matrixSetBrightness(brArray[dateTime[T_HOUR]]);
+	matrixSetBrightness(brArray[dateTime[DS1307_HOUR]]);
 
 	return;
 }
