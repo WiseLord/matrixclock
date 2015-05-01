@@ -19,7 +19,7 @@ const uint8_t *_font;
 static uint8_t fp[FONT_PARAM_COUNT];
 
 static uint8_t fb[32];
-static uint8_t strBuf[512];
+static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = 0;
@@ -66,7 +66,7 @@ static void matrixLoadChar(uint8_t code)
 static void matrixClearBufTail(void)
 {
 	_end = _col;
-	while(_col < 512)
+	while(_col < MATRIX_BUFFER_SIZE)
 		strBuf[_col++] = 0x00;
 	_col = _end;
 
@@ -249,7 +249,7 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 
 		scrollPos++;
 
-		if (scrollPos >= _end + MAX7219_ICNUMBER * 8 - 1 || scrollPos >= 512) {
+		if (scrollPos >= _end + MAX7219_ICNUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
 			scrollMode = 0;
 			scrollPos = 0;
 		}
