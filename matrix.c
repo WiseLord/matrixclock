@@ -76,21 +76,7 @@ static void matrixClearBufTail(void)
 static void matrixUpdate(void)
 {
 #if defined(HT1632)
-	uint8_t i, j, ind;
-	uint8_t *fbInd = fb;
-	static uint8_t data[8];
-
-	ht1632SetAddr(0);
-
-	for (ind = 0; ind < 4; ind++, fbInd += 8) {
-		for (i = 0; i < 8; i++) {
-			data[i] = 0;
-			for (j = 0; j < 8; j++)
-				if (fbInd[j] & (1 << i))
-					data[i] |= (0x80 >> j);
-		}
-		ht1632SendByteSeq(data, sizeof(data));
-	}
+	ht1632SendDataBuf(fb);
 #else
 	max7219SendDataBuf(fb);
 #endif
@@ -109,14 +95,6 @@ void matrixInit(void)
 	return;
 }
 
-void matrixScreenRotate(void)
-{
-	rotate = !rotate;
-	eeprom_write_byte(EEPROM_SCREEN_ROTATE, rotate);
-
-	return;
-}
-
 void matrixSetBrightness(uint8_t brightness)
 {
 #if defined(HT1632)
@@ -124,6 +102,14 @@ void matrixSetBrightness(uint8_t brightness)
 #else
 	max7219SendCmd(MAX7219_INTENSITY, brightness);
 #endif
+
+	return;
+}
+
+void matrixScreenRotate(void)
+{
+	rotate = !rotate;
+	eeprom_write_byte(EEPROM_SCREEN_ROTATE, rotate);
 
 	return;
 }

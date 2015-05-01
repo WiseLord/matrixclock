@@ -28,7 +28,7 @@
 void ht1632SendCmd(uint8_t cmd);
 void ht1632Init(void);
 void ht1632SetAddr(uint8_t addr);
-void ht1632SendByteSeq(uint8_t *data, uint8_t cnt);
+void ht1632SendDataBuf(uint8_t *buf);
 
 
 #endif /* HT1632_H */
