@@ -1,6 +1,9 @@
-TARG=matrixclock
-
 LED_DRIVER = MAX7219
+
+# Lowercase argument
+lc = $(shell echo $1 | tr A-Z a-z)
+
+TARG=matrixclock_$(call lc,$(LED_DRIVER))
 
 MCU = atmega8
 F_CPU = 8000000L
