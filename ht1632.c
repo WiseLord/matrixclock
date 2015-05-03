@@ -2,8 +2,6 @@
 
 #include <avr/pgmspace.h>
 
-static uint8_t _addr;
-
 static const uint8_t initCmdSeq[] PROGMEM = {
 	HT1632_CMD_SYS_ON,
 	HT1632_CMD_LED_ON,
@@ -32,20 +30,6 @@ static void ht1632SendBits(uint8_t bits, uint8_t cnt)
 	return;
 }
 
-static void ht1632SendByteSeq(uint8_t *data, uint8_t cnt)
-{
-	uint8_t i;
-
-	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
-	ht1632SendBits(HT1632_MODE_WRITE, 3);
-	ht1632SendBits(_addr, 7);
-	for (i = 0; i < cnt; i++, _addr += 2)
-		ht1632SendBits(data[i], 8);
-	PORT(HT1632_CS) |= HT1632_CS_LINE;
-
-	return;
-}
-
 void ht1632SendCmd(uint8_t cmd)
 {
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
@@ -55,6 +39,26 @@ void ht1632SendCmd(uint8_t cmd)
 	PORT(HT1632_CS) |= HT1632_CS_LINE;
 
 	return;
+}
+
+void ht1632SendDataBuf(uint8_t *buf)
+{
+	uint8_t i, j, data;
+
+	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
+	ht1632SendBits(HT1632_MODE_WRITE, 3);
+	ht1632SendBits(0, 7);
+
+	for (i = 0; i < 32; i++) {
+		data = 0;
+		for (j = 0; j < 8; j++)
+			if (buf[i / 8 * 8 + j] & (1 << (i % 8)))
+				data |= (0x80 >> j);
+		ht1632SendBits(data, 8);
+	}
+
+	PORT(HT1632_CS) |= HT1632_CS_LINE;
+
 }
 
 void ht1632Init(void)
@@ -73,31 +77,4 @@ void ht1632Init(void)
 		ht1632SendCmd(pgm_read_byte(&initCmdSeq[i]));
 
 	return;
-}
-
-void ht1632SetAddr(uint8_t addr)
-{
-	_addr = addr;
-
-	return;
-}
-
-void ht1632SendDataBuf(uint8_t *buf)
-{
-	uint8_t i, j, ind;
-	uint8_t *fbInd = buf;
-	static uint8_t data[8];
-
-	ht1632SetAddr(0);
-
-	for (ind = 0; ind < 4; ind++, fbInd += 8) {
-		for (i = 0; i < 8; i++) {
-			data[i] = 0;
-			for (j = 0; j < 8; j++)
-				if (fbInd[j] & (1 << i))
-					data[i] |= (0x80 >> j);
-		}
-		ht1632SendByteSeq(data, sizeof(data));
-	}
-
 }

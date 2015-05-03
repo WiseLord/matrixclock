@@ -2,7 +2,7 @@
 
 #include <avr/pgmspace.h>
 
-void max7219SendByte(uint8_t data)
+static void max7219SendByte(uint8_t data)
 {
 	int8_t i = 0;
 

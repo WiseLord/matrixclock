@@ -24,17 +24,6 @@ static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = 0;
 
-/*
-static uint8_t matrixRevBits(uint8_t data)
-{
-	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
-	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
-	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
-
-	return data;
-}
-*/
-
 static void matrixLoadChar(uint8_t code)
 {
 	uint8_t i;
@@ -97,11 +86,13 @@ void matrixInit(void)
 
 void matrixSetBrightness(uint8_t brightness)
 {
+	if (!scrollMode) {
 #if defined(HT1632)
-	ht1632SendCmd(HT1632_CMD_DUTY | brightness);
+		ht1632SendCmd(HT1632_CMD_DUTY | brightness);
 #else
-	max7219SendCmd(MAX7219_INTENSITY, brightness);
+		max7219SendCmd(MAX7219_INTENSITY, brightness);
 #endif
+	}
 
 	return;
 }
