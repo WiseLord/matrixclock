@@ -42,7 +42,7 @@ int main(void)
 	uint8_t dispModePrev = dispMode;
 	int8_t lastParam = PARAM_UP;
 
-	uint32_t mask = 0xFFFFFFFF;
+	uint32_t mask = MASK_ALL;
 
 	hwInit();
 
@@ -70,7 +70,7 @@ int main(void)
 			case MODE_MAIN:
 				matrixHwScroll(MATRIX_SCROLL_STOP);
 				if (dispModePrev != dispMode)
-					showTime(0xFFFFFFFF);
+					showTime(MASK_ALL);
 				break;
 			case MODE_EDIT_TIME:
 				editTime();
@@ -126,7 +126,7 @@ int main(void)
 				stopEditTime();
 				resetEtmOld();
 				dispMode = MODE_MAIN;
-				showTime(0xFFFFFFFF);
+				showTime(MASK_ALL);
 			} else {
 				dispMode = MODE_EDIT_TIME;
 				editTime();
@@ -137,8 +137,8 @@ int main(void)
 		case CMD_BTN_2_LONG:
 			if (dispMode == MODE_ALARM || dispMode == MODE_EDIT_ALARM) {
 				dispMode = MODE_MAIN;
-				setTimeMask(0x00000000);
-				showTime(0xFFFFFFFF);
+				setTimeMask(MASK_NONE);
+				showTime(MASK_ALL);
 				stopEditAlarm();
 				resetAmOld();
 				writeAlarm();
@@ -146,19 +146,19 @@ int main(void)
 				stopEditTime();
 				resetEtmOld();
 				dispMode = MODE_ALARM;
-				mask = 0xFFFFFFFF;
+				mask = MASK_ALL;
 				break;
 			}
 			break;
 		case CMD_BTN_3_LONG:
 			if (dispMode == MODE_BRIGHTNESS) {
 				dispMode = MODE_MAIN;
-				setTimeMask(0x00000000);
-				showTime(0xFFFFFFFF);
+				setTimeMask(MASK_NONE);
+				showTime(MASK_ALL);
 				writeBrightness();
 			} else {
 				dispMode = MODE_BRIGHTNESS;
-				mask = 0xFFFFFFFF;
+				mask = MASK_ALL;
 				setBrightnessHour();
 			}
 			break;
@@ -184,7 +184,7 @@ int main(void)
 			break;
 		case MODE_ALARM:
 			showAlarm(mask);
-			mask = 0x00000000;
+			mask = MASK_NONE;
 			checkAlarmAndBrightness();
 			break;
 		case MODE_EDIT_ALARM:
@@ -193,7 +193,7 @@ int main(void)
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(lastParam, mask);
-			mask = 0x00000000;
+			mask = MASK_NONE;
 			break;
 		}
 

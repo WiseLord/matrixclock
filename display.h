@@ -15,6 +15,18 @@ enum {
 	MODE_BRIGHTNESS
 };
 
+#define MASK_HOUR_TENS		0xF0000000
+#define MASK_HOUR_UNITS		0x07800000
+#define MASK_MIN_TENS		0x000F0000
+#define MASK_MIN_UNITS		0x00007800
+#define MASK_SEC_TENS		0x00000070
+#define MASK_SEC_UNITS		0x00000007
+
+#define MASK_ALARM			0x07C00000
+
+#define MASK_NONE			0x00000000
+#define MASK_ALL			0xFFFFFFFF
+
 void initBrightness(void);
 void writeBrightness(void);
 void showTime(uint32_t mask);

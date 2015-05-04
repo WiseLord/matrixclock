@@ -20,7 +20,7 @@ static int8_t alarmOld = 0;
 static alarmMode amOld = A_NOEDIT;
 
 char strbuf[20];
-static uint32_t timeMask = 0xFFFFFFFF;
+static uint32_t timeMask = MASK_ALL;
 
 static int8_t brHour;
 
@@ -175,17 +175,17 @@ void showTime(uint32_t mask)
 	matrixLoadNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
 
 	if (oldDateTime[DS1307_HOUR] / 10 != dateTime[DS1307_HOUR] / 10)
-		mask  |= 0xF0000000;
+		mask |= MASK_HOUR_TENS;
 	if (oldDateTime[DS1307_HOUR] % 10 != dateTime[DS1307_HOUR] % 10)
-		mask  |= 0x07800000;
+		mask |= MASK_HOUR_UNITS;
 	if (oldDateTime[DS1307_MIN] / 10 != dateTime[DS1307_MIN] / 10)
-		mask  |= 0x000F0000;
+		mask |= MASK_MIN_TENS;
 	if (oldDateTime[DS1307_MIN] % 10 != dateTime[DS1307_MIN] % 10)
-		mask  |= 0x00007800;
+		mask |= MASK_MIN_UNITS;
 	if (oldDateTime[DS1307_SEC] / 10 != dateTime[DS1307_SEC] / 10)
-		mask  |= 0x00000070;
+		mask |= MASK_SEC_TENS;
 	if (oldDateTime[DS1307_SEC] % 10 != dateTime[DS1307_SEC] % 10)
-		mask  |= 0x00000007;
+		mask |= MASK_SEC_UNITS;
 
 	matrixPosData(10, dateTime[DS1307_SEC] & 0x01 ? 0x00 : 0x24);
 	matrixPosData(23, checkIfAlarmToday() ? dateTime[DS1307_SEC] | 0x80 : dateTime[DS1307_SEC]);
@@ -203,7 +203,7 @@ void scrollDate(void)
 {
 	loadDateString();
 	matrixHwScroll(MATRIX_SCROLL_START);
-	timeMask = 0xFFFFFFFF;
+	timeMask = MASK_ALL;
 
 	return;
 }
@@ -212,7 +212,7 @@ void scrollTemp(void)
 {
 	loadTempString();
 	matrixHwScroll(MATRIX_SCROLL_START);
-	timeMask = 0xFFFFFFFF;
+	timeMask = MASK_ALL;
 
 	return;
 }
@@ -231,7 +231,7 @@ void showMainScreen(void)
 		} else if (dateTime[DS1307_SEC] == 40) {
 			scrollTemp();
 		} else {
-			timeMask = 0x0000000;
+			timeMask = MASK_NONE;
 		}
 	}
 
@@ -240,7 +240,7 @@ void showMainScreen(void)
 
 void showTimeEdit(int8_t ch_dir)
 {
-	uint32_t mask = 0x00000000;
+	uint32_t mask = MASK_NONE;
 
 	int8_t time;
 	uint8_t etm;
@@ -255,12 +255,12 @@ void showTimeEdit(int8_t ch_dir)
 	matrixLoadStringPgm(parLabel[etm]);
 
 	if (timeOld / 10 != time / 10)
-		mask  |= 0xF0000000;
+		mask  |= MASK_HOUR_TENS;
 	if (timeOld % 10 != time % 10)
-		mask  |= 0x07800000;
+		mask  |= MASK_HOUR_UNITS;
 
 	if (etmOld != etm)
-		mask |= 0xFFFFFFFF;
+		mask |= MASK_ALL;
 
 	if (ch_dir == PARAM_UP)
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
@@ -299,13 +299,13 @@ void showAlarm(uint32_t mask)
 	matrixLoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
 
 	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
-		mask  |= 0xF0000000;
+		mask  |= MASK_HOUR_TENS;
 	if (oldAlarm[A_HOUR] % 10 != alarm[A_HOUR] % 10)
-		mask  |= 0x07800000;
+		mask  |= MASK_HOUR_UNITS;
 	if (oldAlarm[A_MIN] / 10 != alarm[A_MIN] / 10)
-		mask  |= 0x000F0000;
+		mask  |= MASK_MIN_TENS;
 	if (oldAlarm[A_MIN] % 10 != alarm[A_MIN] % 10)
-		mask  |= 0x00007800;
+		mask  |= MASK_MIN_UNITS;
 
 	matrixPosData(10, 0x24);
 	matrixPosData(23, getRawAlarmWeekday());
@@ -320,7 +320,7 @@ void showAlarm(uint32_t mask)
 
 void showAlarmEdit(int8_t ch_dir)
 {
-	uint32_t mask = 0x00000000;
+	uint32_t mask = MASK_NONE;
 
 	int8_t alarm;
 	alarmMode am;
@@ -354,12 +354,12 @@ void showAlarmEdit(int8_t ch_dir)
 	}
 
 	if (alarmOld / 10 != alarm / 10)
-		mask  |= 0xF0000000;
+		mask  |= MASK_HOUR_TENS;
 	if (alarmOld % 10 != alarm % 10)
-		mask  |= 0x07C00000;
+		mask  |= MASK_ALARM;
 
 	if (amOld != am)
-		mask |= 0xFFFFFFFF;
+		mask |= MASK_ALL;
 
 	if (ch_dir == PARAM_UP)
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
@@ -415,19 +415,19 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(brHour, 2, 0, '0'));
-	matrixSetX(15);
+	matrixSetX(12);
 	matrixLoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
 
 	if (oldHour / 10 != brHour / 10)
-		mask  |= 0xF0000000;
+		mask  |= MASK_HOUR_TENS;
 	if (oldHour % 10 != brHour % 10)
-		mask  |= 0x07800000;
+		mask  |= MASK_HOUR_UNITS;
 	if (oldBrightness / 10 != brArray[brHour] / 10)
-		mask  |= 0x0001E000;
+		mask  |= MASK_MIN_TENS;
 	if (oldBrightness % 10 != brArray[brHour] % 10)
-		mask  |= 0x00000F00;
+		mask  |= MASK_MIN_UNITS;
 
-	for (i = 10; i <= 13; i++)
+	for (i = 22; i <= 23; i++)
 		matrixPosData(i, 0x7F);
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
