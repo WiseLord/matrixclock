@@ -53,7 +53,7 @@ flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 eeprom:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:$(TARG).bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:matrixclock.bin:r
 
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xe4:m -U hfuse:w:0xd1:m
