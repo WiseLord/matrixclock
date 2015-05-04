@@ -19,9 +19,7 @@
 
 #define NOEDIT				0xFF
 
-int8_t getTime(uint8_t tm);
 uint8_t getEtm();
-
 int8_t *readTime(void);
 void stopEditTime(void);
 uint8_t isETM(void);

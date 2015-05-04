@@ -5,11 +5,6 @@
 static int8_t time[7];
 static uint8_t _etm = NOEDIT;
 
-int8_t getTime(uint8_t tm)
-{
-	return time[tm];
-}
-
 uint8_t getEtm()
 {
 	return _etm;
@@ -123,7 +118,6 @@ void editTime(void)
 
 void changeTime(int8_t diff)
 {
-	readTime();
 	switch (_etm) {
 	case DS1307_HOUR:
 		time[DS1307_HOUR] += diff;

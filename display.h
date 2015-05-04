@@ -27,7 +27,7 @@ enum {
 #define MASK_NONE			0x00000000
 #define MASK_ALL			0xFFFFFFFF
 
-void initBrightness(void);
+void displayInit(void);
 void writeBrightness(void);
 void showTime(uint32_t mask);
 void scrollDate(void);

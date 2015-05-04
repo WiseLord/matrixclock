@@ -141,12 +141,14 @@ static uint8_t checkIfAlarmToday(void)
 	return getRawAlarmWeekday() & (1 << (dateTime[DS1307_WDAY] - 1));
 }
 
-void initBrightness(void)
+void displayInit(void)
 {
 	uint8_t i;
 
 	for (i = 0; i < 24; i++)
 		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
+
+	dateTime = readTime();
 
 	return;
 }
@@ -164,8 +166,6 @@ void writeBrightness(void)
 void showTime(uint32_t mask)
 {
 	static int8_t oldDateTime[7];
-
-	dateTime = readTime();
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(dateTime[DS1307_HOUR], 2, 0, '0'));
@@ -242,21 +242,18 @@ void showTimeEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
 
-	int8_t time;
 	uint8_t etm;
 
-	readTime();
 	etm = getEtm();
-	time = getTime(etm);
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(time, 2, 0, '0'));
+	matrixLoadString(mkNumberString(dateTime[etm], 2, 0, '0'));
 	matrixSetX(13);
 	matrixLoadStringPgm(parLabel[etm]);
 
-	if (timeOld / 10 != time / 10)
+	if (timeOld / 10 != dateTime[etm] / 10)
 		mask  |= MASK_HOUR_TENS;
-	if (timeOld % 10 != time % 10)
+	if (timeOld % 10 != dateTime[etm] % 10)
 		mask  |= MASK_HOUR_UNITS;
 
 	if (etmOld != etm)
@@ -267,7 +264,7 @@ void showTimeEdit(int8_t ch_dir)
 	else
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
-	timeOld = time;
+	timeOld = dateTime[etm];
 	etmOld = etm;
 
 	return;
@@ -325,7 +322,6 @@ void showAlarmEdit(int8_t ch_dir)
 	int8_t alarm;
 	alarmMode am;
 
-	readTime();
 	am = getAlarmMode();
 	alarm = getAlarm(am);
 
@@ -374,7 +370,6 @@ void showAlarmEdit(int8_t ch_dir)
 
 void setBrightnessHour(void)
 {
-	dateTime = readTime();
 	brHour = dateTime[DS1307_HOUR];
 
 	matrixSetBrightness(brArray[brHour]);

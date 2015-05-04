@@ -19,6 +19,7 @@ void hwInit(void)
 	sei();
 	ds18x20SearchDevices();
 
+	displayInit();
 
 	matrixInit();
 	matrixFill(0x00);
@@ -28,7 +29,6 @@ void hwInit(void)
 	matrixScrollTimerInit();
 
 	initAlarm();
-	initBrightness();
 
 	dsOnBus = ds18x20Process();			/* Try to find temperature sensor */
 
@@ -172,24 +172,23 @@ int main(void)
 			matrixHwScroll(MATRIX_SCROLL_STOP);
 		}
 
+		if (dispMode != MODE_BRIGHTNESS)
+			checkAlarmAndBrightness();
+
 		/* Show things */
 		switch (dispMode) {
 		case MODE_MAIN:
 			showMainScreen();
-			checkAlarmAndBrightness();
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(lastParam);
-			checkAlarmAndBrightness();
 			break;
 		case MODE_ALARM:
 			showAlarm(mask);
 			mask = MASK_NONE;
-			checkAlarmAndBrightness();
 			break;
 		case MODE_EDIT_ALARM:
 			showAlarmEdit(lastParam);
-			checkAlarmAndBrightness();
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(lastParam, mask);
