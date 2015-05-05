@@ -94,9 +94,6 @@ uint8_t isETM(void)
 void editTime(void)
 {
 	switch (_etm) {
-	case NOEDIT:
-		_etm = DS1307_HOUR;
-		break;
 	case DS1307_HOUR:
 	case DS1307_MIN:
 		_etm--;
@@ -109,7 +106,7 @@ void editTime(void)
 		_etm++;
 		break;
 	default:
-		_etm = NOEDIT;
+		_etm = DS1307_HOUR;
 		break;
 	}
 
