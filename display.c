@@ -464,7 +464,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(brHour, 2, 0, ' '));
-	matrixLoadString("\xDC");
+	matrixLoadString("\xEF");
 	matrixSetX(15);
 	matrixLoadString(mkNumberString(brArray[brHour], 2, 0, ' '));
 	matrixLoadString("\xEE");
