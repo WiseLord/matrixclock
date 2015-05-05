@@ -52,6 +52,24 @@ static void matrixLoadChar(uint8_t code)
 	return;
 }
 
+static void matrixLoadBigNumChar(uint8_t code)
+{
+	uint8_t i;
+	uint8_t data;
+
+	for (i = 0; i < 5; i++) {
+		if (code < '0' || code > '9')
+			data = 0x00;
+		else
+			//pgmData = pgm_read_byte(font_bignums + (code - 0x30) * 5 + i);
+			data = eeprom_read_byte(EEPROM_BIG_NUM_FONT + (code - 0x30) * 5 + i);
+		strBuf[_col++] = data;
+	}
+	strBuf[_col++] = 0x00;
+
+	return;
+}
+
 static void matrixClearBufTail(void)
 {
 	_end = _col;
@@ -103,7 +121,7 @@ void matrixSetBrightness(uint8_t brightness)
 void matrixScreenRotate(void)
 {
 	rotate = !rotate;
-	eeprom_write_byte(EEPROM_SCREEN_ROTATE, rotate);
+	eeprom_update_byte(EEPROM_SCREEN_ROTATE, rotate);
 
 	return;
 }
@@ -186,7 +204,7 @@ void matrixLoadString(char *string)
 	return;
 }
 
-void matrixLoadNumString(char *string)
+void matrixSmallNumString(char *string)
 {
 	while(*string)
 		matrixLoadChar(0xC0 + *string++);
@@ -194,6 +212,14 @@ void matrixLoadNumString(char *string)
 	matrixClearBufTail();
 
 	return;
+}
+
+void matrixBigNumString(char *string)
+{
+	while(*string)
+		matrixLoadBigNumChar(*string++);
+
+	matrixClearBufTail();
 }
 
 void matrixLoadStringEeprom(uint8_t *string)

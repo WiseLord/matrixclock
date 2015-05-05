@@ -28,6 +28,8 @@ static int8_t brHour;
 
 static int8_t brArray[24] = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 12, 9, 7, 5, 4, 3, 2, 1, 0};
 
+static uint8_t bigNum = 0;
+
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
@@ -102,7 +104,7 @@ void displayInit(void)
 		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
 
 	/* Read text labels saved in EEPROM */
-	addr = labelsAddr;
+	addr = EEPROM_LABELS;
 	i = 0;
 	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
 		if (eeprom_read_byte(addr) != '\0') {
@@ -119,6 +121,16 @@ void displayInit(void)
 	}
 
 	dateTime = readTime();
+
+	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
+
+	return;
+}
+
+void displaySwitchBigNum(void)
+{
+	bigNum = !bigNum;
+	eeprom_update_byte(EEPROM_BIGNUM, bigNum);
 
 	return;
 }
@@ -155,36 +167,85 @@ static void showHMColon(uint8_t step)
 
 void showTime(uint32_t mask)
 {
-	static int8_t oldDateTime[7];
+	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
+	uint8_t digit;
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(dateTime[DS1307_HOUR], 2, 0, ' '));
+	mkNumberString(dateTime[DS1307_HOUR], 2, 0, ' ');
+	if (bigNum)
+		matrixBigNumString(strbuf);
+	else
+		matrixLoadString(strbuf);
 	matrixSetX(13);
-	matrixLoadString(mkNumberString(dateTime[DS1307_MIN], 2, 0, '0'));
+	mkNumberString(dateTime[DS1307_MIN], 2, 0, '0');
+	if (bigNum)
+		matrixBigNumString(strbuf);
+	else
+		matrixLoadString(strbuf);
 	matrixSetX(25);
-	matrixLoadNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
+	matrixSmallNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
 
-	if (oldDateTime[DS1307_HOUR] / 10 != dateTime[DS1307_HOUR] / 10)
-		mask |= MASK_HOUR_TENS;
-	if (oldDateTime[DS1307_HOUR] % 10 != dateTime[DS1307_HOUR] % 10)
-		mask |= MASK_HOUR_UNITS;
-	if (oldDateTime[DS1307_MIN] / 10 != dateTime[DS1307_MIN] / 10)
-		mask |= MASK_MIN_TENS;
-	if (oldDateTime[DS1307_MIN] % 10 != dateTime[DS1307_MIN] % 10)
-		mask |= MASK_MIN_UNITS;
-	if (oldDateTime[DS1307_SEC] / 10 != dateTime[DS1307_SEC] / 10)
+	digit = dateTime[DS1307_HOUR] / 10;
+	if (oldHourTens != digit) {
+		if (bigNum)
+			mask |= MASK_BIGHOUR_TENS;
+		else
+			mask |= MASK_HOUR_TENS;
+	}
+	oldHourTens = digit;
+
+	digit = dateTime[DS1307_HOUR] % 10;
+	if (oldHourUnits != digit) {
+		if (bigNum)
+			mask |= MASK_BIGHOUR_UNITS;
+		else
+			mask |= MASK_HOUR_UNITS;
+	}
+	oldHourUnits = digit;
+
+	digit = dateTime[DS1307_MIN] / 10;
+	if (oldMinTens != digit) {
+		if (bigNum)
+			mask |= MASK_BIGMIN_TENS;
+		else
+			mask |= MASK_MIN_TENS;
+	}
+	oldMinTens = digit;
+
+	digit = dateTime[DS1307_MIN] % 10;
+	if (oldMinUnits != digit) {
+		if (bigNum)
+			mask |= MASK_BIGMIN_UNITS;
+		else
+			mask |= MASK_MIN_UNITS;
+	}
+	oldMinUnits = digit;
+
+	digit = dateTime[DS1307_SEC] / 10;
+	if (oldSecTens != digit)
 		mask |= MASK_SEC_TENS;
-	if (oldDateTime[DS1307_SEC] % 10 != dateTime[DS1307_SEC] % 10)
-		mask |= MASK_SEC_UNITS;
+	oldSecTens = digit;
 
-	showHMColon(dateTime[DS1307_SEC] & 0x01);
-	matrixPosData(23, getRawAlarmWeekday());
+	digit = dateTime[DS1307_SEC] % 10;
+	if (oldSecUnits != digit)
+		mask |= MASK_SEC_UNITS;
+	oldSecUnits = digit;
+
+	digit = dateTime[DS1307_SEC] & 0x01;
+	if (bigNum) {
+		if (digit) {
+			matrixPosData(11, 0x00);
+			matrixPosData(12, 0x80);
+		} else {
+			matrixPosData(11, 0x80);
+			matrixPosData(12, 0x00);
+		}
+	} else {
+		showHMColon(digit);
+		matrixPosData(23, getRawAlarmWeekday());
+	}
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-
-	oldDateTime[DS1307_HOUR] = dateTime[DS1307_HOUR];
-	oldDateTime[DS1307_MIN] = dateTime[DS1307_MIN];
-	oldDateTime[DS1307_SEC] = dateTime[DS1307_SEC];
 
 	return;
 }

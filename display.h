@@ -22,6 +22,11 @@ enum {
 #define MASK_SEC_TENS		0x00000070
 #define MASK_SEC_UNITS		0x00000007
 
+#define MASK_BIGHOUR_TENS	0xF8000000
+#define MASK_BIGHOUR_UNITS	0x03E00000
+#define MASK_BIGMIN_TENS	0x0007C000
+#define MASK_BIGMIN_UNITS	0x00001F00
+
 #define MASK_BR_TENS		0x0001E000
 #define MASK_BR_UNITS		0x00000F00
 
@@ -31,6 +36,7 @@ enum {
 #define MASK_ALL			0xFFFFFFFF
 
 void displayInit(void);
+void displaySwitchBigNum(void);
 void writeBrightness(void);
 void showTime(uint32_t mask);
 void scrollDate(void);

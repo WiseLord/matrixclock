@@ -157,8 +157,12 @@ int main(void)
 				break;
 			}
 			break;
+		case CMD_BTN_2_3_LONG:
+			displaySwitchBigNum();
+			showTime(MASK_ALL);
+			break;
 		case CMD_BTN_1_2_3_LONG:
-			matrixScreenRotate();
+//			matrixScreenRotate();
 			break;
 		}
 

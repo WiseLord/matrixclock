@@ -8,11 +8,15 @@
 #define EEPROM_A_DAYS			((void*)0x02)
 
 #define EEPROM_SCREEN_ROTATE	((void*)0x04)
+#define EEPROM_BIGNUM			((void*)0x05)
 
 #define EEPROM_BR_ADDR			((void*)0x08)
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define labelsAddr				((uint8_t*)0x40)
+#define EEPROM_LABELS			((uint8_t*)0x40)
+
+/* Big numbers font (10 * 5 bytes) */
+#define EEPROM_BIG_NUM_FONT		((uint8_t*)0x1C0)
 
 #define EEPROM_SIZE				0x200
 
