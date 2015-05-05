@@ -12,12 +12,10 @@ F_CPU = 8000000L
 # Source files
 SRCS = $(wildcard *.c)
 
-CS = -fexec-charset=ks0066-ru
-
 # Compiler options
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
-CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU) $(CS)
+CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 # AVR toolchain and flasher
