@@ -193,15 +193,15 @@ void matrixLoadNumString(char *string)
 	return;
 }
 
-void matrixLoadStringPgm(const char *string)
+void matrixLoadStringEeprom(uint8_t *string)
 {
 	char ch;
 	uint8_t i = 0;
 
-	ch = pgm_read_byte(&string[i++]);
+	ch = eeprom_read_byte(&string[i++]);
 	while(ch) {
 		matrixLoadChar(ch);
-		ch = pgm_read_byte(&string[i++]);
+		ch = eeprom_read_byte(&string[i++]);
 	}
 
 	matrixClearBufTail();

@@ -19,55 +19,12 @@ static uint8_t etmOld = NOEDIT;
 static int8_t alarmOld = 0;
 static alarmMode amOld = A_NOEDIT;
 
-char strbuf[20];
+char strbuf[8];
 static uint32_t timeMask = MASK_ALL;
 
+uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
+
 static int8_t brHour;
-
-const char wd0[] PROGMEM = "Воскресенье";
-const char wd1[] PROGMEM = "Понедельник";
-const char wd2[] PROGMEM = "Вторник";
-const char wd3[] PROGMEM = "Среда";
-const char wd4[] PROGMEM = "Четверг";
-const char wd5[] PROGMEM = "Пятница";
-const char wd6[] PROGMEM = "Суббота";
-
-const char *weekLabel[] = {wd0, wd1, wd2, wd3, wd4, wd5, wd6};
-
-const char m0[] PROGMEM = "декабря";
-const char m1[] PROGMEM = "января";
-const char m2[] PROGMEM = "февраля";
-const char m3[] PROGMEM = "марта";
-const char m4[] PROGMEM = "апреля";
-const char m5[] PROGMEM = "мая";
-const char m6[] PROGMEM = "июня";
-const char m7[] PROGMEM = "июля";
-const char m8[] PROGMEM = "августа";
-const char m9[] PROGMEM = "сентября";
-const char m10[] PROGMEM = "октября";
-const char m11[] PROGMEM = "ноября";
-
-const char *monthLabel[] = {m0, m1, m2, m3, m4, m5, m6, m7, m8, m9, m10, m11};
-
-const char p0[] PROGMEM = "сек";
-const char p1[] PROGMEM = "мин";
-const char p2[] PROGMEM = "час";
-const char p3[] PROGMEM = "нед";
-const char p4[] PROGMEM = "чис";
-const char p5[] PROGMEM = "мес";
-const char p6[] PROGMEM = "год";
-
-const char *parLabel[] = {p0, p1, p2, p3, p4, p5, p6};
-
-const char ws0[] PROGMEM = "вс";
-const char ws1[] PROGMEM = "пн";
-const char ws2[] PROGMEM = "вт";
-const char ws3[] PROGMEM = "ср";
-const char ws4[] PROGMEM = "чт";
-const char ws5[] PROGMEM = "пт";
-const char ws6[] PROGMEM = "сб";
-
-const char *wsLabel[] = {p2, p1, ws1, ws2, ws3, ws4, ws5, ws6, ws0};
 
 static int8_t brArray[24] = {0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 7, 9, 12, 15, 12, 9, 7, 5, 4, 3, 2, 1, 0};
 
@@ -105,32 +62,26 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 static void loadDateString(void)
 {
 	matrixSetX(0);
-	matrixLoadString(" ");
-	matrixLoadStringPgm(weekLabel[dateTime[DS1307_WDAY] % 7]);
-	matrixLoadString(", ");
+	matrixLoadStringEeprom(txtLabels[dateTime[DS1307_WDAY] % 7]);
 	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
-	matrixLoadString(" ");
-	matrixLoadStringPgm(monthLabel[dateTime[DS1307_MONTH] % 12]);
-	matrixLoadString(" 20");
-	matrixLoadString(mkNumberString(dateTime[DS1307_YEAR], 2, 0, '0'));
-	matrixLoadString("г. ");
+	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + dateTime[DS1307_MONTH] % 12]);
+	matrixLoadString(mkNumberString(2000 + dateTime[DS1307_YEAR], 4, 0, '0'));
 
 	return;
 }
 
 static void loadTempString(void)
 {
-	uint8_t devCount = getDevCount();
-
 	matrixSetX(0);
-	if (devCount > 0) {
-		matrixLoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-		matrixLoadString("·C в комнате");
-	}
-	if (devCount > 1) {
+	matrixLoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
+	matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
+	matrixLoadStringEeprom(txtLabels[LABEL_TEMP1]);
+
+	if (getDevCount() > 1) {
 		matrixLoadString(", ");
 		matrixLoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
-		matrixLoadString("·C на улице");
+		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
+		matrixLoadStringEeprom(txtLabels[LABEL_TEMP2]);
 	}
 
 	return;
@@ -144,9 +95,28 @@ static uint8_t checkIfAlarmToday(void)
 void displayInit(void)
 {
 	uint8_t i;
+	uint8_t *addr;
 
+	/* Read brightness levels */
 	for (i = 0; i < 24; i++)
 		brArray[i] = eeprom_read_byte(EEPROM_BR_ADDR + i);
+
+	/* Read text labels saved in EEPROM */
+	addr = labelsAddr;
+	i = 0;
+	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
+		if (eeprom_read_byte(addr) != '\0') {
+			txtLabels[i] = addr;
+			addr++;
+			i++;
+			while (eeprom_read_byte(addr) != '\0' &&
+				   addr < (uint8_t*)EEPROM_SIZE) {
+				addr++;
+			}
+		} else {
+			addr++;
+		}
+	}
 
 	dateTime = readTime();
 
@@ -210,10 +180,11 @@ void scrollDate(void)
 
 void scrollTemp(void)
 {
-	loadTempString();
-	matrixHwScroll(MATRIX_SCROLL_START);
-	timeMask = MASK_ALL;
-
+	if (getDevCount() > 0) {
+		loadTempString();
+		matrixHwScroll(MATRIX_SCROLL_START);
+		timeMask = MASK_ALL;
+	}
 	return;
 }
 
@@ -249,7 +220,7 @@ void showTimeEdit(int8_t ch_dir)
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(dateTime[etm], 2, 0, '0'));
 	matrixSetX(13);
-	matrixLoadStringPgm(parLabel[etm]);
+	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + etm]);
 
 	if (timeOld / 10 != dateTime[etm] / 10)
 		mask  |= MASK_HOUR_TENS;
@@ -331,12 +302,12 @@ void showAlarmEdit(int8_t ch_dir)
 	case A_HOUR:
 		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
 		matrixSetX(13);
-		matrixLoadStringPgm(p2);
+		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
 		break;
 	case A_MIN:
 		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
 		matrixSetX(13);
-		matrixLoadStringPgm(p1);
+		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
 		break;
 	default:
 		if (alarm)
@@ -345,7 +316,8 @@ void showAlarmEdit(int8_t ch_dir)
 			matrixLoadString("   ");
 		}
 		matrixSetX(13);
-		matrixLoadStringPgm(wsLabel[am]);
+		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - A_MONDAY]);
+
 		break;
 	}
 

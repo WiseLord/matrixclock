@@ -28,7 +28,7 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect);
 void matrixSetX(int16_t x);
 void matrixLoadString(char *string);
 void matrixLoadNumString(char *string);
-void matrixLoadStringPgm(const char *string);
+void matrixLoadStringEeprom(uint8_t *string);
 void matrixLoadFont(const uint8_t *font);
 void matrixScrollTimerInit(void);
 void matrixHwScroll(uint8_t status);
