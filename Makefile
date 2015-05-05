@@ -1,11 +1,12 @@
 LED_DRIVER = MAX7219
 
+MCU = atmega8
+
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
-TARG=matrixclock_$(call lc,$(LED_DRIVER))
+TARG=matrixclock_$(call lc,$(LED_DRIVER))_$(MCU)
 
-MCU = atmega8
 F_CPU = 8000000L
 
 # Source files
@@ -44,7 +45,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(LED_DRIVER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(LED_DRIVER) -D$(MCU) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)

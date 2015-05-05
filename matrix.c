@@ -220,8 +220,13 @@ void matrixLoadFont(const uint8_t *font)
 
 void matrixScrollTimerInit(void)
 {
+#if defined(atmega8)
 	TIMSK |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
 	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);		/* Set timer prescaller to 1024 (7812 Hz) */
+#else
+	TIMSK2 |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
+	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);	/* Set timer prescaller to 1024 (7812 Hz) */
+#endif
 
 	return;
 }
