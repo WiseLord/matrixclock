@@ -1,7 +1,6 @@
 #ifndef MTIMER_H
 #define MTIMER_H
 
-#include <avr/io.h>
 #include <inttypes.h>
 #include "pins.h"
 

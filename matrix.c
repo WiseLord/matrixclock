@@ -81,6 +81,9 @@ void matrixInit(void)
 	max7219Init();
 #endif
 
+	matrixFill(0x00);
+	matrixLoadFont(font_ks0066_ru_08);
+
 	return;
 }
 

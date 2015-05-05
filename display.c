@@ -133,13 +133,33 @@ void writeBrightness(void)
 	return;
 }
 
+static void showHMColon(uint8_t step)
+{
+	switch (step) {
+	case 2:
+		matrixPosData(10, 0x36);
+		matrixPosData(11, 0x36);
+		break;
+	case 1:
+		matrixPosData(10, 0x26);
+		matrixPosData(11, 0x26);
+		break;
+	default:
+		matrixPosData(10, 0x32);
+		matrixPosData(11, 0x32);
+		break;
+	}
+
+	return;
+}
+
 void showTime(uint32_t mask)
 {
 	static int8_t oldDateTime[7];
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(dateTime[DS1307_HOUR], 2, 0, '0'));
-	matrixSetX(12);
+	matrixLoadString(mkNumberString(dateTime[DS1307_HOUR], 2, 0, ' '));
+	matrixSetX(13);
 	matrixLoadString(mkNumberString(dateTime[DS1307_MIN], 2, 0, '0'));
 	matrixSetX(25);
 	matrixLoadNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
@@ -157,8 +177,8 @@ void showTime(uint32_t mask)
 	if (oldDateTime[DS1307_SEC] % 10 != dateTime[DS1307_SEC] % 10)
 		mask |= MASK_SEC_UNITS;
 
-	matrixPosData(10, dateTime[DS1307_SEC] & 0x01 ? 0x00 : 0x24);
-	matrixPosData(23, checkIfAlarmToday() ? dateTime[DS1307_SEC] | 0x80 : dateTime[DS1307_SEC]);
+	showHMColon(dateTime[DS1307_SEC] & 0x01);
+	matrixPosData(23, getRawAlarmWeekday());
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
@@ -218,7 +238,7 @@ void showTimeEdit(int8_t ch_dir)
 	etm = getEtm();
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(dateTime[etm], 2, 0, '0'));
+	matrixLoadString(mkNumberString(dateTime[etm], 2, 0, ' '));
 	matrixSetX(13);
 	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + etm]);
 
@@ -262,9 +282,11 @@ void showAlarm(uint32_t mask)
 	alarm = readAlarm();
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(alarm[A_HOUR], 2, 0, '0'));
-	matrixSetX(12);
+	matrixLoadString(mkNumberString(alarm[A_HOUR], 2, 0, ' '));
+	matrixSetX(13);
 	matrixLoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
+	matrixSetX(26);
+	matrixLoadString("\xED");
 
 	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
 		mask  |= MASK_HOUR_TENS;
@@ -275,7 +297,7 @@ void showAlarm(uint32_t mask)
 	if (oldAlarm[A_MIN] % 10 != alarm[A_MIN] % 10)
 		mask  |= MASK_MIN_UNITS;
 
-	matrixPosData(10, 0x24);
+	showHMColon(2);
 	matrixPosData(23, getRawAlarmWeekday());
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
@@ -300,18 +322,18 @@ void showAlarmEdit(int8_t ch_dir)
 
 	switch (am) {
 	case A_HOUR:
-		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
+		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
 		break;
 	case A_MIN:
-		matrixLoadString(mkNumberString(alarm, 2, 0, '0'));
+		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
 		break;
 	default:
 		if (alarm)
-			matrixLoadString(" ♩ ");
+			matrixLoadString(" \xED ");
 		else {
 			matrixLoadString("   ");
 		}
@@ -378,24 +400,22 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 {
 	static int8_t oldHour;
 	static uint8_t oldBrightness;
-	uint8_t i;
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(brHour, 2, 0, '0'));
-	matrixSetX(12);
-	matrixLoadString(mkNumberString(brArray[brHour], 2, 0, '0'));
+	matrixLoadString(mkNumberString(brHour, 2, 0, ' '));
+	matrixLoadString("\xDC");
+	matrixSetX(15);
+	matrixLoadString(mkNumberString(brArray[brHour], 2, 0, ' '));
+	matrixLoadString("\xEE");
 
 	if (oldHour / 10 != brHour / 10)
 		mask  |= MASK_HOUR_TENS;
 	if (oldHour % 10 != brHour % 10)
 		mask  |= MASK_HOUR_UNITS;
 	if (oldBrightness / 10 != brArray[brHour] / 10)
-		mask  |= MASK_MIN_TENS;
+		mask  |= MASK_BR_TENS;
 	if (oldBrightness % 10 != brArray[brHour] % 10)
-		mask  |= MASK_MIN_UNITS;
-
-	for (i = 22; i <= 23; i++)
-		matrixPosData(i, 0x7F);
+		mask  |= MASK_BR_UNITS;
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 

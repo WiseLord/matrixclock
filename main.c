@@ -1,7 +1,5 @@
-#include <avr/io.h>
-#include <util/delay.h>
-#include <avr/pgmspace.h>
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "matrix.h"
 #include "fonts.h"
@@ -11,8 +9,6 @@
 #include "ds1307.h"
 #include "alarm.h"
 
-static uint8_t dsOnBus = 0;
-
 void hwInit(void)
 {
 	_delay_ms(100);
@@ -20,17 +16,12 @@ void hwInit(void)
 	ds18x20SearchDevices();
 
 	displayInit();
-
 	matrixInit();
-	matrixFill(0x00);
-	matrixLoadFont(font_ks0066_ru_08);
 
 	mTimerInit();
 	matrixScrollTimerInit();
 
 	initAlarm();
-
-	dsOnBus = ds18x20Process();			/* Try to find temperature sensor */
 
 	return;
 }
@@ -39,7 +30,6 @@ int main(void)
 {
 	uint8_t cmd = CMD_EMPTY;
 	uint8_t dispMode = MODE_MAIN;
-	uint8_t dispModePrev = dispMode;
 	int8_t lastParam = PARAM_UP;
 
 	uint32_t mask = MASK_ALL;
@@ -62,16 +52,14 @@ int main(void)
 				startBeeper(160);
 		}
 
+		if (cmd != CMD_EMPTY)
+			matrixHwScroll(MATRIX_SCROLL_STOP);
+
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
 			lastParam = PARAM_UP;
 			switch (dispMode) {
-			case MODE_MAIN:
-				matrixHwScroll(MATRIX_SCROLL_STOP);
-				if (dispModePrev != dispMode)
-					showTime(MASK_ALL);
-				break;
 			case MODE_EDIT_TIME:
 				editTime();
 				break;
@@ -80,7 +68,12 @@ int main(void)
 				editAlarm();
 				break;
 			case MODE_EDIT_ALARM:
-				editAlarm();
+				if (getAlarmMode() == A_SUNDAY) {
+					dispMode = MODE_ALARM;
+					showAlarm(MASK_ALL);
+				} else {
+					editAlarm();
+				}
 				break;
 			case MODE_BRIGHTNESS:
 				incBrightnessHour();
@@ -122,54 +115,51 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_1_LONG:
-			if (dispMode == MODE_EDIT_TIME) {
+			switch (dispMode) {
+			case MODE_EDIT_TIME:
 				stopEditTime();
 				resetEtmOld();
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
-			} else {
+				break;
+			case MODE_MAIN:
 				dispMode = MODE_EDIT_TIME;
 				editTime();
-				stopEditAlarm();
-				resetAmOld();
 			}
 			break;
 		case CMD_BTN_2_LONG:
-			if (dispMode == MODE_ALARM || dispMode == MODE_EDIT_ALARM) {
+			switch (dispMode) {
+			case MODE_ALARM:
+			case MODE_EDIT_ALARM:
 				dispMode = MODE_MAIN;
-				setTimeMask(MASK_NONE);
 				showTime(MASK_ALL);
 				stopEditAlarm();
 				resetAmOld();
 				writeAlarm();
-			} else {
-				stopEditTime();
-				resetEtmOld();
+				break;
+			case MODE_MAIN:
 				dispMode = MODE_ALARM;
 				mask = MASK_ALL;
 				break;
 			}
 			break;
 		case CMD_BTN_3_LONG:
-			if (dispMode == MODE_BRIGHTNESS) {
+			switch (dispMode) {
+			case MODE_BRIGHTNESS:
 				dispMode = MODE_MAIN;
-				setTimeMask(MASK_NONE);
 				showTime(MASK_ALL);
 				writeBrightness();
-			} else {
+				break;
+			case MODE_MAIN:
 				dispMode = MODE_BRIGHTNESS;
 				mask = MASK_ALL;
 				setBrightnessHour();
+				break;
 			}
 			break;
 		case CMD_BTN_1_2_3_LONG:
 			matrixScreenRotate();
 			break;
-		}
-
-		/* Stop scroll if mode has changed */
-		if (dispMode != dispModePrev) {
-			matrixHwScroll(MATRIX_SCROLL_STOP);
 		}
 
 		if (dispMode != MODE_BRIGHTNESS)
@@ -195,10 +185,6 @@ int main(void)
 			mask = MASK_NONE;
 			break;
 		}
-
-		/* Save current mode */
-		dispModePrev = dispMode;
-
 	}
 
 	return 0;

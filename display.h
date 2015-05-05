@@ -1,7 +1,7 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-#include <avr/io.h>
+#include <inttypes.h>
 
 #define PARAM_UP			1
 #define PARAM_DOWN			-1
@@ -17,10 +17,13 @@ enum {
 
 #define MASK_HOUR_TENS		0xF0000000
 #define MASK_HOUR_UNITS		0x07800000
-#define MASK_MIN_TENS		0x000F0000
-#define MASK_MIN_UNITS		0x00007800
+#define MASK_MIN_TENS		0x00078000
+#define MASK_MIN_UNITS		0x00003C00
 #define MASK_SEC_TENS		0x00000070
 #define MASK_SEC_UNITS		0x00000007
+
+#define MASK_BR_TENS		0x0001E000
+#define MASK_BR_UNITS		0x00000F00
 
 #define MASK_ALARM			0x07C00000
 
