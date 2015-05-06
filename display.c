@@ -23,6 +23,9 @@ static int8_t brightness;
 
 static uint8_t bigNum = 0;
 
+static uint8_t etmOld = NOEDIT;
+static alarmMode amOld = A_NOEDIT;
+
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
@@ -150,6 +153,8 @@ void showTime(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
 	uint8_t digit;
 
+	etmOld = NOEDIT;
+
 	matrixSetX(0);
 	mkNumberString(dateTime[DS1307_HOUR], 2, 0, ' ');
 	if (bigNum)
@@ -276,7 +281,6 @@ void showTimeEdit(int8_t ch_dir)
 	uint8_t etm;
 
 	static int8_t timeOld = 0;
-	static uint8_t etmOld = NOEDIT;
 
 	etm = getEtm();
 
@@ -307,6 +311,8 @@ void showTimeEdit(int8_t ch_dir)
 void showAlarm(uint32_t mask)
 {
 	static int8_t oldAlarm[3];
+
+	amOld = A_NOEDIT;
 
 	alarm = readAlarm();
 
@@ -344,7 +350,6 @@ void showAlarmEdit(int8_t ch_dir)
 	int8_t alarm;
 	alarmMode am;
 	static int8_t alarmOld = 0;
-	static alarmMode amOld = A_NOEDIT;
 
 	am = getAlarmMode();
 	alarm = getAlarm(am);
