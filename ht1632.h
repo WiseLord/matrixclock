@@ -26,7 +26,7 @@
 #define HT1632_DUTY_MAX				0x0F
 
 void ht1632SendCmd(uint8_t cmd);
-void ht1632SendDataBuf(uint8_t *buf);
+void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate);
 void ht1632Init(void);
 
 #endif /* HT1632_H */

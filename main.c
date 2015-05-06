@@ -28,23 +28,25 @@ void hwInit(void)
 
 int main(void)
 {
-	uint8_t cmd = CMD_EMPTY;
+	uint8_t cmd;
 	uint8_t dispMode = MODE_MAIN;
-	int8_t lastParam = PARAM_UP;
+	int8_t direction = PARAM_UP;
 
 	uint32_t mask = MASK_ALL;
 
 	hwInit();
 
 	while(1) {
+		/* Measure temperature with TEMP_POLL_INTERVAL period */
 		if (getTempStartTimer() == 0) {
 			setTempStartTimer(TEMP_POLL_INTERVAL);
 			ds18x20Process();
 		}
 
+		/* Get command from buttons */
 		cmd = getBtnCmd();
 
-		/* Beep on command */
+		/* Beep when button is pressed */
 		if (cmd != CMD_EMPTY) {
 			if (cmd < CMD_BTN_1_LONG)
 				startBeeper(80);
@@ -52,13 +54,14 @@ int main(void)
 				startBeeper(160);
 		}
 
+		/* Stop scrolling when button is pressed */
 		if (cmd != CMD_EMPTY)
 			matrixHwScroll(MATRIX_SCROLL_STOP);
 
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
-			lastParam = PARAM_UP;
+			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
 				editTime();
@@ -81,7 +84,7 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_2:
-			lastParam = PARAM_UP;
+			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
 				scrollDate();
@@ -98,7 +101,7 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3:
-			lastParam = PARAM_DOWN;
+			direction = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
 				scrollTemp();
@@ -118,7 +121,6 @@ int main(void)
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
 				stopEditTime();
-				resetEtmOld();
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
 				break;
@@ -134,7 +136,6 @@ int main(void)
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
 				stopEditAlarm();
-				resetAmOld();
 				writeAlarm();
 				break;
 			case MODE_MAIN:
@@ -163,7 +164,7 @@ int main(void)
 			showTime(MASK_ALL);
 			break;
 		case CMD_BTN_1_2_3_LONG:
-//			matrixScreenRotate();
+			matrixScreenRotate();
 			break;
 		}
 
@@ -176,17 +177,17 @@ int main(void)
 			showMainScreen();
 			break;
 		case MODE_EDIT_TIME:
-			showTimeEdit(lastParam);
+			showTimeEdit(direction);
 			break;
 		case MODE_ALARM:
 			showAlarm(mask);
 			mask = MASK_NONE;
 			break;
 		case MODE_EDIT_ALARM:
-			showAlarmEdit(lastParam);
+			showAlarmEdit(direction);
 			break;
 		case MODE_BRIGHTNESS:
-			showBrightness(lastParam, mask);
+			showBrightness(direction, mask);
 			mask = MASK_NONE;
 			break;
 		}

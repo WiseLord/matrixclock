@@ -13,12 +13,6 @@
 int8_t *dateTime;
 int8_t *alarm;
 
-static int8_t timeOld = 0;
-static uint8_t etmOld = NOEDIT;
-
-static int8_t alarmOld = 0;
-static alarmMode amOld = A_NOEDIT;
-
 char strbuf[8];
 static uint32_t timeMask = MASK_ALL;
 
@@ -293,8 +287,10 @@ void showMainScreen(void)
 void showTimeEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
-
 	uint8_t etm;
+
+	static int8_t timeOld = 0;
+	static uint8_t etmOld = NOEDIT;
 
 	etm = getEtm();
 
@@ -318,20 +314,6 @@ void showTimeEdit(int8_t ch_dir)
 
 	timeOld = dateTime[etm];
 	etmOld = etm;
-
-	return;
-}
-
-void resetEtmOld(void)
-{
-	etmOld = NOEDIT;
-
-	return;
-}
-
-void resetAmOld(void)
-{
-	amOld = A_NOEDIT;
 
 	return;
 }
@@ -375,6 +357,8 @@ void showAlarmEdit(int8_t ch_dir)
 
 	int8_t alarm;
 	alarmMode am;
+	static int8_t alarmOld = 0;
+	static alarmMode amOld = A_NOEDIT;
 
 	am = getAlarmMode();
 	alarm = getAlarm(am);

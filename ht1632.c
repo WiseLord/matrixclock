@@ -41,20 +41,28 @@ void ht1632SendCmd(uint8_t cmd)
 	return;
 }
 
-void ht1632SendDataBuf(uint8_t *buf)
+void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate)
 {
-	uint8_t i, j, data;
+	uint8_t i, j, k, data;
 
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
 	ht1632SendBits(HT1632_MODE_WRITE, 3);
 	ht1632SendBits(0, 7);
 
-	for (i = 0; i < 32; i++) {
-		data = 0;
-		for (j = 0; j < 8; j++)
-			if (buf[i / 8 * 8 + j] & (1 << (i % 8)))
-				data |= (0x80 >> j);
-		ht1632SendBits(data, 8);
+	for (k = 0; k < 4; k++) {
+		for (i = 0; i < 8; i++) {
+			data = 0;
+			for (j = 0; j < 8; j++) {
+				if (rotate) {
+					if (buf[((3 - k) << 3) + 7 - j] & (0x80 >> i))
+						data |= (0x80 >> j);
+				} else {
+					if (buf[k * 8 + j] & (0x01 << i))
+						data |= (0x80 >> j);
+				}
+			}
+			ht1632SendBits(data, 8);
+		}
 	}
 
 	PORT(HT1632_CS) |= HT1632_CS_LINE;

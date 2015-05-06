@@ -83,9 +83,9 @@ static void matrixClearBufTail(void)
 static void matrixUpdate(void)
 {
 #if defined(HT1632)
-	ht1632SendDataBuf(fb);
+	ht1632SendDataBuf(fb, rotate);
 #else
-	max7219SendDataBuf(fb);
+	max7219SendDataBuf(fb, rotate);
 #endif
 
 	return;
@@ -101,6 +101,7 @@ void matrixInit(void)
 
 	matrixFill(0x00);
 	matrixLoadFont(font_ks0066_ru_08);
+	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
 
 	return;
 }

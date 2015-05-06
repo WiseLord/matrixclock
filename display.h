@@ -44,8 +44,6 @@ void scrollTemp(void);
 void setTimeMask(uint32_t tmsk);
 void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
-void resetEtmOld(void);
-void resetAmOld(void);
 void showAlarm(uint32_t mask);
 void showAlarmEdit(int8_t ch_dir);
 void setBrightnessHour(void);

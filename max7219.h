@@ -24,7 +24,7 @@
 #define MAX7219_DISP_TEST		0x0F
 
 void max7219SendCmd(uint8_t reg, uint8_t data);
-void max7219SendDataBuf(uint8_t *buf);
+void max7219SendDataBuf(uint8_t *buf, uint8_t rotate);
 void max7219Init(void);
 
 #endif /* MAX7219_H */

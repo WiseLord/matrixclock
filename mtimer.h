@@ -4,19 +4,21 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define TEMP_MEASURE_TIME	750
-#define TEMP_POLL_INTERVAL	1000
+#define TEMP_MEASURE_TIME		1000
+#define TEMP_POLL_INTERVAL		5000
 
-#define BTN_STATE_0		0b000
-#define BTN_1			0b001
-#define BTN_2			0b010
-#define BTN_3			0b100
+#define BTN_STATE_0				0b000
+#define BTN_1					0b001
+#define BTN_2					0b010
+#define BTN_3					0b100
 
 /* Handling long press actions */
-#define SHORT_PRESS		50
-#define LONG_PRESS		500
+#define SHORT_PRESS				50
+#define LONG_PRESS				500
 
 enum {
+	CMD_EMPTY = 0,
+
 	CMD_BTN_1,
 	CMD_BTN_2,
 	CMD_BTN_3,
@@ -25,7 +27,6 @@ enum {
 	CMD_BTN_3_LONG,
 	CMD_BTN_2_3_LONG,
 	CMD_BTN_1_2_3_LONG,
-	CMD_EMPTY = 0xFF
 };
 
 void mTimerInit(void);
