@@ -159,6 +159,7 @@ int main(void)
 			break;
 		case CMD_BTN_2_3_LONG:
 			displaySwitchBigNum();
+			dispMode = MODE_MAIN;
 			showTime(MASK_ALL);
 			break;
 		case CMD_BTN_1_2_3_LONG:
