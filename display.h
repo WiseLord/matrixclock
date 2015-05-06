@@ -35,6 +35,12 @@ enum {
 #define MASK_NONE			0x00000000
 #define MASK_ALL			0xFFFFFFFF
 
+enum {
+	HOUR_CURRENT = 0,
+	HOUR_NEXT,
+	HOUR_PREV,
+};
+
 void displayInit(void);
 void displaySwitchBigNum(void);
 void writeBrightness(void);
@@ -46,8 +52,7 @@ void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
 void showAlarm(uint32_t mask);
 void showAlarmEdit(int8_t ch_dir);
-void setBrightnessHour(void);
-void incBrightnessHour(void);
+void setBrightnessHour(uint8_t mode);
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
 void checkAlarmAndBrightness(void);

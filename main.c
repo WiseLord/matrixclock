@@ -43,6 +43,8 @@ int main(void)
 			ds18x20Process();
 		}
 
+		checkAlarmAndBrightness();
+
 		/* Get command from buttons */
 		cmd = getBtnCmd();
 
@@ -79,7 +81,7 @@ int main(void)
 				}
 				break;
 			case MODE_BRIGHTNESS:
-				incBrightnessHour();
+				setBrightnessHour(HOUR_NEXT);
 				break;
 			}
 			break;
@@ -145,16 +147,15 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3_LONG:
+			setBrightnessHour(HOUR_CURRENT);
 			switch (dispMode) {
 			case MODE_BRIGHTNESS:
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
-				writeBrightness();
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_BRIGHTNESS;
 				mask = MASK_ALL;
-				setBrightnessHour();
 				break;
 			}
 			break;
@@ -167,9 +168,6 @@ int main(void)
 			matrixScreenRotate();
 			break;
 		}
-
-		if (dispMode != MODE_BRIGHTNESS)
-			checkAlarmAndBrightness();
 
 		/* Show things */
 		switch (dispMode) {
