@@ -476,10 +476,15 @@ void checkAlarmAndBrightness(void)
 		}
 	} else {
 		alarmFlag = 1;
+		/* Check new hour and beep*/
+		if (dateTime[DS1307_HOUR] >= 7 && dateTime[DS1307_MIN] == 0 && dateTime[DS1307_SEC] == 0)
+			if (getBeepTimer() == 0)
+				startBeeper(1000);
 	}
 
 	/* Check brightness */
 	matrixSetBrightness(brightness);
+
 
 	return;
 }
