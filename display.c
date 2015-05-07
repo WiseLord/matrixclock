@@ -124,7 +124,6 @@ void displayInit(void)
 	}
 
 	dateTime = readTime();
-	setBrightnessHour(HOUR_CURRENT);
 	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
 
 	return;
@@ -164,24 +163,28 @@ void showTime(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
 	uint8_t digit;
 
+	uint8_t hour = dateTime[DS1307_HOUR];
+	uint8_t min = dateTime[DS1307_MIN];
+	uint8_t sec = dateTime[DS1307_SEC];
+
 	etmOld = NOEDIT;
 
 	matrixSetX(0);
-	mkNumberString(dateTime[DS1307_HOUR], 2, 0, ' ');
+	mkNumberString(hour, 2, 0, ' ');
 	if (bigNum)
 		matrixBigNumString(strbuf);
 	else
 		matrixLoadString(strbuf);
 	matrixSetX(13);
-	mkNumberString(dateTime[DS1307_MIN], 2, 0, '0');
+	mkNumberString(min, 2, 0, '0');
 	if (bigNum)
 		matrixBigNumString(strbuf);
 	else
 		matrixLoadString(strbuf);
 	matrixSetX(25);
-	matrixSmallNumString(mkNumberString(dateTime[DS1307_SEC], 2, 0, '0'));
+	matrixSmallNumString(mkNumberString(sec, 2, 0, '0'));
 
-	digit = dateTime[DS1307_HOUR] / 10;
+	digit = hour / 10;
 	if (oldHourTens != digit) {
 		if (bigNum)
 			mask |= MASK_BIGHOUR_TENS;
@@ -190,7 +193,7 @@ void showTime(uint32_t mask)
 	}
 	oldHourTens = digit;
 
-	digit = dateTime[DS1307_HOUR] % 10;
+	digit = hour % 10;
 	if (oldHourUnits != digit) {
 		if (bigNum)
 			mask |= MASK_BIGHOUR_UNITS;
@@ -199,7 +202,7 @@ void showTime(uint32_t mask)
 	}
 	oldHourUnits = digit;
 
-	digit = dateTime[DS1307_MIN] / 10;
+	digit = min / 10;
 	if (oldMinTens != digit) {
 		if (bigNum)
 			mask |= MASK_BIGMIN_TENS;
@@ -208,7 +211,7 @@ void showTime(uint32_t mask)
 	}
 	oldMinTens = digit;
 
-	digit = dateTime[DS1307_MIN] % 10;
+	digit = min % 10;
 	if (oldMinUnits != digit) {
 		if (bigNum)
 			mask |= MASK_BIGMIN_UNITS;
@@ -217,17 +220,17 @@ void showTime(uint32_t mask)
 	}
 	oldMinUnits = digit;
 
-	digit = dateTime[DS1307_SEC] / 10;
+	digit = sec / 10;
 	if (oldSecTens != digit)
 		mask |= MASK_SEC_TENS;
 	oldSecTens = digit;
 
-	digit = dateTime[DS1307_SEC] % 10;
+	digit = sec % 10;
 	if (oldSecUnits != digit)
 		mask |= MASK_SEC_UNITS;
 	oldSecUnits = digit;
 
-	digit = dateTime[DS1307_SEC] & 0x01;
+	digit = sec & 0x01;
 	if (bigNum) {
 		if (digit) {
 			matrixPosData(11, 0x00);
@@ -240,6 +243,8 @@ void showTime(uint32_t mask)
 		showHMColon(digit);
 		matrixPosData(23, getRawAlarmWeekday());
 	}
+
+	brightness = eeprom_read_byte(EEPROM_BR_ADDR + hour);
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
@@ -321,35 +326,45 @@ void showTimeEdit(int8_t ch_dir)
 
 void showAlarm(uint32_t mask)
 {
-	static int8_t oldAlarm[3];
+	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
+	uint8_t digit;
+
+	uint8_t hour = alarm[A_HOUR];
+	uint8_t min = alarm[A_MIN];
 
 	amOld = A_NOEDIT;
 
-	alarm = readAlarm();
-
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(alarm[A_HOUR], 2, 0, ' '));
+	matrixLoadString(mkNumberString(hour, 2, 0, ' '));
 	matrixSetX(13);
-	matrixLoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
+	matrixLoadString(mkNumberString(min, 2, 0, '0'));
 	matrixSetX(26);
 	matrixLoadString("\xA0");
 
-	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
+	digit = hour / 10;
+	if (oldHourTens != digit)
 		mask  |= MASK_HOUR_TENS;
-	if (oldAlarm[A_HOUR] % 10 != alarm[A_HOUR] % 10)
+	oldHourTens = digit;
+
+	digit = hour % 10;
+	if (oldHourUnits != digit)
 		mask  |= MASK_HOUR_UNITS;
-	if (oldAlarm[A_MIN] / 10 != alarm[A_MIN] / 10)
+	oldHourUnits = digit;
+
+	digit = min / 10;
+	if (oldMinTens != digit)
 		mask  |= MASK_MIN_TENS;
-	if (oldAlarm[A_MIN] % 10 != alarm[A_MIN] % 10)
+	oldMinTens = digit;
+
+	digit = min % 10;
+	if (oldMinUnits != digit)
 		mask  |= MASK_MIN_UNITS;
+	oldMinUnits = digit;
 
 	showHMColon(2);
 	matrixPosData(23, getRawAlarmWeekday());
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-
-	oldAlarm[A_HOUR] = alarm[A_HOUR];
-	oldAlarm[A_MIN] = alarm[A_MIN];
 
 	return;
 }
