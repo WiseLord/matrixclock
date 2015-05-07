@@ -126,6 +126,8 @@ void displayInit(void)
 	dateTime = readTime();
 	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
 
+	brHour = dateTime[DS1307_HOUR];
+
 	return;
 }
 
