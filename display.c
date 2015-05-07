@@ -25,7 +25,17 @@ static uint8_t bigNum = 0;
 
 static uint8_t etmOld = NOEDIT;
 static alarmMode amOld = A_NOEDIT;
+static uint8_t alarmFlag = 1;
 
+static void startAlarm(uint16_t duration)
+{
+	if (getBeepTimer() == 0 && alarmFlag) {
+		alarmFlag = 0;
+		startBeeper(duration);
+	}
+
+	return;
+}
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	uint8_t sign = lead;
@@ -462,30 +472,23 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 
 void checkAlarmAndBrightness(void)
 {
-	static uint8_t alarmFlag = 1;
-
-	/* Check alarm */
 	dateTime = readTime();
 	alarm = readAlarm();
 
+	/* Check alarm */
 	if (dateTime[DS1307_HOUR] == alarm[A_HOUR] && dateTime[DS1307_MIN] == alarm[A_MIN]) {
-		if (checkIfAlarmToday()) {
-			if (getBeepTimer() == 0 && alarmFlag) {
-				alarmFlag = 0;
-				startBeeper(60000);
-			}
-		}
+		if (checkIfAlarmToday())
+			startAlarm(60000);
 	} else {
-		alarmFlag = 1;
-		/* Check new hour and beep*/
-		if (dateTime[DS1307_HOUR] >= 7 && dateTime[DS1307_MIN] == 0 && dateTime[DS1307_SEC] == 0)
-			if (getBeepTimer() == 0)
-				startBeeper(1000);
+		/* Check new hour */
+		if (dateTime[DS1307_HOUR] >= 7 && dateTime[DS1307_MIN] == 0)
+			startAlarm(160);
+		else
+			alarmFlag = 1;
 	}
 
 	/* Check brightness */
 	matrixSetBrightness(brightness);
-
 
 	return;
 }
