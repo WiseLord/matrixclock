@@ -151,8 +151,8 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 	uint8_t i, j;
 
 	for (i = 0; i < 8; i++) {
-		for (j = 0; j < MAX7219_ICNUMBER * 8; j++) {
-			if (mask & (1UL<<(MAX7219_ICNUMBER * 8 - 1 - j))) {
+		for (j = 0; j < MATRIX_NUMBER * 8; j++) {
+			if (mask & (1UL<<(MATRIX_NUMBER * 8 - 1 - j))) {
 				switch (effect) {
 				case MATRIX_EFFECT_SCROLL_DOWN:
 					fb[j] <<= 1;
@@ -267,15 +267,15 @@ ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
 	if (scrollMode) {
 		int8_t i;
 
-		for (i = 0; i < MAX7219_ICNUMBER * 8 - 1; i++) {
+		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++) {
 			fb[i] = fb[i + 1];
 		}
-		fb[MAX7219_ICNUMBER * 8 - 1] = strBuf[scrollPos];
+		fb[MATRIX_NUMBER * 8 - 1] = strBuf[scrollPos];
 		matrixUpdate();
 
 		scrollPos++;
 
-		if (scrollPos >= _end + MAX7219_ICNUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
+		if (scrollPos >= _end + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
 			scrollMode = 0;
 			scrollPos = 0;
 		}

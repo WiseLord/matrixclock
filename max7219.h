@@ -3,9 +3,7 @@
 
 #include <inttypes.h>
 #include "pins.h"
-
-// Number of chips
-#define MAX7219_ICNUMBER		4
+#include "matrix.h"
 
 // Registers
 #define MAX7219_NO_OP			0x00

@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include "pins.h"
 
+#define MATRIX_NUMBER				4
+
 #define MATRIX_SCROLL_STOP			0
 #define MATRIX_SCROLL_START			1
 

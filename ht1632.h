@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include "pins.h"
+#include "matrix.h"
 
 #define HT1632_MODE_READ			0x06
 #define HT1632_MODE_WRITE			0x05
@@ -24,6 +25,12 @@
 #define HT1632_CMD_DUTY				0xA0
 
 #define HT1632_DUTY_MAX				0x0F
+
+#define HT1632_IDBITS_CNT			3
+#define HT1632_CMDBITS_CNT			8
+#define HT1632_CMDLASTBIT			1
+#define HT1632_ADDRBITS_CNT			7
+#define HT1632_DATABITS_CNT			8
 
 void ht1632SendCmd(uint8_t cmd);
 void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate);

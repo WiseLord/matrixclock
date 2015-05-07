@@ -2,16 +2,7 @@
 
 #include <avr/pgmspace.h>
 
-static const uint8_t initCmdSeq[] PROGMEM = {
-	HT1632_CMD_SYS_ON,
-	HT1632_CMD_LED_ON,
-	HT1632_CMD_BLINK_OFF,
-	HT1632_CMD_MASTER,
-	HT1632_CMD_COM_NMOS_08,
-	HT1632_CMD_DUTY,
-};
-
-static void ht1632SendBits(uint8_t bits, uint8_t cnt)
+static void ht1632SendBits(uint8_t cnt, uint8_t bits)
 {
 	int8_t i;
 
@@ -33,9 +24,9 @@ static void ht1632SendBits(uint8_t bits, uint8_t cnt)
 void ht1632SendCmd(uint8_t cmd)
 {
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
-	ht1632SendBits(HT1632_MODE_COMMAND, 3);
-	ht1632SendBits(cmd, 8);
-	ht1632SendBits(0, 1);
+	ht1632SendBits(HT1632_IDBITS_CNT, HT1632_MODE_COMMAND);
+	ht1632SendBits(HT1632_CMDBITS_CNT, cmd);
+	ht1632SendBits(HT1632_CMDLASTBIT, 0);
 	PORT(HT1632_CS) |= HT1632_CS_LINE;
 
 	return;
@@ -46,22 +37,22 @@ void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate)
 	uint8_t i, j, k, data;
 
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
-	ht1632SendBits(HT1632_MODE_WRITE, 3);
-	ht1632SendBits(0, 7);
+	ht1632SendBits(HT1632_IDBITS_CNT, HT1632_MODE_WRITE);
+	ht1632SendBits(HT1632_ADDRBITS_CNT, 0);
 
-	for (k = 0; k < 4; k++) {
+	for (k = 0; k < MATRIX_NUMBER; k++) {
 		for (i = 0; i < 8; i++) {
 			data = 0;
 			for (j = 0; j < 8; j++) {
 				if (rotate) {
-					if (buf[((3 - k) << 3) + 7 - j] & (0x80 >> i))
+					if (buf[((MATRIX_NUMBER - 1 - k) << 3) + 7 - j] & (0x80 >> i))
 						data |= (0x80 >> j);
 				} else {
 					if (buf[k * 8 + j] & (0x01 << i))
 						data |= (0x80 >> j);
 				}
 			}
-			ht1632SendBits(data, 8);
+			ht1632SendBits(HT1632_DATABITS_CNT, data);
 		}
 	}
 
@@ -71,8 +62,6 @@ void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate)
 
 void ht1632Init(void)
 {
-	uint8_t i;
-
 	DDR(HT1632_DATA) |= HT1632_DATA_LINE;
 	DDR(HT1632_CS) |= HT1632_CS_LINE;
 	DDR(HT1632_WR) |= HT1632_WR_LINE;
@@ -81,8 +70,12 @@ void ht1632Init(void)
 	PORT(HT1632_CS) |= HT1632_CS_LINE;
 	PORT(HT1632_WR) |= HT1632_WR_LINE;
 
-	for (i = 0; i < sizeof(initCmdSeq); i++)
-		ht1632SendCmd(pgm_read_byte(&initCmdSeq[i]));
+	ht1632SendCmd(HT1632_CMD_SYS_ON);
+	ht1632SendCmd(HT1632_CMD_LED_ON);
+	ht1632SendCmd(HT1632_CMD_BLINK_OFF);
+	ht1632SendCmd(HT1632_CMD_MASTER);
+	ht1632SendCmd(HT1632_CMD_COM_NMOS_08);
+	ht1632SendCmd(HT1632_CMD_DUTY);
 
 	return;
 }

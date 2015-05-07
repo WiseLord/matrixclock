@@ -418,9 +418,9 @@ void changeBrightness(int8_t diff)
 {
 	brightness += diff;
 
-	if (brightness >= MATRIX_MAX_BRIGHTNESS) {
+	if (brightness > MATRIX_MAX_BRIGHTNESS) {
 		brightness = MATRIX_MIN_BRIGHTNESS;
-	} else if (brightness <= MATRIX_MIN_BRIGHTNESS) {
+	} else if (brightness < MATRIX_MIN_BRIGHTNESS) {
 		brightness = MATRIX_MAX_BRIGHTNESS;
 	}
 

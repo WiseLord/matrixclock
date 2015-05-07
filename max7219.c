@@ -2,7 +2,7 @@
 
 #include <avr/pgmspace.h>
 
-static uint8_t max7219RevBits(uint8_t data)
+static uint8_t max7219SwapBits(uint8_t data)
 {
 	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
 	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
@@ -35,7 +35,7 @@ void max7219SendCmd(uint8_t reg, uint8_t data)
 	int8_t j;
 
 	PORT(MAX7219_LOAD) &= ~MAX7219_LOAD_LINE;
-	for (j = MAX7219_ICNUMBER - 1; j >= 0; j--) {
+	for (j = MATRIX_NUMBER - 1; j >= 0; j--) {
 		max7219SendByte(reg);
 		max7219SendByte(data);
 	}
@@ -50,10 +50,10 @@ void max7219SendDataBuf(uint8_t *buf, uint8_t rotate)
 
 	for (i = 0; i < 8; i++) {
 		PORT(MAX7219_LOAD) &= ~MAX7219_LOAD_LINE;
-		for (j = MAX7219_ICNUMBER - 1; j >= 0; j--) {
+		for (j = MATRIX_NUMBER - 1; j >= 0; j--) {
 			if (rotate) {
 				max7219SendByte(MAX7219_DIGIT_7 - i);
-				max7219SendByte(max7219RevBits(buf[8 * (3 - j) + i]));
+				max7219SendByte(max7219SwapBits(buf[8 * (3 - j) + i]));
 			} else {
 				max7219SendByte(MAX7219_DIGIT_0 + i);
 				max7219SendByte(buf[8 * j + i]);
