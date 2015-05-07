@@ -496,7 +496,7 @@ void checkAlarmAndBrightness(void)
 			startAlarm(60000);
 	} else {
 		/* Check new hour */
-		if (dateTime[DS1307_HOUR] >= 7 && dateTime[DS1307_MIN] == 0)
+		if (dateTime[DS1307_HOUR] > alarm[A_HOUR] && dateTime[DS1307_MIN] == 0)
 			startAlarm(160);
 		else
 			alarmFlag = 1;
