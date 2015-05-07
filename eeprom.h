@@ -62,6 +62,8 @@ enum {
 	LABEL_TEMP1,
 	LABEL_TEMP2,
 
+	LABEL_Y,
+
 	LABEL_END
 };
 

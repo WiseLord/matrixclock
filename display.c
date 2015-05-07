@@ -64,6 +64,7 @@ static void loadDateString(void)
 	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + dateTime[DS1307_MONTH] % 12]);
 	matrixLoadString(mkNumberString(2000 + dateTime[DS1307_YEAR], 4, 0, '0'));
+	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
 
 	return;
 }
@@ -321,7 +322,7 @@ void showAlarm(uint32_t mask)
 	matrixSetX(13);
 	matrixLoadString(mkNumberString(alarm[A_MIN], 2, 0, '0'));
 	matrixSetX(26);
-	matrixLoadString("\xED");
+	matrixLoadString("\xA0");
 
 	if (oldAlarm[A_HOUR] / 10 != alarm[A_HOUR] / 10)
 		mask  |= MASK_HOUR_TENS;
@@ -369,7 +370,7 @@ void showAlarmEdit(int8_t ch_dir)
 		break;
 	default:
 		if (alarm)
-			matrixLoadString(" \xED ");
+			matrixLoadString(" \xA0 ");
 		else {
 			matrixLoadString("   ");
 		}
@@ -434,10 +435,10 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(brHour, 2, 0, ' '));
-	matrixLoadString("\xEF");
+	matrixLoadString("\xBB");
 	matrixSetX(15);
 	matrixLoadString(mkNumberString(brightness, 2, 0, ' '));
-	matrixLoadString("\xEE");
+	matrixLoadString("\xA4");
 
 	if (oldHour / 10 != brHour / 10)
 		mask  |= MASK_HOUR_TENS;

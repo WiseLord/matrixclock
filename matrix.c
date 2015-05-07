@@ -15,9 +15,6 @@ static uint8_t rotate = 0;
 static int16_t _col;
 static int16_t _end;
 
-const uint8_t *_font;
-static uint8_t fp[FONT_PARAM_COUNT];
-
 static uint8_t fb[32];
 static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 
@@ -28,24 +25,14 @@ static void matrixLoadChar(uint8_t code)
 {
 	uint8_t i;
 	uint8_t pgmData;
-	uint8_t spos;	/* Current symbol number in array */
 	uint16_t oft;	/* Current symbol offset in array*/
-	uint8_t swd;	/* Current symbol width */
 
-	spos = code - ((code >= 128) ? fp[FONT_OFTNA] : fp[FONT_OFTA]);
-	oft = 0;
+	oft = (code - ' ' - (code > 128 ? 0x20 : 0)) * 5;
 
-	for (i = 0; i < spos; i++) {
-		swd = pgm_read_byte(_font + i);
-		oft += swd;
-	}
-	swd = pgm_read_byte(_font + spos);
-
-	oft += fp[FONT_CCNT];
-
-	for (i = 0; i < swd; i++) {
-		pgmData = pgm_read_byte(_font + oft + i);
-		strBuf[_col++] = pgmData;
+	for (i = 0; i < 5; i++) {
+		pgmData = pgm_read_byte(font_cp1251_08 + oft + i);
+		if (pgmData != 0x99)
+			strBuf[_col++] = pgmData;
 	}
 	strBuf[_col++] = 0x00;
 
@@ -61,8 +48,24 @@ static void matrixLoadBigNumChar(uint8_t code)
 		if (code < '0' || code > '9')
 			data = 0x00;
 		else
-			//pgmData = pgm_read_byte(font_bignums + (code - 0x30) * 5 + i);
 			data = eeprom_read_byte(EEPROM_BIG_NUM_FONT + (code - 0x30) * 5 + i);
+		strBuf[_col++] = data;
+	}
+	strBuf[_col++] = 0x00;
+
+	return;
+}
+
+static void matrixLoadSmallNumChar(uint8_t code)
+{
+	uint8_t i;
+	uint8_t data;
+
+	for (i = 0; i < 3; i++) {
+		if (code < '0' || code > '9')
+			data = 0x00;
+		else
+			data = pgm_read_byte(font_smallnum + (code - 0x30) * 3 + i);
 		strBuf[_col++] = data;
 	}
 	strBuf[_col++] = 0x00;
@@ -100,7 +103,6 @@ void matrixInit(void)
 #endif
 
 	matrixFill(0x00);
-	matrixLoadFont(font_ks0066_ru_08);
 	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
 
 	return;
@@ -205,22 +207,22 @@ void matrixLoadString(char *string)
 	return;
 }
 
-void matrixSmallNumString(char *string)
-{
-	while(*string)
-		matrixLoadChar(0xC0 + *string++);
-
-	matrixClearBufTail();
-
-	return;
-}
-
 void matrixBigNumString(char *string)
 {
 	while(*string)
 		matrixLoadBigNumChar(*string++);
 
 	matrixClearBufTail();
+}
+
+void matrixSmallNumString(char *string)
+{
+	while(*string)
+		matrixLoadSmallNumChar(*string++);
+
+	matrixClearBufTail();
+
+	return;
 }
 
 void matrixLoadStringEeprom(uint8_t *string)
@@ -237,15 +239,6 @@ void matrixLoadStringEeprom(uint8_t *string)
 	matrixClearBufTail();
 
 	return;
-}
-
-void matrixLoadFont(const uint8_t *font)
-{
-	uint8_t i;
-
-	_font = font + FONT_PARAM_COUNT - 1;
-	for (i = 0; i < FONT_PARAM_COUNT - 1; i++)
-		fp[i] = pgm_read_byte(font + i);
 }
 
 void matrixScrollTimerInit(void)

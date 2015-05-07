@@ -1,4 +1,4 @@
-LED_DRIVER = MAX7219
+LED_DRIVER = HT1632
 
 MCU = atmega8
 
@@ -56,6 +56,9 @@ eeprom_en:
 
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ru.bin:r
+
+eeprom_by:
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_by.bin:r
 
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xd1:m
