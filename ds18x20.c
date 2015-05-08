@@ -3,6 +3,7 @@
 #include "mtimer.h"
 
 #include <util/delay.h>
+#include <util/crc16.h>
 
 static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;
@@ -11,19 +12,10 @@ static uint8_t isResult = 0;							/* It conversion has been done */
 
 static uint8_t calcCRC8 (uint8_t *arr, uint8_t arr_size)
 {
-	uint8_t bit, byte;
-	uint8_t data, crc = 0, cb;
+	uint8_t i, crc;
 
-	for (byte = 0; byte < arr_size; byte++) {
-		data = arr[byte];
-		for (bit = 0; bit < 8; bit++) {
-			cb = (crc ^ data) & 0x01;
-			crc >>= 1;
-			data >>= 1;
-			if (cb)
-				crc ^= 0b10001100; /* Polinom CRC8 = X⁸ + X⁵ + X⁴ + X⁰ */
-		}
-	}
+	for (i = 0, crc = 0; i < arr_size; i++)
+		crc = _crc_ibutton_update(crc, arr[i]);
 
 	return crc;
 }
