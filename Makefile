@@ -60,5 +60,8 @@ eeprom_ru:
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_by.bin:r
 
+eeprom_ua:
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ua.bin:r
+
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xd1:m
