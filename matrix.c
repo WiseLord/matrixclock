@@ -12,10 +12,10 @@
 
 static uint8_t rotate = 0;
 
-static int16_t _col;
-static int16_t _end;
+static int16_t _col;						/* Current position */
+static int16_t _end;						/* End of string in buffer */
 
-static uint8_t fb[32];
+static uint8_t fb[MATRIX_NUMBER * 8];
 static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 
 static volatile int16_t scrollPos = 0;
@@ -25,11 +25,15 @@ static void matrixLoadChar(uint8_t code)
 {
 	uint8_t i;
 	uint8_t pgmData;
-	uint16_t oft;	/* Current symbol offset in array*/
+	uint16_t oft;
 
-	oft = (code - ' ' - (code > 128 ? 0x20 : 0)) * 5;
+	if (code > 128)
+		oft = code - ' ' - 0x20;
+	else
+		oft = code - ' ';
+	oft *= MATRIX_FONT_WIDTH;
 
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < MATRIX_FONT_WIDTH; i++) {
 		pgmData = pgm_read_byte(font_cp1251_08 + oft + i);
 		if (pgmData != 0x99)
 			strBuf[_col++] = pgmData;
@@ -39,33 +43,24 @@ static void matrixLoadChar(uint8_t code)
 	return;
 }
 
-static void matrixLoadBigNumChar(uint8_t code)
+static void matrixLoadNumChar(uint8_t code, uint8_t memType, const uint8_t *font, uint8_t width)
 {
 	uint8_t i;
 	uint8_t data;
+	const uint8_t *oft;
 
-	for (i = 0; i < 5; i++) {
-		if (code < '0' || code > '9')
+	for (i = 0; i < width; i++) {
+		if (code < '0' || code > '9') {
 			data = 0x00;
-		else
-			data = eeprom_read_byte(EEPROM_BIG_NUM_FONT + (code - 0x30) * 5 + i);
-		strBuf[_col++] = data;
-	}
-	strBuf[_col++] = 0x00;
-
-	return;
-}
-
-static void matrixLoadSmallNumChar(uint8_t code)
-{
-	uint8_t i;
-	uint8_t data;
-
-	for (i = 0; i < 3; i++) {
-		if (code < '0' || code > '9')
-			data = 0x00;
-		else
-			data = pgm_read_byte(font_smallnum + (code - 0x30) * 3 + i);
+		} else {
+			oft = font + (code - 0x30) * width + i;
+			if (memType == MATRIX_FONT_EEPROM)
+				data = eeprom_read_byte(oft);
+			else if (memType == MATRIX_FONT_PROGMEM)
+				data = pgm_read_byte(oft);
+			else
+				data = *oft;
+		}
 		strBuf[_col++] = data;
 	}
 	strBuf[_col++] = 0x00;
@@ -210,7 +205,7 @@ void matrixLoadString(char *string)
 void matrixBigNumString(char *string)
 {
 	while(*string)
-		matrixLoadBigNumChar(*string++);
+		matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_BIG_NUM_FONT, MATRIX_BIGNUM_WIDTH);
 
 	matrixClearBufTail();
 }
@@ -218,7 +213,7 @@ void matrixBigNumString(char *string)
 void matrixSmallNumString(char *string)
 {
 	while(*string)
-		matrixLoadSmallNumChar(*string++);
+		matrixLoadNumChar(*string++, MATRIX_FONT_PROGMEM, font_smallnum, MATRIX_SMALLNUM_WIDTH);
 
 	matrixClearBufTail();
 
@@ -243,20 +238,21 @@ void matrixLoadStringEeprom(uint8_t *string)
 
 void matrixScrollTimerInit(void)
 {
+	/* Enable Timer2 overflow interrupt and set prescaler to 1024 (7812 Hz) */
 #if defined(atmega8)
-	TIMSK |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
-	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);		/* Set timer prescaller to 1024 (7812 Hz) */
+	TIMSK |= (1<<TOIE2);
+	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 #else
-	TIMSK2 |= (1<<TOIE2);							/* Enable Timer2 overflow interrupt */
-	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);	/* Set timer prescaller to 1024 (7812 Hz) */
+	TIMSK2 |= (1<<TOIE2);
+	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 #endif
 
 	return;
 }
 
-ISR (TIMER2_OVF_vect)								/* 7812 / 256 = 30 polls/sec */
+/* Interrupt will be executed 7812 / 256 = 30 times/sec */
+ISR (TIMER2_OVF_vect)
 {
-
 	if (scrollMode) {
 		int8_t i;
 
