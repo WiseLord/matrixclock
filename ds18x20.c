@@ -10,16 +10,6 @@ static uint8_t devCount = 0;
 
 static uint8_t isResult = 0;							/* It conversion has been done */
 
-static uint8_t calcCRC8 (uint8_t *arr, uint8_t arr_size)
-{
-	uint8_t i, crc;
-
-	for (i = 0, crc = 0; i < arr_size; i++)
-		crc = _crc_ibutton_update(crc, arr[i]);
-
-	return crc;
-}
-
 static uint8_t ds18x20IsOnBus(void)
 {
 	uint8_t ret;
@@ -111,18 +101,22 @@ static void getAllTemps()
 {
 	uint8_t i, j;
 
-	uint8_t arr[9];
+	uint8_t arr[DS18X20_SCRATCH_LEN];
+	uint8_t crc;
 
 	for (i = 0; i < devCount; i++) {
 		if (ds18x20IsOnBus()) {
 			ds18x20Select(&devs[i]);
 			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
 
-			for (j = 0; j < 9; j++)
+			crc = 0;
+			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
 				arr[j] = ds18x20GetByte();
+				crc = _crc_ibutton_update(crc, arr[j]);
+			}
 
-			if (!calcCRC8(arr, sizeof(arr))) {
-				for (j = 0; j < 9; j++)
+			if (crc == 0) {
+				for (j = 0; j < DS18X20_SCRATCH_LEN; j++)
 					devs[i].sp[j] = arr[j];
 			}
 		}

@@ -23,6 +23,7 @@
 #define DS18B20_FAMILY_CODE			0x28
 
 #define DS18X20_MAX_DEV				2
+#define DS18X20_SCRATCH_LEN			9
 
 typedef struct {
 	uint8_t id[8];		/* 64 bit ds18x20 device ID. */
