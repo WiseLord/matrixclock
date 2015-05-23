@@ -27,13 +27,15 @@ static void calcWeekDay(void)
 
 static uint8_t daysInMonth()
 {
-	if (time[DS1307_MONTH] == 2) {
+	uint8_t m = time[DS1307_MONTH];
+
+	if (m == 2) {
 		if (time[DS1307_YEAR] & 0x03)
 			return 28;
 		return 29;
 	}
 
-	if (time[DS1307_MONTH] == 4 || time[DS1307_MONTH] == 6 || time[DS1307_MONTH] == 9 || time[DS1307_MONTH] == 11) {
+	if (m == 4 || m == 6 || m == 9 || m == 11) {
 		return 30;
 	}
 

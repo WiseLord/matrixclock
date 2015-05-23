@@ -137,7 +137,6 @@ int main(void)
 			case MODE_EDIT_ALARM:
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
-				stopEditAlarm();
 				writeAlarm();
 				break;
 			case MODE_MAIN:

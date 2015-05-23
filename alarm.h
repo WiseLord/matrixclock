@@ -30,8 +30,6 @@ void writeAlarm(void);
 
 void editAlarm(void);
 
-void stopEditAlarm(void);
-
 void changeAlarm(int8_t diff);
 
 #endif // ALARM_H

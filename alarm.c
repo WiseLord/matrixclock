@@ -8,20 +8,14 @@ static alarmMode _am = A_NOEDIT;
 
 void initAlarm(void)
 {
-	int8_t rawAlarm = 0x00;
+	int8_t i, rawAlarm;
 
 	alarm[A_HOUR] = eeprom_read_byte(EEPROM_A_HOUR);
 	alarm[A_MIN] = eeprom_read_byte(EEPROM_A_MIN);
 
 	rawAlarm = eeprom_read_byte(EEPROM_A_DAYS) & 0x7F;
-
-	alarm[A_MONDAY] = rawAlarm & 0x01;
-	alarm[A_TUESDAY] = rawAlarm & 0x02;
-	alarm[A_WEDNESDAY] = rawAlarm & 0x04;
-	alarm[A_THURSDAY] = rawAlarm & 0x08;
-	alarm[A_FRIDAY] = rawAlarm & 0x10;
-	alarm[A_SATURDAY] = rawAlarm & 0x20;
-	alarm[A_SUNDAY] = rawAlarm & 0x40;
+	for (i = 0; i <= A_SUNDAY - A_MONDAY; i++)
+		alarm[i + A_MONDAY] = rawAlarm & (1<<i);
 
 	return;
 }
@@ -59,11 +53,6 @@ void writeAlarm(void)
 	eeprom_update_byte(EEPROM_A_MIN, alarm[A_MIN]);
 	eeprom_update_byte(EEPROM_A_DAYS, getRawAlarmWeekday());
 
-	return;
-}
-
-void stopEditAlarm(void)
-{
 	_am = A_NOEDIT;
 
 	return;
@@ -86,7 +75,6 @@ void editAlarm(void)
 
 void changeAlarm(int8_t diff)
 {
-	readAlarm();
 	switch (_am) {
 	case A_HOUR:
 		alarm[A_HOUR] += diff;
