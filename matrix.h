@@ -31,6 +31,14 @@ enum {
 	MATRIX_EFFECT_SCROLL_BOTH,
 };
 
+enum {
+	NUM_SMALL,
+	NUM_NORMAL,
+	NUM_BIG,
+	NUM_EXTRA,
+	NUM_END,
+};
+
 void matrixInit(void);
 void matrixScreenRotate(void);
 void matrixSetBrightness(uint8_t brightness);
@@ -39,9 +47,7 @@ void matrixPosData(uint8_t pos, uint8_t data);
 void matrixSwitchBuf(uint32_t mask, uint8_t effect);
 void matrixSetX(int16_t x);
 void matrixLoadString(char *string);
-void matrixBigNumString(char *string);
-void matrixExtraNumString(char *string);
-void matrixSmallNumString(char *string);
+void matrixLoadNumString(char *string, uint8_t numType);
 void matrixLoadStringEeprom(uint8_t *string);
 void matrixScrollTimerInit(void);
 void matrixHwScroll(uint8_t status);

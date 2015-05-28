@@ -47,13 +47,6 @@ enum {
 	HOUR_PREV,
 };
 
-enum {
-	NUM_NORMAL,
-	NUM_BIG,
-	NUM_EXTRA,
-	NUM_END,
-};
-
 void displayInit(void);
 void displaySwitchBigNum(void);
 void displaySwitchHourZero(void);

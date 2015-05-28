@@ -155,20 +155,21 @@ void displaySwitchHourZero(void) {
 
 static void showHMColon(uint8_t step, uint8_t pos)
 {
-	switch (step) {
-	case 2:
-		matrixPosData(pos, 0x36);
-		matrixPosData(pos + 1, 0x36);
-		break;
-	case 1:
-		matrixPosData(pos, 0x26);
-		matrixPosData(pos + 1, 0x26);
-		break;
-	default:
-		matrixPosData(pos, 0x32);
-		matrixPosData(pos + 1, 0x32);
-		break;
-	}
+	uint8_t value;
+
+	if (step == 4)
+		value = 0x62;
+	else if (step == 3)
+		value = 0x46;
+	else if (step == 2)
+		value = 0x36;
+	else if (step == 1)
+		value = 0x26;
+	else
+		value = 0x32;
+
+	matrixPosData(pos, value);
+	matrixPosData(pos + 1, value);
 
 	return;
 }
@@ -189,26 +190,18 @@ void showTime(uint32_t mask)
 	else
 		matrixSetX(0);
 	mkNumberString(hour, 2, 0, hourZero);
-	if (bigNum == NUM_EXTRA)
-		matrixExtraNumString(strbuf);
-	else if (bigNum == NUM_BIG)
-		matrixBigNumString(strbuf);
-	else
-		matrixLoadString(strbuf);
+	matrixLoadNumString(strbuf, bigNum);
+
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(18);
 	else
 		matrixSetX(13);
 	mkNumberString(min, 2, 0, '0');
-	if (bigNum == NUM_EXTRA)
-		matrixExtraNumString(strbuf);
-	else if (bigNum == NUM_BIG)
-		matrixBigNumString(strbuf);
-	else
-		matrixLoadString(strbuf);
+	matrixLoadNumString(strbuf, bigNum);
+
 	if (bigNum != NUM_EXTRA) {
 		matrixSetX(25);
-		matrixSmallNumString(mkNumberString(sec, 2, 0, '0'));
+		matrixLoadNumString(mkNumberString(sec, 2, 0, '0'), NUM_SMALL);
 	}
 
 	digit = hour / 10;
@@ -268,16 +261,11 @@ void showTime(uint32_t mask)
 	}
 	digit = sec & 0x01;
 	if (bigNum == NUM_BIG) {
-		if (digit) {
-			matrixPosData(11, 0x00);
-			matrixPosData(12, 0x80);
-		} else {
-			matrixPosData(11, 0x80);
-			matrixPosData(12, 0x00);
-		}
+		matrixPosData(11, (!digit) << 7);
+		matrixPosData(12, digit << 7);
 	} else if (bigNum == NUM_EXTRA) {
 		matrixPosData(0, 0x00);
-		showHMColon(digit, 15);
+		showHMColon(digit + 3, 15);
 	} else {
 		showHMColon(digit, 10);
 		matrixPosData(23, getRawAlarmWeekday());

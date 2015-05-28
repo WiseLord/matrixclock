@@ -202,30 +202,27 @@ void matrixLoadString(char *string)
 	return;
 }
 
-void matrixBigNumString(char *string)
+void matrixLoadNumString(char *string, uint8_t numType)
 {
-	while(*string)
-		matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_BIG_NUM_FONT, MATRIX_BIGNUM_WIDTH);
+	switch (numType) {
+	case NUM_SMALL:
+		while(*string)
+			matrixLoadNumChar(*string++, MATRIX_FONT_PROGMEM, font_smallnum, MATRIX_SMALLNUM_WIDTH);
+		break;
+	case NUM_BIG:
+		while(*string)
+			matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_BIG_NUM_FONT, MATRIX_BIGNUM_WIDTH);
+		break;
+	case NUM_EXTRA:
+		while(*string)
+			matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_EXTRA_NUM_FONT, MATRIX_EXTRANUM_WIDTH);
+		break;
+	default:
+		matrixLoadString(string);
+		break;
+	}
 
 	matrixClearBufTail();
-}
-
-void matrixExtraNumString(char *string)
-{
-	while(*string)
-		matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_EXTRA_NUM_FONT, MATRIX_EXTRANUM_WIDTH);
-
-	matrixClearBufTail();
-}
-
-void matrixSmallNumString(char *string)
-{
-	while(*string)
-		matrixLoadNumChar(*string++, MATRIX_FONT_PROGMEM, font_smallnum, MATRIX_SMALLNUM_WIDTH);
-
-	matrixClearBufTail();
-
-	return;
 }
 
 void matrixLoadStringEeprom(uint8_t *string)
