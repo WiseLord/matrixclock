@@ -22,6 +22,7 @@ static int8_t brHour;
 static int8_t brightness;
 
 static uint8_t bigNum = 0;
+static uint8_t hourZero = '0';
 
 static uint8_t etmOld = NOEDIT;
 static alarmMode amOld = A_NOEDIT;
@@ -125,6 +126,7 @@ void displayInit(void)
 
 	dateTime = readTime();
 	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
+	hourZero = eeprom_read_byte(EEPROM_HOURZERO);
 
 	brHour = dateTime[DS1307_HOUR];
 
@@ -141,6 +143,15 @@ void displaySwitchBigNum(void)
 	return;
 }
 
+void displaySwitchHourZero(void) {
+	if (hourZero == '0')
+		hourZero = ' ';
+	else
+		hourZero = '0';
+
+	eeprom_update_byte(EEPROM_HOURZERO, hourZero);
+	return;
+}
 
 static void showHMColon(uint8_t step, uint8_t pos)
 {
@@ -177,7 +188,7 @@ void showTime(uint32_t mask)
 		matrixSetX(1);
 	else
 		matrixSetX(0);
-	mkNumberString(hour, 2, 0, ' ');
+	mkNumberString(hour, 2, 0, hourZero);
 	if (bigNum == NUM_EXTRA)
 		matrixExtraNumString(strbuf);
 	else if (bigNum == NUM_BIG)

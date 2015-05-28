@@ -9,6 +9,7 @@
 
 #define EEPROM_SCREEN_ROTATE	((void*)0x04)
 #define EEPROM_BIGNUM			((void*)0x05)
+#define EEPROM_HOURZERO			((void*)0x06)
 
 #define EEPROM_BR_ADDR			((void*)0x08)
 

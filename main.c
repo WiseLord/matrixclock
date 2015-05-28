@@ -158,6 +158,11 @@ int main(void)
 				break;
 			}
 			break;
+		case CMD_BTN_1_2_LONG:
+			displaySwitchHourZero();
+			dispMode = MODE_MAIN;
+			showTime(MASK_ALL);
+			break;
 		case CMD_BTN_2_3_LONG:
 			displaySwitchBigNum();
 			dispMode = MODE_MAIN;
