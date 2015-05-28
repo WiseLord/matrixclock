@@ -133,27 +133,29 @@ void displayInit(void)
 
 void displaySwitchBigNum(void)
 {
-	bigNum = !bigNum;
+	if (++bigNum >= NUM_END)
+		bigNum = NUM_NORMAL;
+
 	eeprom_update_byte(EEPROM_BIGNUM, bigNum);
 
 	return;
 }
 
 
-static void showHMColon(uint8_t step)
+static void showHMColon(uint8_t step, uint8_t pos)
 {
 	switch (step) {
 	case 2:
-		matrixPosData(10, 0x36);
-		matrixPosData(11, 0x36);
+		matrixPosData(pos, 0x36);
+		matrixPosData(pos + 1, 0x36);
 		break;
 	case 1:
-		matrixPosData(10, 0x26);
-		matrixPosData(11, 0x26);
+		matrixPosData(pos, 0x26);
+		matrixPosData(pos + 1, 0x26);
 		break;
 	default:
-		matrixPosData(10, 0x32);
-		matrixPosData(11, 0x32);
+		matrixPosData(pos, 0x32);
+		matrixPosData(pos + 1, 0x32);
 		break;
 	}
 
@@ -171,24 +173,38 @@ void showTime(uint32_t mask)
 
 	etmOld = NOEDIT;
 
-	matrixSetX(0);
+	if (bigNum == NUM_EXTRA)
+		matrixSetX(1);
+	else
+		matrixSetX(0);
 	mkNumberString(hour, 2, 0, ' ');
-	if (bigNum)
+	if (bigNum == NUM_EXTRA)
+		matrixExtraNumString(strbuf);
+	else if (bigNum == NUM_BIG)
 		matrixBigNumString(strbuf);
 	else
 		matrixLoadString(strbuf);
-	matrixSetX(13);
+	if (bigNum == NUM_EXTRA)
+		matrixSetX(18);
+	else
+		matrixSetX(13);
 	mkNumberString(min, 2, 0, '0');
-	if (bigNum)
+	if (bigNum == NUM_EXTRA)
+		matrixExtraNumString(strbuf);
+	else if (bigNum == NUM_BIG)
 		matrixBigNumString(strbuf);
 	else
 		matrixLoadString(strbuf);
-	matrixSetX(25);
-	matrixSmallNumString(mkNumberString(sec, 2, 0, '0'));
+	if (bigNum != NUM_EXTRA) {
+		matrixSetX(25);
+		matrixSmallNumString(mkNumberString(sec, 2, 0, '0'));
+	}
 
 	digit = hour / 10;
 	if (oldHourTens != digit) {
-		if (bigNum)
+		if (bigNum == NUM_EXTRA)
+			mask |= MASK_EXTRAHOUR_TENS;
+		else if (bigNum == NUM_BIG)
 			mask |= MASK_BIGHOUR_TENS;
 		else
 			mask |= MASK_HOUR_TENS;
@@ -197,7 +213,9 @@ void showTime(uint32_t mask)
 
 	digit = hour % 10;
 	if (oldHourUnits != digit) {
-		if (bigNum)
+		if (bigNum == NUM_EXTRA)
+			mask |= MASK_EXTRAHOUR_UNITS;
+		else if (bigNum == NUM_BIG)
 			mask |= MASK_BIGHOUR_UNITS;
 		else
 			mask |= MASK_HOUR_UNITS;
@@ -206,7 +224,9 @@ void showTime(uint32_t mask)
 
 	digit = min / 10;
 	if (oldMinTens != digit) {
-		if (bigNum)
+		if (bigNum == NUM_EXTRA)
+			mask |= MASK_EXTRAMIN_TENS;
+		else if (bigNum == NUM_BIG)
 			mask |= MASK_BIGMIN_TENS;
 		else
 			mask |= MASK_MIN_TENS;
@@ -215,25 +235,28 @@ void showTime(uint32_t mask)
 
 	digit = min % 10;
 	if (oldMinUnits != digit) {
-		if (bigNum)
+		if (bigNum == NUM_EXTRA)
+			mask |= MASK_EXTRAMIN_UNITS;
+		else if (bigNum == NUM_BIG)
 			mask |= MASK_BIGMIN_UNITS;
 		else
 			mask |= MASK_MIN_UNITS;
 	}
 	oldMinUnits = digit;
 
-	digit = sec / 10;
-	if (oldSecTens != digit)
-		mask |= MASK_SEC_TENS;
-	oldSecTens = digit;
+	if (bigNum != NUM_EXTRA) {
+		digit = sec / 10;
+		if (oldSecTens != digit)
+			mask |= MASK_SEC_TENS;
+		oldSecTens = digit;
 
-	digit = sec % 10;
-	if (oldSecUnits != digit)
-		mask |= MASK_SEC_UNITS;
-	oldSecUnits = digit;
-
+		digit = sec % 10;
+		if (oldSecUnits != digit)
+			mask |= MASK_SEC_UNITS;
+		oldSecUnits = digit;
+	}
 	digit = sec & 0x01;
-	if (bigNum) {
+	if (bigNum == NUM_BIG) {
 		if (digit) {
 			matrixPosData(11, 0x00);
 			matrixPosData(12, 0x80);
@@ -241,8 +264,11 @@ void showTime(uint32_t mask)
 			matrixPosData(11, 0x80);
 			matrixPosData(12, 0x00);
 		}
+	} else if (bigNum == NUM_EXTRA) {
+		matrixPosData(0, 0x00);
+		showHMColon(digit, 15);
 	} else {
-		showHMColon(digit);
+		showHMColon(digit, 10);
 		matrixPosData(23, getRawAlarmWeekday());
 	}
 
@@ -363,7 +389,7 @@ void showAlarm(uint32_t mask)
 		mask  |= MASK_MIN_UNITS;
 	oldMinUnits = digit;
 
-	showHMColon(2);
+	showHMColon(2, 10);
 	matrixPosData(23, getRawAlarmWeekday());
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);

@@ -15,6 +15,7 @@
 #define MATRIX_FONT_WIDTH			5
 #define MATRIX_SMALLNUM_WIDTH		3
 #define MATRIX_BIGNUM_WIDTH			5
+#define MATRIX_EXTRANUM_WIDTH		6
 #define MATRIX_BUFFER_SIZE			384
 
 enum {
@@ -39,6 +40,7 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect);
 void matrixSetX(int16_t x);
 void matrixLoadString(char *string);
 void matrixBigNumString(char *string);
+void matrixExtraNumString(char *string);
 void matrixSmallNumString(char *string);
 void matrixLoadStringEeprom(uint8_t *string);
 void matrixScrollTimerInit(void);

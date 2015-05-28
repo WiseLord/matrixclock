@@ -210,6 +210,14 @@ void matrixBigNumString(char *string)
 	matrixClearBufTail();
 }
 
+void matrixExtraNumString(char *string)
+{
+	while(*string)
+		matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_EXTRA_NUM_FONT, MATRIX_EXTRANUM_WIDTH);
+
+	matrixClearBufTail();
+}
+
 void matrixSmallNumString(char *string)
 {
 	while(*string)

@@ -17,6 +17,8 @@
 
 /* Big numbers font (10 * 5 bytes) */
 #define EEPROM_BIG_NUM_FONT		((uint8_t*)0x1C0)
+/* Extra numbers font (10 * 6 bytes) */
+#define EEPROM_EXTRA_NUM_FONT	((uint8_t*)0x180)
 
 #define EEPROM_SIZE				0x200
 
