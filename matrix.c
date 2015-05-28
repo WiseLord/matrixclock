@@ -68,16 +68,6 @@ static void matrixLoadNumChar(uint8_t code, uint8_t memType, const uint8_t *font
 	return;
 }
 
-static void matrixClearBufTail(void)
-{
-	_end = _col;
-	while(_col < MATRIX_BUFFER_SIZE)
-		strBuf[_col++] = 0x00;
-	_col = _end;
-
-	return;
-}
-
 static void matrixUpdate(void)
 {
 #if defined(HT1632)
@@ -132,6 +122,16 @@ void matrixFill(uint8_t data)
 		fb[i] = data;
 
 	matrixUpdate();
+
+	return;
+}
+
+void matrixClearBufTail(void)
+{
+	_end = _col;
+	while(_col < MATRIX_BUFFER_SIZE)
+		strBuf[_col++] = 0x00;
+	_col = _end;
 
 	return;
 }

@@ -89,7 +89,7 @@ int main(void)
 			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
-				scrollDate();
+				scroll(SCROLL_DATE);
 				break;
 			case MODE_EDIT_TIME:
 				changeTime(PARAM_UP);
@@ -106,7 +106,7 @@ int main(void)
 			direction = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
-				scrollTemp();
+				scroll(SCROLL_TEMP);
 				break;
 			case MODE_EDIT_TIME:
 				changeTime(PARAM_DOWN);

@@ -47,13 +47,17 @@ enum {
 	HOUR_PREV,
 };
 
+enum {
+	SCROLL_DATE = 0,
+	SCROLL_TEMP,
+};
+
 void displayInit(void);
 void displaySwitchBigNum(void);
 void displaySwitchHourZero(void);
 void writeBrightness(void);
 void showTime(uint32_t mask);
-void scrollDate(void);
-void scrollTemp(void);
+void scroll(uint8_t type);
 void setTimeMask(uint32_t tmsk);
 void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);

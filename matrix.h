@@ -43,6 +43,7 @@ void matrixInit(void);
 void matrixScreenRotate(void);
 void matrixSetBrightness(uint8_t brightness);
 void matrixFill(uint8_t data);
+void matrixClearBufTail(void);
 void matrixPosData(uint8_t pos, uint8_t data);
 void matrixSwitchBuf(uint32_t mask, uint8_t effect);
 void matrixSetX(int16_t x);

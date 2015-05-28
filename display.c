@@ -70,7 +70,6 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 
 static void loadDateString(void)
 {
-	matrixSetX(0);
 	matrixLoadStringEeprom(txtLabels[dateTime[DS1307_WDAY] % 7]);
 	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + dateTime[DS1307_MONTH] % 12]);
@@ -82,16 +81,15 @@ static void loadDateString(void)
 
 static void loadTempString(void)
 {
-	matrixSetX(0);
-	matrixLoadString(mkNumberString(ds18x20GetTemp(0), 4, 1, ' '));
-	matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
-	matrixLoadStringEeprom(txtLabels[LABEL_TEMP1]);
+	uint8_t i;
 
-	if (getDevCount() > 1) {
-		matrixLoadString(", ");
-		matrixLoadString(mkNumberString(ds18x20GetTemp(1), 4, 1, ' '));
+	for (i = 0; i < getDevCount(); i++) {
+		if (i > 0)
+			matrixLoadString(", ");
+		matrixLoadString(mkNumberString(ds18x20GetTemp(i), 4, 1, ' '));
 		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
-		matrixLoadStringEeprom(txtLabels[LABEL_TEMP2]);
+		matrixLoadStringEeprom(txtLabels[LABEL_TEMP1 + i]);
+
 	}
 
 	return;
@@ -278,28 +276,26 @@ void showTime(uint32_t mask)
 	return;
 }
 
-void scrollDate(void)
+void scroll(uint8_t type)
 {
-	loadDateString();
+	matrixSetX(0);
+	matrixClearBufTail();
+	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_SCROLL_BOTH);
+	if (type == SCROLL_DATE)
+		loadDateString();
+	else
+		loadTempString();
 	matrixHwScroll(MATRIX_SCROLL_START);
 	timeMask = MASK_ALL;
 
 	return;
 }
 
-void scrollTemp(void)
-{
-	if (getDevCount() > 0) {
-		loadTempString();
-		matrixHwScroll(MATRIX_SCROLL_START);
-		timeMask = MASK_ALL;
-	}
-	return;
-}
-
 void setTimeMask(uint32_t tmsk)
 {
 	timeMask = tmsk;
+
+	return;
 }
 
 void showMainScreen(void)
@@ -307,9 +303,9 @@ void showMainScreen(void)
 	if (matrixGetScrollMode() == 0) {
 		showTime(timeMask);
 		if (dateTime[DS1307_SEC] == 10) {
-			scrollDate();
+			scroll(SCROLL_DATE);
 		} else if (dateTime[DS1307_SEC] == 40) {
-			scrollTemp();
+			scroll(SCROLL_TEMP);
 		} else {
 			timeMask = MASK_NONE;
 		}
