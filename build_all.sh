@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for LED_DRIVER in HT1632 MAX7219
+for LED_DRIVER in HT1632 MAX7219 MAX7219MOD
 do
 	for MCU in atmega168 atmega328 atmega8 atmega88
 	do
