@@ -8,10 +8,10 @@
 #define I2C_ACK		1
 #define I2C_READ	1
 
-void I2CStart(uint8_t addr);
-void I2CStop(void);
+void I2CswStart(uint8_t addr);
+void I2CswStop(void);
 
-uint8_t I2CWriteByte(uint8_t data);
-uint8_t I2CReadByte(uint8_t *data, uint8_t ack);
+void I2CswWriteByte(uint8_t data);
+uint8_t I2CswReadByte(uint8_t ack);
 
 #endif /* I2CSW_H */

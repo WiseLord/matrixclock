@@ -2,7 +2,7 @@
 
 #include <util/delay.h>
 
-static uint8_t I2CGetBit(void)
+static uint8_t I2CswGetBit(void)
 {
 	uint8_t ret;
 
@@ -15,18 +15,18 @@ static uint8_t I2CGetBit(void)
 	return ret;
 }
 
-static void I2CSendBit(uint8_t bit)
+static void I2CswSendBit(uint8_t bit)
 {
 	if (bit)
 		DDR(I2C_SDA) &= ~I2C_SDA_LINE;		/* Pullup SDA = 1 */
 	else
 		DDR(I2C_SDA) |= I2C_SDA_LINE;		/* Active SDA = 0 */
-	I2CGetBit();
+	I2CswGetBit();
 
 	return;
 }
 
-void I2CStart(uint8_t addr)
+void I2CswStart(uint8_t addr)
 {
 	DDR(I2C_SCL) &= ~I2C_SCL_LINE;			/* Pullup SCL = 1 */
 	DDR(I2C_SDA) &= ~I2C_SDA_LINE;			/* Pullup SDA = 1 */
@@ -35,12 +35,12 @@ void I2CStart(uint8_t addr)
 	_delay_us(5);
 	DDR(I2C_SCL) |= I2C_SCL_LINE;			/* Active SCL = 0 */
 
-	I2CWriteByte(addr);
+	I2CswWriteByte(addr);
 
 	return;
 }
 
-void I2CStop(void)
+void I2CswStop(void)
 {
 	DDR(I2C_SCL) |= I2C_SCL_LINE;			/* Active SCL = 0 */
 	DDR(I2C_SDA) |= I2C_SDA_LINE;			/* Active SDA = 0 */
@@ -52,28 +52,32 @@ void I2CStop(void)
 	return;
 }
 
-uint8_t I2CWriteByte(uint8_t data)
+void I2CswWriteByte(uint8_t data)
 {
-	int8_t i = 0;
+	uint8_t i = 0;
 
-	for (i = 7; i >= 0; i--)
-		I2CSendBit(data & (1<<i));
-	I2CSendBit(I2C_ACK);
-
-	return 0;
-}
-
-uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
-{
-	int8_t i = 0;
-	*data = 0;
-
-	DDR(I2C_SDA) &= ~I2C_SDA_LINE;			/* Pullup SDA = 1 */
-	for (i = 7; i >= 0; i--) {
-		if (I2CGetBit())
-			*data |= (1<<i);
+	for (i = 0; i < 8; i++) {
+		I2CswSendBit(data & 0x80);
+		data <<= 1;
 	}
-	I2CSendBit(!ack);
+	I2CswSendBit(I2C_ACK);
 
-	return 0;
+	return;
+}
+
+uint8_t I2CswReadByte(uint8_t ack)
+{
+	uint8_t i, ret;
+
+	DDR(I2C_SDA) &= ~I2C_SDA_LINE;			/* Pullup SDA = 1 */
+
+	ret = 0;
+	for (i = 0; i < 8; i++) {
+		ret <<= 1;
+		if (I2CswGetBit())
+			ret |= 0x01;
+	}
+	I2CswSendBit(!ack);
+
+	return ret;
 }

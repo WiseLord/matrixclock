@@ -47,16 +47,16 @@ int8_t *readTime(void)
 	uint8_t temp;
 	uint8_t i;
 
-	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_SEC);
-	I2CStart(DS1307_ADDR | I2C_READ);
+	I2CswStart(DS1307_ADDR);
+	I2CswWriteByte(DS1307_SEC);
+	I2CswStart(DS1307_ADDR | I2C_READ);
 	for (i = DS1307_SEC; i < DS1307_YEAR; i++) {
-		I2CReadByte(&temp, I2C_ACK);
+		temp = I2CswReadByte(I2C_ACK);
 		time[i] = BD2D(temp);
 	}
-	I2CReadByte(&temp, I2C_NOACK);
+	temp = I2CswReadByte(I2C_NOACK);
 	time[DS1307_YEAR] = BD2D(temp);
-	I2CStop();
+	I2CswStop();
 
 	return time;
 }
@@ -70,11 +70,11 @@ static void writeTime(void)
 	if (_etm >= DS1307_DATE)
 		calcWeekDay();
 
-	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_SEC);
+	I2CswStart(DS1307_ADDR);
+	I2CswWriteByte(DS1307_SEC);
 	for (i = DS1307_SEC; i <= DS1307_YEAR; i++)
-		I2CWriteByte(D2BD(time[i]));
-	I2CStop();
+		I2CswWriteByte(D2BD(time[i]));
+	I2CswStop();
 
 	return;
 }
