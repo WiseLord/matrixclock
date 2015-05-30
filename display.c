@@ -171,14 +171,22 @@ static void showHMColon(uint8_t step, uint8_t pos)
 
 static uint8_t calcBrightness(void)
 {
-	int8_t hour, br;
+	int8_t hour;
+	static uint8_t br = 0;
 
-	hour = dateTime[DS1307_HOUR];
+	if (ADCH > 1) {							/* We have photoresistor */
+		if (br > (ADCH >> 4))
+			br--;
+		if (br < (ADCH >> 4))
+			br++;
+	} else {								/* Calculate br(hour) */
+		hour = dateTime[DS1307_HOUR];
 
-	if (hour <= 12)
-		br = (hour * 2) - 25 + brMax;
-	else
-		br = 31 - (hour * 2) + brMax;
+		if (hour <= 12)
+			br = (hour * 2) - 25 + brMax;
+		else
+			br = 31 - (hour * 2) + brMax;
+	}
 
 	if (br > MATRIX_MAX_BRIGHTNESS)
 		br = MATRIX_MAX_BRIGHTNESS;
