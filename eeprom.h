@@ -11,7 +11,7 @@
 #define EEPROM_BIGNUM			((void*)0x05)
 #define EEPROM_HOURZERO			((void*)0x06)
 
-#define EEPROM_BR_ADDR			((void*)0x08)
+#define EEPROM_BR_MAX			((void*)0x08)
 
 /* Text labels (maximum 15 byte followed by \0) */
 #define EEPROM_LABELS			((uint8_t*)0x40)

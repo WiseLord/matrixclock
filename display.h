@@ -33,19 +33,13 @@ enum {
 #define MASK_SEC_TENS			0x00000070UL
 #define MASK_SEC_UNITS			0x00000007UL
 
-#define MASK_BR_TENS			0x0001E000UL
-#define MASK_BR_UNITS			0x00000F00UL
+#define MASK_BR_TENS			0xF0000000UL
+#define MASK_BR_UNITS			0x07800000UL
 
 #define MASK_ALARM				0x07C00000UL
 
 #define MASK_NONE				0x00000000UL
 #define MASK_ALL				0xFFFFFFFFUL
-
-enum {
-	HOUR_CURRENT = 0,
-	HOUR_NEXT,
-	HOUR_PREV,
-};
 
 enum {
 	SCROLL_DATE = 0,
@@ -66,6 +60,7 @@ void showAlarmEdit(int8_t ch_dir);
 void setBrightnessHour(uint8_t mode);
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
+void saveMaxBrightness(void);
 void checkAlarmAndBrightness(void);
 
 #endif /* DISPLAY_H */

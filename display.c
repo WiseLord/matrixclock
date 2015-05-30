@@ -18,8 +18,7 @@ static uint32_t timeMask = MASK_ALL;
 
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
-static int8_t brHour;
-static int8_t brightness;
+static int8_t brMax;
 
 static uint8_t bigNum = 0;
 static uint8_t hourZero = '0';
@@ -122,11 +121,9 @@ void displayInit(void)
 		}
 	}
 
-	dateTime = readTime();
 	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
 	hourZero = eeprom_read_byte(EEPROM_HOURZERO);
-
-	brHour = dateTime[DS1307_HOUR];
+	brMax = eeprom_read_byte(EEPROM_BR_MAX);
 
 	return;
 }
@@ -170,6 +167,25 @@ static void showHMColon(uint8_t step, uint8_t pos)
 	matrixPosData(pos + 1, value);
 
 	return;
+}
+
+static uint8_t calcBrightness(void)
+{
+	int8_t hour, br;
+
+	hour = dateTime[DS1307_HOUR];
+
+	if (hour <= 12)
+		br = (hour * 2) - 25 + brMax;
+	else
+		br = 31 - (hour * 2) + brMax;
+
+	if (br > MATRIX_MAX_BRIGHTNESS)
+		br = MATRIX_MAX_BRIGHTNESS;
+	if (br < MATRIX_MIN_BRIGHTNESS)
+		br = MATRIX_MIN_BRIGHTNESS;
+
+	return br;
 }
 
 void showTime(uint32_t mask)
@@ -268,8 +284,6 @@ void showTime(uint32_t mask)
 		showHMColon(digit, 10);
 		matrixPosData(23, getRawAlarmWeekday());
 	}
-
-	brightness = eeprom_read_byte(EEPROM_BR_ADDR + hour);
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
@@ -447,30 +461,14 @@ void showAlarmEdit(int8_t ch_dir)
 	return;
 }
 
-void setBrightnessHour(uint8_t mode)
-{
-	eeprom_update_byte(EEPROM_BR_ADDR + brHour, brightness);
-
-	if (mode == HOUR_CURRENT) {
-		brHour = dateTime[DS1307_HOUR];
-	} else if (mode == HOUR_NEXT) {
-		if (++brHour >= 24)
-			brHour = 0;
-	}
-
-	brightness = eeprom_read_byte(EEPROM_BR_ADDR + brHour);
-
-	return;
-}
-
 void changeBrightness(int8_t diff)
 {
-	brightness += diff;
+	brMax += diff;
 
-	if (brightness > MATRIX_MAX_BRIGHTNESS) {
-		brightness = MATRIX_MIN_BRIGHTNESS;
-	} else if (brightness < MATRIX_MIN_BRIGHTNESS) {
-		brightness = MATRIX_MAX_BRIGHTNESS;
+	if (brMax > MATRIX_MAX_BRIGHTNESS) {
+		brMax = MATRIX_MIN_BRIGHTNESS;
+	} else if (brMax < MATRIX_MIN_BRIGHTNESS) {
+		brMax = MATRIX_MAX_BRIGHTNESS;
 	}
 
 	return;
@@ -478,23 +476,16 @@ void changeBrightness(int8_t diff)
 
 void showBrightness(int8_t ch_dir, uint32_t mask)
 {
-	static int8_t oldHour;
-	static uint8_t oldBrightness;
+	static uint8_t oldBrMax;
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(brHour, 2, 0, ' '));
-	matrixLoadString("\xBB");
-	matrixSetX(15);
-	matrixLoadString(mkNumberString(brightness, 2, 0, ' '));
-	matrixLoadString("\xA4");
+	matrixLoadString(mkNumberString(brMax, 2, 0, ' '));
+	matrixSetX(12);
+	matrixLoadString("\xA4\xA4\xA4");
 
-	if (oldHour / 10 != brHour / 10)
-		mask  |= MASK_HOUR_TENS;
-	if (oldHour % 10 != brHour % 10)
-		mask  |= MASK_HOUR_UNITS;
-	if (oldBrightness / 10 != brightness / 10)
+	if (oldBrMax / 10 != brMax / 10)
 		mask  |= MASK_BR_TENS;
-	if (oldBrightness % 10 != brightness % 10)
+	if (oldBrMax % 10 != brMax % 10)
 		mask  |= MASK_BR_UNITS;
 
 	if (ch_dir == PARAM_UP)
@@ -502,8 +493,16 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	else
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
-	oldHour = brHour;
-	oldBrightness = brightness;
+	oldBrMax = brMax;
+
+	matrixSetBrightness(brMax);
+
+	return;
+}
+
+void saveMaxBrightness(void)
+{
+	eeprom_update_byte(EEPROM_BR_MAX, brMax);
 
 	return;
 }
@@ -526,7 +525,7 @@ void checkAlarmAndBrightness(void)
 	}
 
 	/* Check brightness */
-	matrixSetBrightness(brightness);
+	matrixSetBrightness(calcBrightness());
 
 	return;
 }

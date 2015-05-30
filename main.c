@@ -43,7 +43,8 @@ int main(void)
 			ds18x20Process();
 		}
 
-		checkAlarmAndBrightness();
+		if (dispMode != MODE_BRIGHTNESS)
+			checkAlarmAndBrightness();
 
 		/* Get command from buttons */
 		cmd = getBtnCmd();
@@ -79,9 +80,6 @@ int main(void)
 				} else {
 					editAlarm();
 				}
-				break;
-			case MODE_BRIGHTNESS:
-				setBrightnessHour(HOUR_NEXT);
 				break;
 			}
 			break;
@@ -146,10 +144,10 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3_LONG:
-			setBrightnessHour(HOUR_CURRENT);
 			switch (dispMode) {
 			case MODE_BRIGHTNESS:
 				dispMode = MODE_MAIN;
+				saveMaxBrightness();
 				showTime(MASK_ALL);
 				break;
 			case MODE_MAIN:
