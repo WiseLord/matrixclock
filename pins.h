@@ -33,6 +33,8 @@
 #define I2C_SDA				B
 #define I2C_SDA_LINE		(1<<2)
 
+#define ADC_CHANNEL			7
+
 #else
 
 #define ONE_WIRE			D
@@ -52,6 +54,8 @@
 #define I2C_SCL_LINE		(1<<5)
 #define I2C_SDA				C
 #define I2C_SDA_LINE		(1<<4)
+
+#define ADC_CHANNEL			0
 
 #endif
 

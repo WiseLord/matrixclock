@@ -19,7 +19,7 @@ void hwInit(void)
 	matrixInit();
 
 	mTimerInit();
-	matrixScrollTimerInit();
+	matrixScrollAndADCInit();
 
 	initAlarm();
 

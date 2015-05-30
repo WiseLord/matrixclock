@@ -50,7 +50,7 @@ void matrixSetX(int16_t x);
 void matrixLoadString(char *string);
 void matrixLoadNumString(char *string, uint8_t numType);
 void matrixLoadStringEeprom(uint8_t *string);
-void matrixScrollTimerInit(void);
+void matrixScrollAndADCInit(void);
 void matrixHwScroll(uint8_t status);
 uint8_t matrixGetScrollMode(void);
 
