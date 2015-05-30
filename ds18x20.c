@@ -66,21 +66,24 @@ static void ds18x20SendByte(uint8_t byte)
 {
 	uint8_t i;
 
-	for (i = 0; i < 8; i++)
-		ds18x20SendBit(byte & (1<<i));
+	for (i = 0; i < 8; i++) {
+		ds18x20SendBit(byte & 0x01);
+		byte >>= 1;
+	}
 
 	return;
 }
 
 static uint8_t ds18x20GetByte(void)
 {
-	uint8_t i, ret = 0;
+	uint8_t i, ret;
 
-	for (i = 0; i < 8; i++)
+	ret = 0;
+	for (i = 0; i < 8; i++) {
+		ret >>= 1;
 		if (ds18x20GetBit())
-			ret |= (1<<i);
-		else
-			ret &= ~(1<<i);
+			ret |= 0x80;
+	}
 
 	return ret;
 }
@@ -100,9 +103,8 @@ static void ds18x20Select(ds18x20Dev *dev)
 static void getAllTemps()
 {
 	uint8_t i, j;
-
-	uint8_t arr[DS18X20_SCRATCH_LEN];
 	uint8_t crc;
+	static uint8_t arr[DS18X20_SCRATCH_LEN];
 
 	for (i = 0; i < devCount; i++) {
 		if (ds18x20IsOnBus()) {
@@ -252,22 +254,17 @@ uint8_t ds18x20Process(void)
 
 int16_t ds18x20GetTemp(uint8_t num)
 {
-	int16_t ret = 0;
+	int16_t ret = devs[num].temp;
 
 	if (devs[num].id[0] == 0x28) /* DS18B20 */
-		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5 / 8;
+		ret = ret * 5 / 8;
 	else if (devs[num].id[0] == 0x10) /* DS18S20 */
-		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 2;
+		ret = ret * 2;
 
 	return ret;
 }
 
-ds18x20Dev ds18x20GetDev(uint8_t num)
-{
-	return devs[num];
-}
-
-uint8_t getDevCount(void)
+uint8_t ds18x20GetDevCount(void)
 {
 	return devCount;
 }

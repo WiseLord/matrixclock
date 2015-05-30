@@ -25,15 +25,17 @@
 #define DS18X20_MAX_DEV				2
 #define DS18X20_SCRATCH_LEN			9
 
-typedef struct {
-	uint8_t id[8];		/* 64 bit ds18x20 device ID. */
-	uint8_t sp[9];		/* Scratchpad memory */
+typedef union {
+	int16_t temp;
+	struct {
+		uint8_t sp[9];
+		uint8_t id[8];
+	};
 } ds18x20Dev;
 
 void ds18x20SearchDevices(void);
 uint8_t ds18x20Process(void);
 int16_t ds18x20GetTemp(uint8_t num);
-ds18x20Dev ds18x20GetDev(uint8_t num);
-uint8_t getDevCount(void);
+uint8_t ds18x20GetDevCount(void);
 
 #endif /* DS18X20_H */

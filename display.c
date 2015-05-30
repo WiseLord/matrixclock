@@ -83,7 +83,7 @@ static void loadTempString(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < getDevCount(); i++) {
+	for (i = 0; i < ds18x20GetDevCount(); i++) {
 		if (i > 0)
 			matrixLoadString(", ");
 		matrixLoadString(mkNumberString(ds18x20GetTemp(i), 4, 1, ' '));
