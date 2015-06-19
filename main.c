@@ -8,12 +8,15 @@
 #include "ds18x20.h"
 #include "rtc.h"
 #include "alarm.h"
+#include "bmp180.h"
 
 void hwInit(void)
 {
 	_delay_ms(100);
 	sei();
 	ds18x20SearchDevices();
+
+	bmp180Init();
 
 	displayInit();
 	matrixInit();
@@ -44,6 +47,8 @@ int main(void)
 		if (getTempStartTimer() == 0) {
 			setTempStartTimer(TEMP_POLL_INTERVAL);
 			ds18x20Process();
+			if (bmp180HaveSensor())
+				bmp180Convert();
 		}
 
 		if (dispMode != MODE_BRIGHTNESS)

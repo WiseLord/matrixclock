@@ -6,6 +6,7 @@
 #include "mtimer.h"
 #include "alarm.h"
 #include "eeprom.h"
+#include "bmp180.h"
 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
@@ -93,6 +94,19 @@ static void loadTempString(void)
 		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
 		matrixLoadString(" ");
 		matrixLoadStringEeprom(txtLabels[LABEL_TEMP1 + i]);
+	}
+	if (bmp180HaveSensor()) {
+		matrixLoadString(", ");
+		matrixLoadString(mkNumberString(bmp180GetTemp(), 4, 1, ' '));
+		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
+		matrixLoadString(" ");
+		matrixLoadStringEeprom(txtLabels[LABEL_TEMP3]);
+		matrixLoadString(", ");
+		matrixLoadStringEeprom(txtLabels[LABEL_PRESSURE]);
+		matrixLoadString(" ");
+		matrixLoadString(mkNumberString(bmp180GetPressure(), 4, 1, ' '));
+		matrixLoadString(" ");
+		matrixLoadStringEeprom(txtLabels[LABEL_MMHG]);
 	}
 
 	return;
