@@ -1,4 +1,4 @@
-LED_DRIVER = MAX7219
+LED_DRIVER = HT1632
 
 MCU = atmega8
 
