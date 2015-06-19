@@ -70,9 +70,13 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 static void loadDateString(void)
 {
 	matrixLoadStringEeprom(txtLabels[dateTime[DS1307_WDAY] % 7]);
+	matrixLoadString(", ");
 	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
+	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + dateTime[DS1307_MONTH] % 12]);
+	matrixLoadString(" ");
 	matrixLoadString(mkNumberString(2000 + dateTime[DS1307_YEAR], 4, 0, '0'));
+	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
 
 	return;
@@ -87,8 +91,8 @@ static void loadTempString(void)
 			matrixLoadString(", ");
 		matrixLoadString(mkNumberString(ds18x20GetTemp(i), 4, 1, ' '));
 		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
+		matrixLoadString(" ");
 		matrixLoadStringEeprom(txtLabels[LABEL_TEMP1 + i]);
-
 	}
 
 	return;

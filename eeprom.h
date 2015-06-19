@@ -14,7 +14,7 @@
 #define EEPROM_BR_MAX			((void*)0x08)
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define EEPROM_LABELS			((uint8_t*)0x40)
+#define EEPROM_LABELS			((uint8_t*)0x10)
 
 /* Big numbers font (10 * 5 bytes) */
 #define EEPROM_BIG_NUM_FONT		((uint8_t*)0x1C0)
