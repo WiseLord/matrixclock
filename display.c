@@ -86,6 +86,8 @@ static void loadTempString(void)
 {
 	uint8_t i;
 
+	matrixLoadStringEeprom(txtLabels[LABEL_TEMPERATURE]);
+
 	for (i = 0; i < ds18x20GetDevCount(); i++) {
 		if (i > 0)
 			matrixLoadString(", ");
