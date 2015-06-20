@@ -30,12 +30,12 @@ typedef struct {
 	uint8_t etm;
 } RTC_type;
 
+extern RTC_type rtc;
+
 #define NOEDIT				0xFF
 
-uint8_t getEtm();
-int8_t *readTime(void);
+void readTime(void);
 void stopEditTime(void);
-uint8_t isETM(void);
 void editTime(void);
 void changeTime(int8_t diff);
 

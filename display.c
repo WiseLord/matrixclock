@@ -10,7 +10,6 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
-int8_t *dateTime;
 int8_t *alarm;
 
 char strbuf[8];
@@ -69,13 +68,13 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 
 static void loadDateString(void)
 {
-	matrixLoadStringEeprom(txtLabels[(LABEL_SATURDAY + dateTime[DS1307_WDAY]) % 7]);
+	matrixLoadStringEeprom(txtLabels[(LABEL_SATURDAY + rtc.wday) % 7]);
 	matrixLoadString(", ");
-	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
+	matrixLoadString(mkNumberString(rtc.date, 2, 0, ' '));
 	matrixLoadString(" ");
-	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + dateTime[DS1307_MONTH] % 12]);
+	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
 	matrixLoadString(" ");
-	matrixLoadString(mkNumberString(2000 + dateTime[DS1307_YEAR], 4, 0, '0'));
+	matrixLoadString(mkNumberString(2000 + rtc.year, 4, 0, '0'));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
 
@@ -172,7 +171,6 @@ static void showHMColon(uint8_t step, uint8_t pos)
 
 static uint8_t calcBrightness(void)
 {
-	int8_t hour;
 	int8_t br = 0;
 
 	if (ADCH > 1) {							/* We have photoresistor */
@@ -181,12 +179,10 @@ static uint8_t calcBrightness(void)
 		if (br < (ADCH >> 4))
 			br++;
 	} else {								/* Calculate br(hour) */
-		hour = dateTime[DS1307_HOUR];
-
-		if (hour <= 12)
-			br = (hour * 2) - 25 + brMax;
+		if (rtc.hour <= 12)
+			br = (rtc.hour * 2) - 25 + brMax;
 		else
-			br = 31 - (hour * 2) + brMax;
+			br = 31 - (rtc.hour * 2) + brMax;
 	}
 
 	if (br > MATRIX_MAX_BRIGHTNESS)
@@ -202,32 +198,28 @@ void showTime(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
 	uint8_t digit;
 
-	uint8_t hour = dateTime[DS1307_HOUR];
-	uint8_t min = dateTime[DS1307_MIN];
-	uint8_t sec = dateTime[DS1307_SEC];
-
 	etmOld = NOEDIT;
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(1);
 	else
 		matrixSetX(0);
-	mkNumberString(hour, 2, 0, hourZero);
+	mkNumberString(rtc.hour, 2, 0, hourZero);
 	matrixLoadNumString(strbuf, bigNum);
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(18);
 	else
 		matrixSetX(13);
-	mkNumberString(min, 2, 0, '0');
+	mkNumberString(rtc.min, 2, 0, '0');
 	matrixLoadNumString(strbuf, bigNum);
 
 	if (bigNum != NUM_EXTRA) {
 		matrixSetX(25);
-		matrixLoadNumString(mkNumberString(sec, 2, 0, '0'), NUM_SMALL);
+		matrixLoadNumString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
 
-	digit = hour / 10;
+	digit = rtc.hour / 10;
 	if (oldHourTens != digit) {
 		if (bigNum == NUM_EXTRA)
 			mask |= MASK_EXTRAHOUR_TENS;
@@ -238,7 +230,7 @@ void showTime(uint32_t mask)
 	}
 	oldHourTens = digit;
 
-	digit = hour % 10;
+	digit = rtc.hour % 10;
 	if (oldHourUnits != digit) {
 		if (bigNum == NUM_EXTRA)
 			mask |= MASK_EXTRAHOUR_UNITS;
@@ -249,7 +241,7 @@ void showTime(uint32_t mask)
 	}
 	oldHourUnits = digit;
 
-	digit = min / 10;
+	digit = rtc.min / 10;
 	if (oldMinTens != digit) {
 		if (bigNum == NUM_EXTRA)
 			mask |= MASK_EXTRAMIN_TENS;
@@ -260,7 +252,7 @@ void showTime(uint32_t mask)
 	}
 	oldMinTens = digit;
 
-	digit = min % 10;
+	digit = rtc.min % 10;
 	if (oldMinUnits != digit) {
 		if (bigNum == NUM_EXTRA)
 			mask |= MASK_EXTRAMIN_UNITS;
@@ -272,17 +264,17 @@ void showTime(uint32_t mask)
 	oldMinUnits = digit;
 
 	if (bigNum != NUM_EXTRA) {
-		digit = sec / 10;
+		digit = rtc.sec / 10;
 		if (oldSecTens != digit)
 			mask |= MASK_SEC_TENS;
 		oldSecTens = digit;
 
-		digit = sec % 10;
+		digit = rtc.sec % 10;
 		if (oldSecUnits != digit)
 			mask |= MASK_SEC_UNITS;
 		oldSecUnits = digit;
 	}
-	digit = sec & 0x01;
+	digit = rtc.sec & 0x01;
 	if (bigNum == NUM_BIG) {
 		matrixPosData(11, (!digit) << 7);
 		matrixPosData(12, digit << 7);
@@ -325,10 +317,11 @@ void showMainScreen(void)
 {
 	if (matrixGetScrollMode() == 0) {
 		showTime(timeMask);
-		if (dateTime[DS1307_SEC] == 10) {
-			scroll(SCROLL_DATE);
-		} else if (dateTime[DS1307_SEC] == 40) {
-			scroll(SCROLL_TEMP);
+		if (rtc.sec == 20) {
+			if (rtc.min & 0x01)
+				scroll(SCROLL_DATE);
+			else
+				scroll(SCROLL_TEMP);
 		} else {
 			timeMask = MASK_NONE;
 		}
@@ -340,23 +333,21 @@ void showMainScreen(void)
 void showTimeEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
-	uint8_t etm;
 
 	static int8_t timeOld = 0;
-
-	etm = getEtm();
+	uint8_t time = *((uint8_t*)(&rtc) + rtc.etm);
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(dateTime[etm], 2, 0, ' '));
+	matrixLoadString(mkNumberString(time, 2, 0, ' '));
 	matrixSetX(13);
-	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + etm]);
+	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + rtc.etm]);
 
-	if (timeOld / 10 != dateTime[etm] / 10)
+	if (timeOld / 10 != time / 10)
 		mask  |= MASK_HOUR_TENS;
-	if (timeOld % 10 != dateTime[etm] % 10)
+	if (timeOld % 10 != time % 10)
 		mask  |= MASK_HOUR_UNITS;
 
-	if (etmOld != etm)
+	if (etmOld != rtc.etm)
 		mask |= MASK_ALL;
 
 	if (ch_dir == PARAM_UP)
@@ -364,8 +355,8 @@ void showTimeEdit(int8_t ch_dir)
 	else
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
-	timeOld = dateTime[etm];
-	etmOld = etm;
+	timeOld = time;
+	etmOld = rtc.etm;
 
 	return;
 }
@@ -518,16 +509,16 @@ void saveMaxBrightness(void)
 
 void checkAlarmAndBrightness(void)
 {
-	dateTime = readTime();
+	readTime();
 	alarm = readAlarm();
 
 	/* Check alarm */
-	if (dateTime[DS1307_HOUR] == alarm[A_HOUR] && dateTime[DS1307_MIN] == alarm[A_MIN]) {
-		if (getRawAlarmWeekday() & (1 << ((dateTime[DS1307_WDAY] + 5) % 7)))
+	if (rtc.hour == alarm[A_HOUR] && rtc.min == alarm[A_MIN]) {
+		if (getRawAlarmWeekday() & (1 << ((rtc.wday + 5) % 7)))
 			startAlarm(60000);
 	} else {
 		/* Check new hour */
-		if (dateTime[DS1307_HOUR] > alarm[A_HOUR] && dateTime[DS1307_MIN] == 0)
+		if (rtc.hour > alarm[A_HOUR] && rtc.min == 0)
 			startAlarm(160);
 		else
 			alarmFlag = 1;

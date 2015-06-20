@@ -2,14 +2,7 @@
 
 #include "i2csw.h"
 
-static RTC_type rtc;
-
-static uint8_t _etm = NOEDIT;
-
-uint8_t getEtm()
-{
-	return _etm;
-}
+RTC_type rtc;
 
 static void calcWeekDay(void)
 {
@@ -43,7 +36,7 @@ static uint8_t daysInMonth()
 	return 31;
 }
 
-int8_t *readTime(void)
+void readTime(void)
 {
 	uint8_t temp;
 	uint8_t i;
@@ -59,7 +52,7 @@ int8_t *readTime(void)
 	rtc.year = BD2D(temp);
 	I2CswStop();
 
-	return (int8_t*)&rtc;
+	return;
 }
 
 static void writeTime(void)
@@ -68,7 +61,7 @@ static void writeTime(void)
 
 	if (rtc.date > daysInMonth())
 		rtc.date = daysInMonth();
-	if (_etm >= DS1307_DATE)
+	if (rtc.etm >= DS1307_DATE)
 		calcWeekDay();
 
 	I2CswStart(DS1307_ADDR);
@@ -82,34 +75,27 @@ static void writeTime(void)
 
 void stopEditTime(void)
 {
-	_etm = NOEDIT;
+	rtc.etm = NOEDIT;
 
 	return;
 }
 
-uint8_t isETM(void)
-{
-	if (_etm == NOEDIT)
-		return 0;
-	return 1;
-}
-
 void editTime(void)
 {
-	switch (_etm) {
+	switch (rtc.etm) {
 	case DS1307_HOUR:
 	case DS1307_MIN:
-		_etm--;
+		rtc.etm--;
 		break;
 	case DS1307_SEC:
-		_etm = DS1307_DATE;
+		rtc.etm = DS1307_DATE;
 		break;
 	case DS1307_DATE:
 	case DS1307_MONTH:
-		_etm++;
+		rtc.etm++;
 		break;
 	default:
-		_etm = DS1307_HOUR;
+		rtc.etm = DS1307_HOUR;
 		break;
 	}
 
@@ -118,7 +104,7 @@ void editTime(void)
 
 void changeTime(int8_t diff)
 {
-	switch (_etm) {
+	switch (rtc.etm) {
 	case DS1307_HOUR:
 		rtc.hour += diff;
 		if (rtc.hour > 23)

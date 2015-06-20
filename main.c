@@ -22,6 +22,7 @@ void hwInit(void)
 	matrixScrollAndADCInit();
 
 	initAlarm();
+	stopEditTime();
 
 	return;
 }
