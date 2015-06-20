@@ -10,8 +10,6 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
-int8_t *alarm;
-
 char strbuf[8];
 static uint32_t timeMask = MASK_ALL;
 
@@ -23,7 +21,8 @@ static uint8_t bigNum = 0;
 static uint8_t hourZero = '0';
 
 static uint8_t etmOld = RTC_NOEDIT;
-static uint8_t amOld = ALARM_NOEDIT;
+static uint8_t eamOld = ALARM_NOEDIT;
+
 static uint8_t alarmFlag = 1;
 
 static void startAlarm(uint16_t duration)
@@ -283,7 +282,7 @@ void showTime(uint32_t mask)
 		showHMColon(digit + 3, 15);
 	} else {
 		showHMColon(digit, 10);
-		matrixPosData(23, getRawAlarmWeekday());
+		matrixPosData(23, alarmRawWeekday());
 	}
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
@@ -366,40 +365,37 @@ void showAlarm(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
 	uint8_t digit;
 
-	uint8_t hour = alarm[ALARM_HOUR];
-	uint8_t min = alarm[ALARM_MIN];
-
-	amOld = ALARM_NOEDIT;
+	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
-	matrixLoadString(mkNumberString(hour, 2, 0, ' '));
+	matrixLoadString(mkNumberString(alarm.hour, 2, 0, ' '));
 	matrixSetX(13);
-	matrixLoadString(mkNumberString(min, 2, 0, '0'));
+	matrixLoadString(mkNumberString(alarm.min, 2, 0, '0'));
 	matrixSetX(26);
 	matrixLoadString("\xA0");
 
-	digit = hour / 10;
+	digit = alarm.hour / 10;
 	if (oldHourTens != digit)
-		mask  |= MASK_HOUR_TENS;
+		mask |= MASK_HOUR_TENS;
 	oldHourTens = digit;
 
-	digit = hour % 10;
+	digit = alarm.hour % 10;
 	if (oldHourUnits != digit)
-		mask  |= MASK_HOUR_UNITS;
+		mask |= MASK_HOUR_UNITS;
 	oldHourUnits = digit;
 
-	digit = min / 10;
+	digit = alarm.min / 10;
 	if (oldMinTens != digit)
-		mask  |= MASK_MIN_TENS;
+		mask |= MASK_MIN_TENS;
 	oldMinTens = digit;
 
-	digit = min % 10;
+	digit = alarm.min % 10;
 	if (oldMinUnits != digit)
-		mask  |= MASK_MIN_UNITS;
+		mask |= MASK_MIN_UNITS;
 	oldMinUnits = digit;
 
 	showHMColon(2, 10);
-	matrixPosData(23, getRawAlarmWeekday());
+	matrixPosData(23, alarmRawWeekday());
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 
@@ -410,44 +406,42 @@ void showAlarmEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
 
-	int8_t alarm;
-	uint8_t am;
+	int8_t alarm_;
 	static int8_t alarmOld = 0;
 
-	am = getAlarmMode();
-	alarm = getAlarm(am);
+	alarm_ = *((int8_t*)&alarm + alarm.eam);
 
 	matrixSetX(0);
 
-	switch (am) {
+	switch (alarm.eam) {
 	case ALARM_HOUR:
-		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
+		matrixLoadString(mkNumberString(alarm_, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
 		break;
 	case ALARM_MIN:
-		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
+		matrixLoadString(mkNumberString(alarm_, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
 		break;
 	default:
-		if (alarm)
+		if (alarm_)
 			matrixLoadString(" \xA0 ");
 		else {
 			matrixLoadString("   ");
 		}
 		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - ALARM_MON]);
+		matrixLoadStringEeprom(txtLabels[LABEL_MO + alarm.eam - ALARM_MON]);
 
 		break;
 	}
 
-	if (alarmOld / 10 != alarm / 10)
+	if (alarmOld / 10 != alarm_ / 10)
 		mask  |= MASK_HOUR_TENS;
-	if (alarmOld % 10 != alarm % 10)
+	if (alarmOld % 10 != alarm_ % 10)
 		mask  |= MASK_ALARM;
 
-	if (amOld != am)
+	if (eamOld != alarm.eam)
 		mask |= MASK_ALL;
 
 	if (ch_dir == PARAM_UP)
@@ -455,8 +449,8 @@ void showAlarmEdit(int8_t ch_dir)
 	else
 		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
-	alarmOld = alarm;
-	amOld = am;
+	alarmOld = alarm_;
+	eamOld = alarm.eam;
 
 	return;
 }
@@ -510,15 +504,14 @@ void saveMaxBrightness(void)
 void checkAlarmAndBrightness(void)
 {
 	rtcReadTime();
-	alarm = readAlarm();
 
 	/* Check alarm */
-	if (rtc.hour == alarm[ALARM_HOUR] && rtc.min == alarm[ALARM_MIN]) {
-		if (getRawAlarmWeekday() & (1 << ((rtc.wday + 5) % 7)))
+	if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
+		if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
 			startAlarm(60000);
 	} else {
 		/* Check new hour */
-		if (rtc.hour > alarm[ALARM_HOUR] && rtc.min == 0)
+		if (rtc.hour > alarm.hour && rtc.min == 0)
 			startAlarm(160);
 		else
 			alarmFlag = 1;

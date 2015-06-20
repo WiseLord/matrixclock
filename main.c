@@ -21,7 +21,7 @@ void hwInit(void)
 	mTimerInit();
 	matrixScrollAndADCInit();
 
-	initAlarm();
+	alarmInit();
 	rtcStopEditTime();
 
 	return;
@@ -72,14 +72,14 @@ int main(void)
 				break;
 			case MODE_ALARM:
 				dispMode = MODE_EDIT_ALARM;
-				editAlarm();
+				alarmNextEditParam();
 				break;
 			case MODE_EDIT_ALARM:
-				if (getAlarmMode() == ALARM_SUN) {
+				if (alarm.eam == ALARM_SUN) {
 					dispMode = MODE_ALARM;
 					showAlarm(MASK_ALL);
 				} else {
-					editAlarm();
+					alarmNextEditParam();
 				}
 				break;
 			}
@@ -94,7 +94,7 @@ int main(void)
 				rtcChangeTime(PARAM_UP);
 				break;
 			case MODE_EDIT_ALARM:
-				changeAlarm(PARAM_UP);
+				alarmChange(PARAM_UP);
 				break;
 			case MODE_BRIGHTNESS:
 				changeBrightness(PARAM_UP);
@@ -111,7 +111,7 @@ int main(void)
 				rtcChangeTime(PARAM_DOWN);
 				break;
 			case MODE_EDIT_ALARM:
-				changeAlarm(PARAM_DOWN);
+				alarmChange(PARAM_DOWN);
 				break;
 			case MODE_BRIGHTNESS:
 				changeBrightness(PARAM_DOWN);
@@ -136,7 +136,7 @@ int main(void)
 			case MODE_EDIT_ALARM:
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
-				writeAlarm();
+				alarmSave();
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_ALARM;

@@ -13,6 +13,7 @@ enum {
 	ALARM_FRI,
 	ALARM_SAT,
 	ALARM_SUN,
+	ALARM_ETM
 };
 
 typedef struct {
@@ -28,24 +29,14 @@ typedef struct {
 	int8_t eam;
 } Alarm_type;
 
-extern Alarm_type alrm;
+extern Alarm_type alarm;
 
 #define ALARM_NOEDIT			0xFF
 
-void initAlarm(void);
-
-int8_t getAlarm(uint8_t am);
-
-uint8_t getAlarmMode();
-
-int8_t *readAlarm(void);
-
-int8_t getRawAlarmWeekday(void);
-
-void writeAlarm(void);
-
-void editAlarm(void);
-
-void changeAlarm(int8_t diff);
+void alarmInit(void);
+void alarmSave(void);
+void alarmNextEditParam(void);
+void alarmChange(int8_t diff);
+int8_t alarmRawWeekday(void);
 
 #endif // ALARM_H
