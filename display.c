@@ -23,7 +23,7 @@ static uint8_t bigNum = 0;
 static uint8_t hourZero = '0';
 
 static uint8_t etmOld = RTC_NOEDIT;
-static alarmMode amOld = A_NOEDIT;
+static uint8_t amOld = ALARM_NOEDIT;
 static uint8_t alarmFlag = 1;
 
 static void startAlarm(uint16_t duration)
@@ -366,10 +366,10 @@ void showAlarm(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
 	uint8_t digit;
 
-	uint8_t hour = alarm[A_HOUR];
-	uint8_t min = alarm[A_MIN];
+	uint8_t hour = alarm[ALARM_HOUR];
+	uint8_t min = alarm[ALARM_MIN];
 
-	amOld = A_NOEDIT;
+	amOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(hour, 2, 0, ' '));
@@ -411,7 +411,7 @@ void showAlarmEdit(int8_t ch_dir)
 	uint32_t mask = MASK_NONE;
 
 	int8_t alarm;
-	alarmMode am;
+	uint8_t am;
 	static int8_t alarmOld = 0;
 
 	am = getAlarmMode();
@@ -420,12 +420,12 @@ void showAlarmEdit(int8_t ch_dir)
 	matrixSetX(0);
 
 	switch (am) {
-	case A_HOUR:
+	case ALARM_HOUR:
 		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
 		break;
-	case A_MIN:
+	case ALARM_MIN:
 		matrixLoadString(mkNumberString(alarm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
@@ -437,7 +437,7 @@ void showAlarmEdit(int8_t ch_dir)
 			matrixLoadString("   ");
 		}
 		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - A_MONDAY]);
+		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - ALARM_MONDAY]);
 
 		break;
 	}
@@ -513,12 +513,12 @@ void checkAlarmAndBrightness(void)
 	alarm = readAlarm();
 
 	/* Check alarm */
-	if (rtc.hour == alarm[A_HOUR] && rtc.min == alarm[A_MIN]) {
+	if (rtc.hour == alarm[ALARM_HOUR] && rtc.min == alarm[ALARM_MIN]) {
 		if (getRawAlarmWeekday() & (1 << ((rtc.wday + 5) % 7)))
 			startAlarm(60000);
 	} else {
 		/* Check new hour */
-		if (rtc.hour > alarm[A_HOUR] && rtc.min == 0)
+		if (rtc.hour > alarm[ALARM_HOUR] && rtc.min == 0)
 			startAlarm(160);
 		else
 			alarmFlag = 1;

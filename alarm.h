@@ -3,24 +3,26 @@
 
 #include <inttypes.h>
 
-typedef enum {
-	A_HOUR  = 0,
-	A_MIN   = 1,
-	A_MONDAY  = 2,
-	A_TUESDAY  = 3,
-	A_WEDNESDAY  = 4,
-	A_THURSDAY  = 5,
-	A_FRIDAY  = 6,
-	A_SATURDAY  = 7,
-	A_SUNDAY  = 8,
-	A_NOEDIT = 9
-} alarmMode;
+enum {
+	ALARM_HOUR = 0,
+	ALARM_MIN,
+	ALARM_MONDAY,
+	ALARM_TUESDAY,
+	ALARM_WEDNESDAY,
+	ALARM_THURSDAY,
+	ALARM_FRIDAY,
+	ALARM_SATURDAY,
+	ALARM_SUNDAY,
+};
+
+#define ALARM_NOEDIT			0xFF
+
 
 void initAlarm(void);
 
-int8_t getAlarm(alarmMode am);
+int8_t getAlarm(uint8_t am);
 
-alarmMode getAlarmMode();
+uint8_t getAlarmMode();
 
 int8_t *readAlarm(void);
 
