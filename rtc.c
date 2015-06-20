@@ -1,11 +1,12 @@
 #include "rtc.h"
 
+#include <avr/pgmspace.h>
 #include "i2csw.h"
 
 RTC_type rtc;
 
-static RTC_type rtcMin = {0, 0, 0, 1, 1, 1, 1, RTC_NOEDIT};
-static RTC_type rtcMax = {59, 59, 23, 7, 31, 12, 99, RTC_NOEDIT};
+const static RTC_type rtcMin PROGMEM = {0, 0, 0, 1, 1, 1, 1, RTC_NOEDIT};
+const static RTC_type rtcMax PROGMEM = {59, 59, 23, 7, 31, 12, 99, RTC_NOEDIT};
 
 static void rtcWeekDay(void)
 {
@@ -104,8 +105,8 @@ void rtcNextEditParam(void)
 void rtcChangeTime(int8_t diff)
 {
 	int8_t *time = (int8_t*)&rtc + rtc.etm;
-	int8_t timeMax = *((int8_t*)&rtcMax + rtc.etm);
-	int8_t timeMin = *((int8_t*)&rtcMin + rtc.etm);
+	int8_t timeMax = pgm_read_byte((int8_t*)&rtcMax + rtc.etm);
+	int8_t timeMin = pgm_read_byte((int8_t*)&rtcMin + rtc.etm);
 
 	if (rtc.etm == RTC_DATE)
 		timeMax = rtcDaysInMonth();
