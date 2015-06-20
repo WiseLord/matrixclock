@@ -33,8 +33,6 @@ int main(void)
 	uint8_t dispMode = MODE_MAIN;
 	int8_t direction = PARAM_UP;
 
-	uint32_t mask = MASK_ALL;
-
 	hwInit();
 
 	while(1) {
@@ -82,6 +80,8 @@ int main(void)
 					alarmNextEditParam();
 				}
 				break;
+			default:
+				showMainScreen(MASK_ALL);
 			}
 			break;
 		case CMD_BTN_2:
@@ -140,7 +140,7 @@ int main(void)
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_ALARM;
-				mask = MASK_ALL;
+				showAlarm(MASK_ALL);
 				break;
 			}
 			break;
@@ -153,7 +153,7 @@ int main(void)
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_BRIGHTNESS;
-				mask = MASK_ALL;
+				showBrightness(direction, MASK_ALL);
 				break;
 			}
 			break;
@@ -175,21 +175,19 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_MAIN:
-			showMainScreen();
+			showMainScreen(MASK_NONE);
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(direction);
 			break;
 		case MODE_ALARM:
-			showAlarm(mask);
-			mask = MASK_NONE;
+			showAlarm(MASK_NONE);
 			break;
 		case MODE_EDIT_ALARM:
 			showAlarmEdit(direction);
 			break;
 		case MODE_BRIGHTNESS:
-			showBrightness(direction, mask);
-			mask = MASK_NONE;
+			showBrightness(direction, MASK_NONE);
 			break;
 		}
 	}

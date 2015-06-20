@@ -11,7 +11,6 @@
 #include <avr/eeprom.h>
 
 char strbuf[8];
-static uint32_t timeMask = MASK_ALL;
 
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
@@ -300,29 +299,19 @@ void scroll(uint8_t type)
 	else
 		loadTempString();
 	matrixHwScroll(MATRIX_SCROLL_START);
-	timeMask = MASK_ALL;
 
 	return;
 }
 
-void setTimeMask(uint32_t tmsk)
-{
-	timeMask = tmsk;
-
-	return;
-}
-
-void showMainScreen(void)
+void showMainScreen(uint32_t mask)
 {
 	if (matrixGetScrollMode() == 0) {
-		showTime(timeMask);
+		showTime(mask);
 		if (rtc.sec == 20) {
 			if (rtc.min & 0x01)
 				scroll(SCROLL_DATE);
 			else
 				scroll(SCROLL_TEMP);
-		} else {
-			timeMask = MASK_NONE;
 		}
 	}
 
