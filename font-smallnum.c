@@ -1,3 +1,5 @@
+#include "fonts.h"
+
 #include <avr/pgmspace.h>
 
 const uint8_t font_smallnum[] PROGMEM = {

@@ -31,6 +31,14 @@ enum {
 	MATRIX_EFFECT_SCROLL_BOTH,
 };
 
+#if defined(HT1632)
+#define matrixInitDriver() ht1632Init()
+#define matrixUpdate(x, y) ht1632SendDataBuf(x, y)
+#else
+#define matrixInitDriver() max7219Init()
+#define matrixUpdate(x, y) max7219SendDataBuf(x, y)
+#endif
+
 enum {
 	NUM_SMALL,
 	NUM_NORMAL,
@@ -40,18 +48,25 @@ enum {
 };
 
 void matrixInit(void);
-void matrixScreenRotate(void);
+
 void matrixSetBrightness(uint8_t brightness);
+void matrixScreenRotate(void);
+
 void matrixFill(uint8_t data);
 void matrixClearBufTail(void);
+
 void matrixPosData(uint8_t pos, uint8_t data);
+
 void matrixSwitchBuf(uint32_t mask, uint8_t effect);
+
 void matrixSetX(int16_t x);
-void matrixLoadString(char *string);
-void matrixLoadNumString(char *string, uint8_t numType);
-void matrixLoadStringEeprom(uint8_t *string);
+
 void matrixScrollAndADCInit(void);
 void matrixHwScroll(uint8_t status);
 uint8_t matrixGetScrollMode(void);
+
+void matrixLoadNumString(char *string, uint8_t numSize);
+void matrixLoadString(char *string);
+void matrixLoadStringEeprom(uint8_t *string);
 
 #endif /* MATRIX_H */

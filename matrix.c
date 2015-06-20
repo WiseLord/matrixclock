@@ -13,7 +13,6 @@
 static uint8_t rotate = 0;
 
 static int16_t _col;						/* Current position */
-static int16_t _end;						/* End of string in buffer */
 
 static uint8_t fb[MATRIX_NUMBER * 8];
 static uint8_t strBuf[MATRIX_BUFFER_SIZE];
@@ -21,71 +20,56 @@ static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = 0;
 
-static void matrixLoadChar(uint8_t code)
-{
-	uint8_t i;
-	uint8_t pgmData;
-	uint16_t oft;
-
-	if (code > 128)
-		oft = code - ' ' - 0x20;
-	else
-		oft = code - ' ';
-	oft *= MATRIX_FONT_WIDTH;
-
-	for (i = 0; i < MATRIX_FONT_WIDTH; i++) {
-		pgmData = pgm_read_byte(font_cp1251_08 + oft + i);
-		if (pgmData != 0x99)
-			strBuf[_col++] = pgmData;
-	}
-	strBuf[_col++] = 0x00;
-
-	return;
-}
-
-static void matrixLoadNumChar(uint8_t code, uint8_t memType, const uint8_t *font, uint8_t width)
+static void matrixLoadChar(uint8_t numSize, uint8_t code)
 {
 	uint8_t i;
 	uint8_t data;
 	const uint8_t *oft;
+	uint8_t chOft;
+
+	const uint8_t *font = font_cp1251_08;
+	uint8_t width = MATRIX_FONT_WIDTH;
+	uint8_t memType = MATRIX_FONT_PROGMEM;
+
+	chOft = code - '0';
+
+	if (numSize == NUM_SMALL) {
+		font = font_smallnum;
+		width = MATRIX_SMALLNUM_WIDTH;
+	} else if (numSize == NUM_BIG) {
+		font = EEPROM_BIG_NUM_FONT;
+		width = MATRIX_BIGNUM_WIDTH;
+		memType = MATRIX_FONT_EEPROM;
+	} else if (numSize == NUM_EXTRA) {
+		font = EEPROM_EXTRA_NUM_FONT;
+		width = MATRIX_EXTRANUM_WIDTH;
+		memType = MATRIX_FONT_EEPROM;
+	} else {
+		chOft = code - ' ';
+		/* TODO: Remove it with full font */
+		if (code > 128)
+			chOft -= 0x20;
+	}
 
 	for (i = 0; i < width; i++) {
-		if (code < '0' || code > '9') {
-			data = 0x00;
-		} else {
-			oft = font + (code - 0x30) * width + i;
-			if (memType == MATRIX_FONT_EEPROM)
-				data = eeprom_read_byte(oft);
-			else if (memType == MATRIX_FONT_PROGMEM)
-				data = pgm_read_byte(oft);
-			else
-				data = *oft;
-		}
-		strBuf[_col++] = data;
+		oft = font + chOft * width + i;
+		if (memType == MATRIX_FONT_EEPROM)
+			data = eeprom_read_byte(oft);
+		else if (memType == MATRIX_FONT_PROGMEM)
+			data = pgm_read_byte(oft);
+		else
+			data = *oft;
+		if (data != VOID)
+			strBuf[_col++] = data;
 	}
 	strBuf[_col++] = 0x00;
-
-	return;
-}
-
-static void matrixUpdate(void)
-{
-#if defined(HT1632)
-	ht1632SendDataBuf(fb, rotate);
-#else
-	max7219SendDataBuf(fb, rotate);
-#endif
 
 	return;
 }
 
 void matrixInit(void)
 {
-#if defined(HT1632)
-	ht1632Init();
-#else
-	max7219Init();
-#endif
+	matrixInitDriver();
 
 	matrixFill(0x00);
 	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
@@ -121,17 +105,17 @@ void matrixFill(uint8_t data)
 	for (i = 0; i < sizeof(fb); i++)
 		fb[i] = data;
 
-	matrixUpdate();
+	matrixUpdate(fb, rotate);
 
 	return;
 }
 
 void matrixClearBufTail(void)
 {
-	_end = _col;
-	while(_col < MATRIX_BUFFER_SIZE)
-		strBuf[_col++] = 0x00;
-	_col = _end;
+	int16_t ptr = _col;
+
+	while(ptr < MATRIX_BUFFER_SIZE)
+		strBuf[ptr++] = 0x00;
 
 	return;
 }
@@ -153,22 +137,22 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 				switch (effect) {
 				case MATRIX_EFFECT_SCROLL_DOWN:
 					fb[j] <<= 1;
-					if (strBuf[j] & (128>>i))
+					if (strBuf[j] & (0x80 >> i))
 						fb[j] |= 0x01;
 					break;
 				case MATRIX_EFFECT_SCROLL_UP:
 					fb[j] >>= 1;
-					if (strBuf[j] & (1<<i))
+					if (strBuf[j] & (0x01 << i))
 						fb[j] |= 0x80;
 					break;
 				case MATRIX_EFFECT_SCROLL_BOTH:
 					if (j & 0x01) {
 						fb[j] <<= 1;
-						if (strBuf[j] & (128 >> i))
+						if (strBuf[j] & (0x80 >> i))
 							fb[j] |= 0x01;
 					} else {
 						fb[j] >>= 1;
-						if (strBuf[j] & (1<<i))
+						if (strBuf[j] & (0x01 << i))
 							fb[j] |= 0x80;
 					}
 					break;
@@ -179,7 +163,7 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 			}
 		}
 		_delay_ms(20);
-		matrixUpdate();
+		matrixUpdate(fb, rotate);
 	}
 
 	return;
@@ -188,55 +172,6 @@ void matrixSwitchBuf(uint32_t mask, uint8_t effect)
 void matrixSetX(int16_t x)
 {
 	_col = x;
-
-	return;
-}
-
-void matrixLoadString(char *string)
-{
-	while(*string)
-		matrixLoadChar(*string++);
-
-	matrixClearBufTail();
-
-	return;
-}
-
-void matrixLoadNumString(char *string, uint8_t numType)
-{
-	switch (numType) {
-	case NUM_SMALL:
-		while(*string)
-			matrixLoadNumChar(*string++, MATRIX_FONT_PROGMEM, font_smallnum, MATRIX_SMALLNUM_WIDTH);
-		break;
-	case NUM_BIG:
-		while(*string)
-			matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_BIG_NUM_FONT, MATRIX_BIGNUM_WIDTH);
-		break;
-	case NUM_EXTRA:
-		while(*string)
-			matrixLoadNumChar(*string++, MATRIX_FONT_EEPROM, EEPROM_EXTRA_NUM_FONT, MATRIX_EXTRANUM_WIDTH);
-		break;
-	default:
-		matrixLoadString(string);
-		break;
-	}
-
-	matrixClearBufTail();
-}
-
-void matrixLoadStringEeprom(uint8_t *string)
-{
-	char ch;
-	uint8_t i = 0;
-
-	ch = eeprom_read_byte(&string[i++]);
-	while(ch) {
-		matrixLoadChar(ch);
-		ch = eeprom_read_byte(&string[i++]);
-	}
-
-	matrixClearBufTail();
 
 	return;
 }
@@ -266,22 +201,21 @@ ISR (TIMER2_OVF_vect)
 	if (scrollMode) {
 		int8_t i;
 
-		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++) {
+		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++)
 			fb[i] = fb[i + 1];
-		}
 		fb[MATRIX_NUMBER * 8 - 1] = strBuf[scrollPos];
-		matrixUpdate();
+		matrixUpdate(fb, rotate);
 
 		scrollPos++;
 
-		if (scrollPos >= _end + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
+		if (scrollPos >= _col + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
 			scrollMode = 0;
 			scrollPos = 0;
 		}
 
 	}
 
-	// Start ADC conversion to brightness from photoresistor
+	// Start ADC conversion to get brightness from photoresistor
 	ADCSRA |= 1<<ADSC;
 
 	return;
@@ -298,4 +232,36 @@ void matrixHwScroll(uint8_t status)
 uint8_t matrixGetScrollMode(void)
 {
 	return scrollMode;
+}
+
+
+void matrixLoadNumString(char *string, uint8_t numSize)
+{
+	while(*string)
+		matrixLoadChar(numSize, *string++);
+
+	matrixClearBufTail();
+}
+
+void matrixLoadString(char *string)
+{
+	matrixLoadNumString(string, NUM_NORMAL);
+
+	return;
+}
+
+void matrixLoadStringEeprom(uint8_t *string)
+{
+	char ch;
+	uint8_t i = 0;
+
+	ch = eeprom_read_byte(&string[i++]);
+	while(ch) {
+		matrixLoadChar(NUM_NORMAL, ch);
+		ch = eeprom_read_byte(&string[i++]);
+	}
+
+	matrixClearBufTail();
+
+	return;
 }
