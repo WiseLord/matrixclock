@@ -75,7 +75,7 @@ static void writeTime(void)
 
 void stopEditTime(void)
 {
-	rtc.etm = NOEDIT;
+	rtc.etm = RTC_NOEDIT;
 
 	return;
 }

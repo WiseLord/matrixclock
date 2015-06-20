@@ -3,10 +3,10 @@
 
 #include <inttypes.h>
 
-#define DS1307_ADDR		0b11010000
+#define DS1307_ADDR			0xD0
 
-#define BD2D(x)			((x >> 4) * 10 + (x & 0x0F))
-#define D2BD(x)			(((x / 10) << 4) + (x % 10))
+#define BD2D(x)				((x >> 4) * 10 + (x & 0x0F))
+#define D2BD(x)				(((x / 10) << 4) + (x % 10))
 
 enum {
 	DS1307_SEC = 0,
@@ -32,7 +32,7 @@ typedef struct {
 
 extern RTC_type rtc;
 
-#define NOEDIT				0xFF
+#define RTC_NOEDIT			0xFF
 
 void readTime(void);
 void stopEditTime(void);

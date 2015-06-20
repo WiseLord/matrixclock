@@ -22,7 +22,7 @@ static int8_t brMax;
 static uint8_t bigNum = 0;
 static uint8_t hourZero = '0';
 
-static uint8_t etmOld = NOEDIT;
+static uint8_t etmOld = RTC_NOEDIT;
 static alarmMode amOld = A_NOEDIT;
 static uint8_t alarmFlag = 1;
 
@@ -198,7 +198,7 @@ void showTime(uint32_t mask)
 	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
 	uint8_t digit;
 
-	etmOld = NOEDIT;
+	etmOld = RTC_NOEDIT;
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(1);
