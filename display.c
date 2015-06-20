@@ -303,10 +303,16 @@ void scroll(uint8_t type)
 	return;
 }
 
-void showMainScreen(uint32_t mask)
+void showMainScreen(void)
 {
-	if (matrixGetScrollMode() == 0) {
-		showTime(mask);
+	uint8_t mode = matrixGetScrollMode();
+	static uint8_t modeOld;
+
+	if (mode == MATRIX_SCROLL_OFF) {
+		if (modeOld == MATRIX_SCROLL_ON)
+			showTime(MASK_ALL);
+		else
+			showTime(MASK_NONE);
 		if (rtc.sec == 20) {
 			if (rtc.min & 0x01)
 				scroll(SCROLL_DATE);
@@ -314,6 +320,8 @@ void showMainScreen(uint32_t mask)
 				scroll(SCROLL_TEMP);
 		}
 	}
+
+	modeOld = mode;
 
 	return;
 }

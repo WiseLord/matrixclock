@@ -53,7 +53,7 @@ void writeBrightness(void);
 void showTime(uint32_t mask);
 void scroll(uint8_t type);
 void setTimeMask(uint32_t tmsk);
-void showMainScreen(uint32_t mask);
+void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
 void showAlarm(uint32_t mask);
 void showAlarmEdit(int8_t ch_dir);

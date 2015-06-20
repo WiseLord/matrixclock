@@ -81,7 +81,7 @@ int main(void)
 				}
 				break;
 			default:
-				showMainScreen(MASK_ALL);
+				showTime(MASK_ALL);
 			}
 			break;
 		case CMD_BTN_2:
@@ -175,7 +175,7 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_MAIN:
-			showMainScreen(MASK_NONE);
+			showMainScreen();
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(direction);

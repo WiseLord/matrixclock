@@ -19,7 +19,7 @@
 #define MATRIX_BUFFER_SIZE			512
 
 enum {
-	MATRIX_FONT_RAM,
+	MATRIX_FONT_RAM = 0,
 	MATRIX_FONT_PROGMEM,
 	MATRIX_FONT_EEPROM,
 };
@@ -40,11 +40,16 @@ enum {
 #endif
 
 enum {
-	NUM_SMALL,
+	NUM_SMALL = 0,
 	NUM_NORMAL,
 	NUM_BIG,
 	NUM_EXTRA,
 	NUM_END,
+};
+
+enum {
+	MATRIX_SCROLL_OFF = 0,
+	MATRIX_SCROLL_ON,
 };
 
 void matrixInit(void);

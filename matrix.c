@@ -18,7 +18,7 @@ static uint8_t fb[MATRIX_NUMBER * 8];
 static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 
 static volatile int16_t scrollPos = 0;
-static volatile uint8_t scrollMode = 0;
+static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
 static void matrixLoadChar(uint8_t numSize, uint8_t code)
 {
@@ -79,7 +79,7 @@ void matrixInit(void)
 
 void matrixSetBrightness(uint8_t brightness)
 {
-	if (!scrollMode) {
+	if (scrollMode == MATRIX_SCROLL_OFF) {
 #if defined(HT1632)
 		ht1632SendCmd(HT1632_CMD_DUTY | brightness);
 #else
@@ -198,7 +198,7 @@ void matrixScrollAndADCInit(void)
 /* Interrupt will be executed 7812 / 256 = 30 times/sec */
 ISR (TIMER2_OVF_vect)
 {
-	if (scrollMode) {
+	if (scrollMode == MATRIX_SCROLL_ON) {
 		int8_t i;
 
 		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++)
@@ -209,7 +209,7 @@ ISR (TIMER2_OVF_vect)
 		scrollPos++;
 
 		if (scrollPos >= _col + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
-			scrollMode = 0;
+			scrollMode = MATRIX_SCROLL_OFF;
 			scrollPos = 0;
 		}
 
