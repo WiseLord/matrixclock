@@ -6,7 +6,7 @@
 #include "mtimer.h"
 #include "display.h"
 #include "ds18x20.h"
-#include "ds1307.h"
+#include "rtc.h"
 #include "alarm.h"
 
 void hwInit(void)

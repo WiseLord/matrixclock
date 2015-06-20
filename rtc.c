@@ -1,4 +1,4 @@
-#include "ds1307.h"
+#include "rtc.h"
 
 #include "i2csw.h"
 
@@ -43,9 +43,9 @@ void rtcReadTime(void)
 	uint8_t temp;
 	uint8_t i;
 
-	I2CswStart(DS1307_ADDR);
+	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(RTC_SEC);
-	I2CswStart(DS1307_ADDR | I2C_READ);
+	I2CswStart(RTC_I2C_ADDR | I2C_READ);
 	for (i = RTC_SEC; i < RTC_YEAR; i++) {
 		temp = I2CswReadByte(I2C_ACK);
 		*((int8_t*)&rtc + i) = BD2D(temp);
@@ -61,7 +61,7 @@ static void rtcSaveTime(void)
 {
 	uint8_t i;
 
-	I2CswStart(DS1307_ADDR);
+	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(RTC_SEC);
 	for (i = RTC_SEC; i <= RTC_YEAR; i++)
 		I2CswWriteByte(D2BD(*((int8_t*)&rtc + i)));

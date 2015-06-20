@@ -1,9 +1,9 @@
-#ifndef DS1307_H
-#define DS1307_H
+#ifndef RTC_H
+#define RTC_H
 
 #include <inttypes.h>
 
-#define DS1307_ADDR			0xD0
+#define RTC_I2C_ADDR		0xD0
 
 #define BD2D(x)				((x >> 4) * 10 + (x & 0x0F))
 #define D2BD(x)				(((x / 10) << 4) + (x % 10))
@@ -39,4 +39,4 @@ void rtcStopEditTime(void);
 void rtcNextEditParam(void);
 void rtcChangeTime(int8_t diff);
 
-#endif /* DS1307_H */
+#endif /* RTC_H */

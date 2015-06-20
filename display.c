@@ -1,6 +1,6 @@
 #include "display.h"
 
-#include "ds1307.h"
+#include "rtc.h"
 #include "matrix.h"
 #include "ds18x20.h"
 #include "mtimer.h"
