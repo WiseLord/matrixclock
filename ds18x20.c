@@ -1,14 +1,10 @@
 #include "ds18x20.h"
 
-#include "mtimer.h"
-
 #include <util/delay.h>
 #include <util/crc16.h>
 
 static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;
-
-static uint8_t isResult = 0;							/* It conversion has been done */
 
 static uint8_t ds18x20IsOnBus(void)
 {
@@ -133,14 +129,10 @@ static void convertTemp(void)
 	ds18x20SendByte(DS18X20_CMD_CONVERT);
 
 #ifdef DS18X20_PARASITE_POWER
-	/* Set active 1 on port for 750ms as parasitic power */
+	/* Set active 1 on port for at least 750ms as parasitic power */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;
 #endif
-
-	setTempConvertTimer(TEMP_MEASURE_TIME);
-
-	isResult = 1;
 
 	return;
 }
@@ -157,7 +149,7 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	ds18x20SendByte(DS18X20_CMD_SEARCH_ROM);
 
 	/* Walk through all 64 bits */
-	for (currBit = 0; currBit < 64; currBit++)
+	for (currBit = 0; currBit < DS18X20_ID_LEN * 8; currBit++)
 	{
 		/* Read bit from bus twice. */
 		bitA = ds18x20GetBit();
@@ -206,7 +198,7 @@ void ds18x20SearchDevices(void)
 
 	/* Reset addresses */
 	for (i = 0; i < DS18X20_MAX_DEV; i++)
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < DS18X20_ID_LEN; j++)
 			devs[i].id[j] = 0x00;
 
 	/* Search all sensors */
@@ -215,7 +207,7 @@ void ds18x20SearchDevices(void)
 	currentID = newID;
 
 	do {
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < DS18X20_ID_LEN; j++)
 			newID[j] = currentID[j];
 
 		if (!ds18x20IsOnBus()) {
@@ -239,15 +231,11 @@ void ds18x20SearchDevices(void)
 
 uint8_t ds18x20Process(void)
 {
-	if (getTempConvertTimer() == 0) {
+	getAllTemps();
 
-		if (isResult)
-			getAllTemps();
-
-		/* Convert temperature */
-		if (ds18x20IsOnBus())
-			convertTemp();
-	}
+	/* Convert temperature */
+	if (ds18x20IsOnBus())
+		convertTemp();
 
 	return devCount;
 }
@@ -261,6 +249,7 @@ int16_t ds18x20GetTemp(uint8_t num)
 	else if (devs[num].id[0] == 0x10) /* DS18S20 */
 		ret = ret * 5;
 
+	/* Return value is in 0.1°C units */
 	return ret;
 }
 

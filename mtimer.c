@@ -3,7 +3,6 @@
 #include <avr/interrupt.h>
 
 /* Temperature */
-static volatile uint16_t tempConvertTimer = 0;
 static volatile uint16_t tempStartTimer = 0;
 
 /* Beeper */
@@ -22,8 +21,6 @@ void mTimerInit(void)
 	TIMSK0 |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
 	TCCR0B |= (0<<CS02) | (1<<CS01) | (1<<CS00);	/* Set timer prescaller to 64 (125kHz) */
 #endif
-
-	tempConvertTimer = 0;
 
 	DDR(BEEPER) |= BEEPER_LINE;
 	PORT(BEEPER) |= BEEPER_LINE;
@@ -104,10 +101,7 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 		btnCnt = 0;
 	}
 
-
 	/* Temperature */
-	if (tempConvertTimer)
-		tempConvertTimer--;
 	if (tempStartTimer)
 		tempStartTimer--;
 
@@ -126,17 +120,6 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 		PORT(BEEPER) |= BEEPER_LINE;
 
 	}
-
-	return;
-}
-
-uint16_t getTempConvertTimer(void)
-{
-	return tempConvertTimer;
-}
-void setTempConvertTimer(uint16_t val)
-{
-	tempConvertTimer = val;
 
 	return;
 }
