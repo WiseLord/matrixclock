@@ -335,7 +335,7 @@ void showTimeEdit(int8_t ch_dir)
 	uint32_t mask = MASK_NONE;
 
 	static int8_t timeOld = 0;
-	uint8_t time = *((uint8_t*)(&rtc) + rtc.etm);
+	int8_t time = *((int8_t*)&rtc + rtc.etm);
 
 	matrixSetX(0);
 	matrixLoadString(mkNumberString(time, 2, 0, ' '));
@@ -509,7 +509,7 @@ void saveMaxBrightness(void)
 
 void checkAlarmAndBrightness(void)
 {
-	readTime();
+	rtcReadTime();
 	alarm = readAlarm();
 
 	/* Check alarm */

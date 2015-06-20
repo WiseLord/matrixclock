@@ -22,7 +22,7 @@ void hwInit(void)
 	matrixScrollAndADCInit();
 
 	initAlarm();
-	stopEditTime();
+	rtcStopEditTime();
 
 	return;
 }
@@ -68,7 +68,7 @@ int main(void)
 			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
-				editTime();
+				rtcNextEditParam();
 				break;
 			case MODE_ALARM:
 				dispMode = MODE_EDIT_ALARM;
@@ -91,7 +91,7 @@ int main(void)
 				scroll(SCROLL_DATE);
 				break;
 			case MODE_EDIT_TIME:
-				changeTime(PARAM_UP);
+				rtcChangeTime(PARAM_UP);
 				break;
 			case MODE_EDIT_ALARM:
 				changeAlarm(PARAM_UP);
@@ -108,7 +108,7 @@ int main(void)
 				scroll(SCROLL_TEMP);
 				break;
 			case MODE_EDIT_TIME:
-				changeTime(PARAM_DOWN);
+				rtcChangeTime(PARAM_DOWN);
 				break;
 			case MODE_EDIT_ALARM:
 				changeAlarm(PARAM_DOWN);
@@ -121,13 +121,13 @@ int main(void)
 		case CMD_BTN_1_LONG:
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
-				stopEditTime();
+				rtcStopEditTime();
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_EDIT_TIME;
-				editTime();
+				rtcNextEditParam();
 			}
 			break;
 		case CMD_BTN_2_LONG:

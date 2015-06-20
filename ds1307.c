@@ -4,7 +4,10 @@
 
 RTC_type rtc;
 
-static void calcWeekDay(void)
+static RTC_type rtcMin = {0, 0, 0, 1, 1, 1, 1, RTC_NOEDIT};
+static RTC_type rtcMax = {59, 59, 23, 7, 31, 12, 99, RTC_NOEDIT};
+
+static void rtcWeekDay(void)
 {
 	uint8_t a, y, m;
 
@@ -19,7 +22,7 @@ static void calcWeekDay(void)
 	return;
 }
 
-static uint8_t daysInMonth()
+static uint8_t rtcDaysInMonth(void)
 {
 	uint8_t m = rtc.month;
 
@@ -29,24 +32,23 @@ static uint8_t daysInMonth()
 		return 29;
 	}
 
-	if (m == 4 || m == 6 || m == 9 || m == 11) {
+	if (m == 4 || m == 6 || m == 9 || m == 11)
 		return 30;
-	}
 
 	return 31;
 }
 
-void readTime(void)
+void rtcReadTime(void)
 {
 	uint8_t temp;
 	uint8_t i;
 
 	I2CswStart(DS1307_ADDR);
-	I2CswWriteByte(DS1307_SEC);
+	I2CswWriteByte(RTC_SEC);
 	I2CswStart(DS1307_ADDR | I2C_READ);
-	for (i = DS1307_SEC; i < DS1307_YEAR; i++) {
+	for (i = RTC_SEC; i < RTC_YEAR; i++) {
 		temp = I2CswReadByte(I2C_ACK);
-		*((uint8_t*)(&rtc) + i) = BD2D(temp);
+		*((int8_t*)&rtc + i) = BD2D(temp);
 	}
 	temp = I2CswReadByte(I2C_NOACK);
 	rtc.year = BD2D(temp);
@@ -55,96 +57,65 @@ void readTime(void)
 	return;
 }
 
-static void writeTime(void)
+static void rtcSaveTime(void)
 {
 	uint8_t i;
 
-	if (rtc.date > daysInMonth())
-		rtc.date = daysInMonth();
-	if (rtc.etm >= DS1307_DATE)
-		calcWeekDay();
-
 	I2CswStart(DS1307_ADDR);
-	I2CswWriteByte(DS1307_SEC);
-	for (i = DS1307_SEC; i <= DS1307_YEAR; i++)
-		I2CswWriteByte(D2BD(*((uint8_t*)(&rtc) + i)));
+	I2CswWriteByte(RTC_SEC);
+	for (i = RTC_SEC; i <= RTC_YEAR; i++)
+		I2CswWriteByte(D2BD(*((int8_t*)&rtc + i)));
 	I2CswStop();
 
 	return;
 }
 
-void stopEditTime(void)
+void rtcStopEditTime(void)
 {
 	rtc.etm = RTC_NOEDIT;
 
 	return;
 }
 
-void editTime(void)
+void rtcNextEditParam(void)
 {
 	switch (rtc.etm) {
-	case DS1307_HOUR:
-	case DS1307_MIN:
+	case RTC_HOUR:
+	case RTC_MIN:
 		rtc.etm--;
 		break;
-	case DS1307_SEC:
-		rtc.etm = DS1307_DATE;
+	case RTC_SEC:
+		rtc.etm = RTC_DATE;
 		break;
-	case DS1307_DATE:
-	case DS1307_MONTH:
+	case RTC_DATE:
+	case RTC_MONTH:
 		rtc.etm++;
 		break;
 	default:
-		rtc.etm = DS1307_HOUR;
+		rtc.etm = RTC_HOUR;
 		break;
 	}
 
 	return;
 }
 
-void changeTime(int8_t diff)
+void rtcChangeTime(int8_t diff)
 {
-	switch (rtc.etm) {
-	case DS1307_HOUR:
-		rtc.hour += diff;
-		if (rtc.hour > 23)
-			rtc.hour = 0;
-		if (rtc.hour < 0)
-			rtc.hour = 23;
-		break;
-	case DS1307_MIN:
-		rtc.min += diff;
-		if (rtc.min > 59)
-			rtc.min = 0;
-		if (rtc.min < 0)
-			rtc.min = 59;
-		break;
-	case DS1307_SEC:
-		rtc.sec = 0;
-		break;
-	case DS1307_DATE:
-		rtc.date += diff;
-		if (rtc.date > daysInMonth())
-			rtc.date = 1;
-		if (rtc.date < 1)
-			rtc.date = daysInMonth();
-		break;
-	case DS1307_MONTH:
-		rtc.month += diff;
-		if (rtc.month > 12)
-			rtc.month = 1;
-		if (rtc.month < 1)
-			rtc.month = 12;
-		break;
-	case DS1307_YEAR:
-		rtc.year += diff;
-		if (rtc.year > 99)
-			rtc.year = 0;
-		if (rtc.year < 0)
-			rtc.year = 99;
-		break;
-	default:
-		break;
-	}
-	writeTime();
+	int8_t *time = (int8_t*)&rtc + rtc.etm;
+	int8_t timeMax = *((int8_t*)&rtcMax + rtc.etm);
+	int8_t timeMin = *((int8_t*)&rtcMin + rtc.etm);
+
+	if (rtc.etm == RTC_DATE)
+		timeMax = rtcDaysInMonth();
+
+	*time += diff;
+
+	if (*time > timeMax)
+		*time = timeMin;
+	if (*time < timeMin)
+		*time = timeMax;
+
+	rtcWeekDay();
+
+	rtcSaveTime();
 }

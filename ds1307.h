@@ -9,34 +9,34 @@
 #define D2BD(x)				(((x / 10) << 4) + (x % 10))
 
 enum {
-	DS1307_SEC = 0,
-	DS1307_MIN,
-	DS1307_HOUR,
-	DS1307_WDAY,
-	DS1307_DATE,
-	DS1307_MONTH,
-	DS1307_YEAR,
-	DS1307_ETM,
+	RTC_SEC = 0,
+	RTC_MIN,
+	RTC_HOUR,
+	RTC_WDAY,
+	RTC_DATE,
+	RTC_MONTH,
+	RTC_YEAR,
+	RTC_ETM,
 };
 
 typedef struct {
-	uint8_t sec;
-	uint8_t min;
-	uint8_t hour;
-	uint8_t wday;
-	uint8_t date;
-	uint8_t month;
-	uint8_t year;
-	uint8_t etm;
+	int8_t sec;
+	int8_t min;
+	int8_t hour;
+	int8_t wday;
+	int8_t date;
+	int8_t month;
+	int8_t year;
+	int8_t etm;
 } RTC_type;
 
 extern RTC_type rtc;
 
 #define RTC_NOEDIT			0xFF
 
-void readTime(void);
-void stopEditTime(void);
-void editTime(void);
-void changeTime(int8_t diff);
+void rtcReadTime(void);
+void rtcStopEditTime(void);
+void rtcNextEditParam(void);
+void rtcChangeTime(int8_t diff);
 
 #endif /* DS1307_H */
