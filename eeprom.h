@@ -3,15 +3,15 @@
 
 #include <inttypes.h>
 
-#define EEPROM_A_HOUR			((void*)0x00)
-#define EEPROM_A_MIN			((void*)0x01)
-#define EEPROM_A_DAYS			((void*)0x02)
+#define EEPROM_ALARM_HOUR		((void*)0x00)
+#define EEPROM_ALARM_MIN		((void*)0x01)
+#define EEPROM_ALARM_MON		((void*)0x02)
 
-#define EEPROM_SCREEN_ROTATE	((void*)0x04)
-#define EEPROM_BIGNUM			((void*)0x05)
-#define EEPROM_HOURZERO			((void*)0x06)
+#define EEPROM_SCREEN_ROTATE	((void*)0x0A)
+#define EEPROM_BIGNUM			((void*)0x0B)
+#define EEPROM_HOURZERO			((void*)0x0C)
 
-#define EEPROM_BR_MAX			((void*)0x08)
+#define EEPROM_BR_MAX			((void*)0x0E)
 
 /* Text labels (maximum 15 byte followed by \0) */
 #define EEPROM_LABELS			((uint8_t*)0x10)

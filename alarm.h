@@ -6,17 +6,31 @@
 enum {
 	ALARM_HOUR = 0,
 	ALARM_MIN,
-	ALARM_MONDAY,
-	ALARM_TUESDAY,
-	ALARM_WEDNESDAY,
-	ALARM_THURSDAY,
-	ALARM_FRIDAY,
-	ALARM_SATURDAY,
-	ALARM_SUNDAY,
+	ALARM_MON,
+	ALARM_TUE,
+	ALARM_WED,
+	ALARM_THU,
+	ALARM_FRI,
+	ALARM_SAT,
+	ALARM_SUN,
 };
 
-#define ALARM_NOEDIT			0xFF
+typedef struct {
+	int8_t hour;
+	int8_t min;
+	int8_t mon;
+	int8_t tue;
+	int8_t wed;
+	int8_t thu;
+	int8_t fri;
+	int8_t sat;
+	int8_t sun;
+	int8_t eam;
+} Alarm_type;
 
+extern Alarm_type alrm;
+
+#define ALARM_NOEDIT			0xFF
 
 void initAlarm(void);
 

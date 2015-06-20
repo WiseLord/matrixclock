@@ -75,7 +75,7 @@ int main(void)
 				editAlarm();
 				break;
 			case MODE_EDIT_ALARM:
-				if (getAlarmMode() == ALARM_SUNDAY) {
+				if (getAlarmMode() == ALARM_SUN) {
 					dispMode = MODE_ALARM;
 					showAlarm(MASK_ALL);
 				} else {

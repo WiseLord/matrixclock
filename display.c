@@ -437,7 +437,7 @@ void showAlarmEdit(int8_t ch_dir)
 			matrixLoadString("   ");
 		}
 		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - ALARM_MONDAY]);
+		matrixLoadStringEeprom(txtLabels[LABEL_MO + am - ALARM_MON]);
 
 		break;
 	}
