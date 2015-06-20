@@ -61,6 +61,8 @@ static void rtcSaveTime(void)
 {
 	uint8_t i;
 
+	rtcWeekDay();
+
 	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(RTC_SEC);
 	for (i = RTC_SEC; i <= RTC_YEAR; i++)
@@ -115,7 +117,7 @@ void rtcChangeTime(int8_t diff)
 	if (*time < timeMin)
 		*time = timeMax;
 
-	rtcWeekDay();
-
 	rtcSaveTime();
+
+	return;
 }
