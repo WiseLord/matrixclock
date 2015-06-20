@@ -2,7 +2,8 @@
 
 #include "i2csw.h"
 
-static int8_t time[7];
+static RTC_type rtc;
+
 static uint8_t _etm = NOEDIT;
 
 uint8_t getEtm()
@@ -14,23 +15,23 @@ static void calcWeekDay(void)
 {
 	uint8_t a, y, m;
 
-	a = (time[DS1307_MONTH] > 2 ? 0 : 1);
-	y = 12 + time[DS1307_YEAR] - a;
-	m = time[DS1307_MONTH] + 12 * a - 2;
+	a = (rtc.month > 2 ? 0 : 1);
+	y = 12 + rtc.year - a;
+	m = rtc.month + 12 * a - 2;
 
-	time[DS1307_WDAY] = (time[DS1307_DATE] + y + (y / 4) + ((31 * m) / 12)) % 7;
-	if (time[DS1307_WDAY] == 0)
-		time[DS1307_WDAY] = 7;
+	rtc.wday = (rtc.date + y + (y / 4) + ((31 * m) / 12)) % 7;
+	if (rtc.wday == 0)
+		rtc.wday = 7;
 
 	return;
 }
 
 static uint8_t daysInMonth()
 {
-	uint8_t m = time[DS1307_MONTH];
+	uint8_t m = rtc.month;
 
 	if (m == 2) {
-		if (time[DS1307_YEAR] & 0x03)
+		if (rtc.year & 0x03)
 			return 28;
 		return 29;
 	}
@@ -52,28 +53,28 @@ int8_t *readTime(void)
 	I2CswStart(DS1307_ADDR | I2C_READ);
 	for (i = DS1307_SEC; i < DS1307_YEAR; i++) {
 		temp = I2CswReadByte(I2C_ACK);
-		time[i] = BD2D(temp);
+		*((uint8_t*)(&rtc) + i) = BD2D(temp);
 	}
 	temp = I2CswReadByte(I2C_NOACK);
-	time[DS1307_YEAR] = BD2D(temp);
+	rtc.year = BD2D(temp);
 	I2CswStop();
 
-	return time;
+	return (int8_t*)&rtc;
 }
 
 static void writeTime(void)
 {
 	uint8_t i;
 
-	if (time[DS1307_DATE] > daysInMonth())
-		time[DS1307_DATE] = daysInMonth();
+	if (rtc.date > daysInMonth())
+		rtc.date = daysInMonth();
 	if (_etm >= DS1307_DATE)
 		calcWeekDay();
 
 	I2CswStart(DS1307_ADDR);
 	I2CswWriteByte(DS1307_SEC);
 	for (i = DS1307_SEC; i <= DS1307_YEAR; i++)
-		I2CswWriteByte(D2BD(time[i]));
+		I2CswWriteByte(D2BD(*((uint8_t*)(&rtc) + i)));
 	I2CswStop();
 
 	return;
@@ -119,42 +120,42 @@ void changeTime(int8_t diff)
 {
 	switch (_etm) {
 	case DS1307_HOUR:
-		time[DS1307_HOUR] += diff;
-		if (time[DS1307_HOUR] > 23)
-			time[DS1307_HOUR] = 0;
-		if (time[DS1307_HOUR] < 0)
-			time[DS1307_HOUR] = 23;
+		rtc.hour += diff;
+		if (rtc.hour > 23)
+			rtc.hour = 0;
+		if (rtc.hour < 0)
+			rtc.hour = 23;
 		break;
 	case DS1307_MIN:
-		time[DS1307_MIN] += diff;
-		if (time[DS1307_MIN] > 59)
-			time[DS1307_MIN] = 0;
-		if (time[DS1307_MIN] < 0)
-			time[DS1307_MIN] = 59;
+		rtc.min += diff;
+		if (rtc.min > 59)
+			rtc.min = 0;
+		if (rtc.min < 0)
+			rtc.min = 59;
 		break;
 	case DS1307_SEC:
-		time[DS1307_SEC] = 0;
+		rtc.sec = 0;
 		break;
 	case DS1307_DATE:
-		time[DS1307_DATE] += diff;
-		if (time[DS1307_DATE] > daysInMonth())
-			time[DS1307_DATE] = 1;
-		if (time[DS1307_DATE] < 1)
-			time[DS1307_DATE] = daysInMonth();
+		rtc.date += diff;
+		if (rtc.date > daysInMonth())
+			rtc.date = 1;
+		if (rtc.date < 1)
+			rtc.date = daysInMonth();
 		break;
 	case DS1307_MONTH:
-		time[DS1307_MONTH] += diff;
-		if (time[DS1307_MONTH] > 12)
-			time[DS1307_MONTH] = 1;
-		if (time[DS1307_MONTH] < 1)
-			time[DS1307_MONTH] = 12;
+		rtc.month += diff;
+		if (rtc.month > 12)
+			rtc.month = 1;
+		if (rtc.month < 1)
+			rtc.month = 12;
 		break;
 	case DS1307_YEAR:
-		time[DS1307_YEAR] += diff;
-		if (time[DS1307_YEAR] > 99)
-			time[DS1307_YEAR] = 0;
-		if (time[DS1307_YEAR] < 0)
-			time[DS1307_YEAR] = 99;
+		rtc.year += diff;
+		if (rtc.year > 99)
+			rtc.year = 0;
+		if (rtc.year < 0)
+			rtc.year = 99;
 		break;
 	default:
 		break;
