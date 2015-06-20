@@ -69,7 +69,7 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 
 static void loadDateString(void)
 {
-	matrixLoadStringEeprom(txtLabels[dateTime[DS1307_WDAY] % 7]);
+	matrixLoadStringEeprom(txtLabels[(LABEL_SATURDAY + dateTime[DS1307_WDAY]) % 7]);
 	matrixLoadString(", ");
 	matrixLoadString(mkNumberString(dateTime[DS1307_DATE], 2, 0, ' '));
 	matrixLoadString(" ");
@@ -98,11 +98,6 @@ static void loadTempString(void)
 	}
 
 	return;
-}
-
-static uint8_t checkIfAlarmToday(void)
-{
-	return getRawAlarmWeekday() & (1 << (dateTime[DS1307_WDAY] - 1));
 }
 
 void displayInit(void)
@@ -528,7 +523,7 @@ void checkAlarmAndBrightness(void)
 
 	/* Check alarm */
 	if (dateTime[DS1307_HOUR] == alarm[A_HOUR] && dateTime[DS1307_MIN] == alarm[A_MIN]) {
-		if (checkIfAlarmToday())
+		if (getRawAlarmWeekday() & (1 << ((dateTime[DS1307_WDAY] + 5) % 7)))
 			startAlarm(60000);
 	} else {
 		/* Check new hour */

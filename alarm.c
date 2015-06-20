@@ -40,9 +40,11 @@ int8_t getRawAlarmWeekday(void)
 	int8_t rawWeekday = 0x00;
 	uint8_t i;
 
-	for (i = 0; i <= A_SUNDAY - A_MONDAY; i++)
+	for (i = 0; i <= A_SUNDAY - A_MONDAY; i++) {
+		rawWeekday >>= 1;
 		if (alarm[A_MONDAY + i])
-			rawWeekday |= (1<<i);
+			rawWeekday |= 0x40;
+	}
 
 	return rawWeekday;
 }
