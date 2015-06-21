@@ -80,6 +80,8 @@ int main(void)
 			case MODE_EDIT_ALARM:
 				alarmNextEditParam();
 				break;
+			case MODE_BRIGHTNESS:
+				break;
 			default:
 				showTime(MASK_ALL);
 			}
@@ -88,7 +90,7 @@ int main(void)
 			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_MAIN:
-				scroll(SCROLL_DATE);
+				startScroll(SCROLL_DATE);
 				break;
 			case MODE_EDIT_TIME:
 				rtcChangeTime(PARAM_UP);
@@ -105,7 +107,7 @@ int main(void)
 			direction = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
-				scroll(SCROLL_TEMP);
+				startScroll(SCROLL_TEMP);
 				break;
 			case MODE_EDIT_TIME:
 				rtcChangeTime(PARAM_DOWN);

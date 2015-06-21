@@ -34,6 +34,7 @@ static void startAlarm(uint16_t duration)
 
 	return;
 }
+
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
 	static char strbuf[8];
@@ -173,6 +174,51 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 	return mask;
 }
 
+static void showHMColon(uint8_t step, uint8_t pos)
+{
+	uint8_t value;
+
+	if (step == 4)
+		value = 0x62;
+	else if (step == 3)
+		value = 0x46;
+	else if (step == 2)
+		value = 0x36;
+	else if (step == 1)
+		value = 0x26;
+	else
+		value = 0x32;
+
+	matrixPosData(pos, value);
+	matrixPosData(pos + 1, value);
+
+	return;
+}
+
+static uint8_t calcBrightness(void)
+{
+	int8_t br = 0;
+
+	if (ADCH > 1) {							/* We have photoresistor */
+		if (br > (ADCH >> 4))
+			br--;
+		if (br < (ADCH >> 4))
+			br++;
+	} else {								/* Calculate br(hour) */
+		if (rtc.hour <= 12)
+			br = (rtc.hour * 2) - 25 + brMax;
+		else
+			br = 31 - (rtc.hour * 2) + brMax;
+	}
+
+	if (br > MATRIX_MAX_BRIGHTNESS)
+		br = MATRIX_MAX_BRIGHTNESS;
+	if (br < MATRIX_MIN_BRIGHTNESS)
+		br = MATRIX_MIN_BRIGHTNESS;
+
+	return br;
+}
+
 void displayInit(void)
 {
 	uint8_t i;
@@ -222,49 +268,18 @@ void displaySwitchHourZero(void) {
 	return;
 }
 
-static void showHMColon(uint8_t step, uint8_t pos)
+void startScroll(uint8_t type)
 {
-	uint8_t value;
-
-	if (step == 4)
-		value = 0x62;
-	else if (step == 3)
-		value = 0x46;
-	else if (step == 2)
-		value = 0x36;
-	else if (step == 1)
-		value = 0x26;
+	matrixSetX(0);
+	matrixClearBufTail();
+	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_SCROLL_BOTH);
+	if (type == SCROLL_DATE)
+		loadDateString();
 	else
-		value = 0x32;
-
-	matrixPosData(pos, value);
-	matrixPosData(pos + 1, value);
+		loadTempString();
+	matrixHwScroll(MATRIX_SCROLL_START);
 
 	return;
-}
-
-static uint8_t calcBrightness(void)
-{
-	int8_t br = 0;
-
-	if (ADCH > 1) {							/* We have photoresistor */
-		if (br > (ADCH >> 4))
-			br--;
-		if (br < (ADCH >> 4))
-			br++;
-	} else {								/* Calculate br(hour) */
-		if (rtc.hour <= 12)
-			br = (rtc.hour * 2) - 25 + brMax;
-		else
-			br = 31 - (rtc.hour * 2) + brMax;
-	}
-
-	if (br > MATRIX_MAX_BRIGHTNESS)
-		br = MATRIX_MAX_BRIGHTNESS;
-	if (br < MATRIX_MIN_BRIGHTNESS)
-		br = MATRIX_MIN_BRIGHTNESS;
-
-	return br;
 }
 
 void showTime(uint32_t mask)
@@ -323,20 +338,6 @@ void showTime(uint32_t mask)
 	return;
 }
 
-void scroll(uint8_t type)
-{
-	matrixSetX(0);
-	matrixClearBufTail();
-	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_SCROLL_BOTH);
-	if (type == SCROLL_DATE)
-		loadDateString();
-	else
-		loadTempString();
-	matrixHwScroll(MATRIX_SCROLL_START);
-
-	return;
-}
-
 void showMainScreen(void)
 {
 	uint8_t mode = matrixGetScrollMode();
@@ -349,9 +350,9 @@ void showMainScreen(void)
 			showTime(MASK_NONE);
 		if (rtc.sec == 20) {
 			if (rtc.min & 0x01)
-				scroll(SCROLL_DATE);
+				startScroll(SCROLL_DATE);
 			else
-				scroll(SCROLL_TEMP);
+				startScroll(SCROLL_TEMP);
 		}
 	}
 
@@ -370,6 +371,8 @@ void showTimeEdit(int8_t ch_dir)
 	matrixLoadString(mkNumberString(time, 2, 0, ' '));
 	matrixSetX(13);
 	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + rtc.etm]);
+	matrixSetX(27);
+	matrixLoadString("\xAD");
 
 	mask = updateMask(mask, NUM_NORMAL, time, 0);
 
@@ -404,15 +407,16 @@ void showAlarmEdit(int8_t ch_dir)
 		break;
 	default:
 		if (alrm)
-			matrixLoadString(" \xA0 ");
-		else {
-			matrixLoadString("   ");
-		}
+			matrixLoadString(" \xA0");
+		else
+			matrixLoadString("  ");
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_MO + alarm.eam - ALARM_MON]);
 
 		break;
 	}
+	matrixSetX(27);
+	matrixLoadString("\xA0");
 
 	mask = updateMask(mask, NUM_NORMAL, alrm, 0);
 

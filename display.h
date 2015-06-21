@@ -46,15 +46,13 @@ enum {
 void displayInit(void);
 void displaySwitchBigNum(void);
 void displaySwitchHourZero(void);
-void writeBrightness(void);
+void startScroll(uint8_t type);
+
 void showTime(uint32_t mask);
-void scroll(uint8_t type);
-void setTimeMask(uint32_t tmsk);
 void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
-void showAlarm(uint32_t mask);
 void showAlarmEdit(int8_t ch_dir);
-void setBrightnessHour(uint8_t mode);
+
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
 void saveMaxBrightness(void);
