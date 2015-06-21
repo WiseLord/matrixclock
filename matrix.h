@@ -25,10 +25,10 @@ enum {
 };
 
 enum {
+	MATRIX_EFFECT_SCROLL_DOWN = -1,
 	MATRIX_EFFECT_NONE = 0,
-	MATRIX_EFFECT_SCROLL_DOWN,
-	MATRIX_EFFECT_SCROLL_UP,
-	MATRIX_EFFECT_SCROLL_BOTH,
+	MATRIX_EFFECT_SCROLL_UP = 1,
+	MATRIX_EFFECT_SCROLL_BOTH = 2,
 };
 
 #if defined(HT1632)
@@ -62,7 +62,7 @@ void matrixClearBufTail(void);
 
 void matrixPosData(uint8_t pos, uint8_t data);
 
-void matrixSwitchBuf(uint32_t mask, uint8_t effect);
+void matrixSwitchBuf(uint32_t mask, int8_t effect);
 
 void matrixSetX(int16_t x);
 

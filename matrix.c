@@ -127,7 +127,7 @@ void matrixPosData(uint8_t pos, uint8_t data)
 	return;
 }
 
-void matrixSwitchBuf(uint32_t mask, uint8_t effect)
+void matrixSwitchBuf(uint32_t mask, int8_t effect)
 {
 	uint8_t i, j;
 

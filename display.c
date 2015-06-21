@@ -22,6 +22,8 @@ static uint8_t eamOld = ALARM_NOEDIT;
 
 static uint8_t alarmFlag = 1;
 
+static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
+
 static void startAlarm(uint16_t duration)
 {
 	if (getBeepTimer() == 0 && alarmFlag) {
@@ -94,6 +96,67 @@ static void loadTempString(void)
 	}
 
 	return;
+}
+
+static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t min)
+{
+	uint8_t bits = 0;
+	uint8_t digit;
+
+	digit = hour / 10;
+	if (oldHourTens != digit)
+		bits |= 0x80;
+	oldHourTens = digit;
+
+	digit = hour % 10;
+	if (oldHourUnits != digit)
+		bits |= 0x40;
+	oldHourUnits = digit;
+
+	digit = min / 10;
+	if (oldMinTens != digit)
+		bits |= 0x20;
+	oldMinTens = digit;
+
+	digit = min % 10;
+	if (oldMinUnits != digit)
+		bits |= 0x10;
+	oldMinUnits = digit;
+
+	if (bits & 0x80) {
+		if (numSize == NUM_EXTRA)
+			mask |= MASK_EXTRAHOUR_TENS;
+		else if (numSize == NUM_BIG)
+			mask |= MASK_BIGHOUR_TENS;
+		else
+			mask |= MASK_HOUR_TENS;
+	}
+	if (bits & 0x40) {
+		if (numSize == NUM_EXTRA)
+			mask |= MASK_EXTRAHOUR_UNITS;
+		else if (numSize == NUM_BIG)
+			mask |= MASK_BIGHOUR_UNITS;
+		else
+			mask |= MASK_HOUR_UNITS;
+	}
+	if (bits & 0x20) {
+		if (numSize == NUM_EXTRA)
+			mask |= MASK_EXTRAMIN_TENS;
+		else if (numSize == NUM_BIG)
+			mask |= MASK_BIGMIN_TENS;
+		else
+			mask |= MASK_MIN_TENS;
+	}
+	if (bits & 0x10) {
+		if (numSize == NUM_EXTRA )
+			mask |= MASK_EXTRAMIN_UNITS;
+		else if (numSize == NUM_BIG)
+			mask |= MASK_BIGMIN_UNITS;
+		else
+			mask |= MASK_MIN_UNITS;
+	}
+
+	return mask;
 }
 
 void displayInit(void)
@@ -192,7 +255,7 @@ static uint8_t calcBrightness(void)
 
 void showTime(uint32_t mask)
 {
-	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits, oldSecTens, oldSecUnits;
+	static uint8_t oldSecTens, oldSecUnits;
 	uint8_t digit;
 
 	etmOld = RTC_NOEDIT;
@@ -214,49 +277,7 @@ void showTime(uint32_t mask)
 		matrixLoadNumString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
 
-	digit = rtc.hour / 10;
-	if (oldHourTens != digit) {
-		if (bigNum == NUM_EXTRA)
-			mask |= MASK_EXTRAHOUR_TENS;
-		else if (bigNum == NUM_BIG)
-			mask |= MASK_BIGHOUR_TENS;
-		else
-			mask |= MASK_HOUR_TENS;
-	}
-	oldHourTens = digit;
-
-	digit = rtc.hour % 10;
-	if (oldHourUnits != digit) {
-		if (bigNum == NUM_EXTRA)
-			mask |= MASK_EXTRAHOUR_UNITS;
-		else if (bigNum == NUM_BIG)
-			mask |= MASK_BIGHOUR_UNITS;
-		else
-			mask |= MASK_HOUR_UNITS;
-	}
-	oldHourUnits = digit;
-
-	digit = rtc.min / 10;
-	if (oldMinTens != digit) {
-		if (bigNum == NUM_EXTRA)
-			mask |= MASK_EXTRAMIN_TENS;
-		else if (bigNum == NUM_BIG)
-			mask |= MASK_BIGMIN_TENS;
-		else
-			mask |= MASK_MIN_TENS;
-	}
-	oldMinTens = digit;
-
-	digit = rtc.min % 10;
-	if (oldMinUnits != digit) {
-		if (bigNum == NUM_EXTRA)
-			mask |= MASK_EXTRAMIN_UNITS;
-		else if (bigNum == NUM_BIG)
-			mask |= MASK_BIGMIN_UNITS;
-		else
-			mask |= MASK_MIN_UNITS;
-	}
-	oldMinUnits = digit;
+	mask = updateMask(mask, bigNum, rtc.hour, rtc.min);
 
 	if (bigNum != NUM_EXTRA) {
 		digit = rtc.sec / 10;
@@ -269,6 +290,7 @@ void showTime(uint32_t mask)
 			mask |= MASK_SEC_UNITS;
 		oldSecUnits = digit;
 	}
+
 	digit = rtc.sec & 0x01;
 	if (bigNum == NUM_BIG) {
 		matrixPosData(11, (!digit) << 7);
@@ -327,7 +349,6 @@ void showTimeEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
 
-	static int8_t timeOld = 0;
 	int8_t time = *((int8_t*)&rtc + rtc.etm);
 
 	matrixSetX(0);
@@ -335,20 +356,13 @@ void showTimeEdit(int8_t ch_dir)
 	matrixSetX(13);
 	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + rtc.etm]);
 
-	if (timeOld / 10 != time / 10)
-		mask  |= MASK_HOUR_TENS;
-	if (timeOld % 10 != time % 10)
-		mask  |= MASK_HOUR_UNITS;
+	mask = updateMask(mask, NUM_NORMAL, time, 0);
 
 	if (etmOld != rtc.etm)
 		mask |= MASK_ALL;
 
-	if (ch_dir == PARAM_UP)
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-	else
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
+	matrixSwitchBuf(mask, ch_dir);
 
-	timeOld = time;
 	etmOld = rtc.etm;
 
 	return;
@@ -356,9 +370,6 @@ void showTimeEdit(int8_t ch_dir)
 
 void showAlarm(uint32_t mask)
 {
-	static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
-	uint8_t digit;
-
 	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
@@ -368,30 +379,12 @@ void showAlarm(uint32_t mask)
 	matrixSetX(26);
 	matrixLoadString("\xA0");
 
-	digit = alarm.hour / 10;
-	if (oldHourTens != digit)
-		mask |= MASK_HOUR_TENS;
-	oldHourTens = digit;
-
-	digit = alarm.hour % 10;
-	if (oldHourUnits != digit)
-		mask |= MASK_HOUR_UNITS;
-	oldHourUnits = digit;
-
-	digit = alarm.min / 10;
-	if (oldMinTens != digit)
-		mask |= MASK_MIN_TENS;
-	oldMinTens = digit;
-
-	digit = alarm.min % 10;
-	if (oldMinUnits != digit)
-		mask |= MASK_MIN_UNITS;
-	oldMinUnits = digit;
+	mask = updateMask(mask, NUM_NORMAL, alarm.hour, alarm.min);
 
 	showHMColon(2, 10);
 	matrixPosData(23, alarmRawWeekday());
 
-	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
+	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
 	return;
 }
@@ -400,26 +393,23 @@ void showAlarmEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
 
-	int8_t alarm_;
-	static int8_t alarmOld = 0;
-
-	alarm_ = *((int8_t*)&alarm + alarm.eam);
+	int8_t alrm = *((int8_t*)&alarm + alarm.eam);
 
 	matrixSetX(0);
 
 	switch (alarm.eam) {
 	case ALARM_HOUR:
-		matrixLoadString(mkNumberString(alarm_, 2, 0, ' '));
+		matrixLoadString(mkNumberString(alrm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
 		break;
 	case ALARM_MIN:
-		matrixLoadString(mkNumberString(alarm_, 2, 0, ' '));
+		matrixLoadString(mkNumberString(alrm, 2, 0, ' '));
 		matrixSetX(13);
 		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
 		break;
 	default:
-		if (alarm_)
+		if (alrm)
 			matrixLoadString(" \xA0 ");
 		else {
 			matrixLoadString("   ");
@@ -430,20 +420,13 @@ void showAlarmEdit(int8_t ch_dir)
 		break;
 	}
 
-	if (alarmOld / 10 != alarm_ / 10)
-		mask  |= MASK_HOUR_TENS;
-	if (alarmOld % 10 != alarm_ % 10)
-		mask  |= MASK_ALARM;
+	mask = updateMask(mask, NUM_NORMAL, alrm, 0);
 
 	if (eamOld != alarm.eam)
 		mask |= MASK_ALL;
 
-	if (ch_dir == PARAM_UP)
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-	else
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
+	matrixSwitchBuf(mask, ch_dir);
 
-	alarmOld = alarm_;
 	eamOld = alarm.eam;
 
 	return;
@@ -476,10 +459,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	if (oldBrMax % 10 != brMax % 10)
 		mask  |= MASK_BR_UNITS;
 
-	if (ch_dir == PARAM_UP)
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-	else
-		matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
+	matrixSwitchBuf(mask, ch_dir);
 
 	oldBrMax = brMax;
 
