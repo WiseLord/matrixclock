@@ -10,8 +10,6 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
-char strbuf[8];
-
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
 static int8_t brMax;
@@ -35,6 +33,8 @@ static void startAlarm(uint16_t duration)
 }
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
+	static char strbuf[8];
+
 	uint8_t sign = lead;
 	int8_t pos;
 
@@ -71,8 +71,7 @@ static void loadDateString(void)
 	matrixLoadString(mkNumberString(rtc.date, 2, 0, ' '));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
-	matrixLoadString(" ");
-	matrixLoadString(mkNumberString(2000 + rtc.year, 4, 0, '0'));
+	matrixLoadString(mkNumberString(2000 + rtc.year, 4, 0, ' '));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
 
@@ -202,15 +201,13 @@ void showTime(uint32_t mask)
 		matrixSetX(1);
 	else
 		matrixSetX(0);
-	mkNumberString(rtc.hour, 2, 0, hourZero);
-	matrixLoadNumString(strbuf, bigNum);
+	matrixLoadNumString(mkNumberString(rtc.hour, 2, 0, hourZero), bigNum);
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(18);
 	else
 		matrixSetX(13);
-	mkNumberString(rtc.min, 2, 0, '0');
-	matrixLoadNumString(strbuf, bigNum);
+	matrixLoadNumString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
 
 	if (bigNum != NUM_EXTRA) {
 		matrixSetX(25);

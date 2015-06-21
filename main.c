@@ -35,6 +35,8 @@ int main(void)
 
 	hwInit();
 
+	showTime(MASK_ALL);
+
 	while(1) {
 		/* Measure temperature with TEMP_POLL_INTERVAL period */
 		if (getTempStartTimer() == 0) {
