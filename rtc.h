@@ -35,7 +35,6 @@ extern RTC_type rtc;
 #define RTC_NOEDIT			0xFF
 
 void rtcReadTime(void);
-void rtcStopEditTime(void);
 void rtcNextEditParam(void);
 void rtcChangeTime(int8_t diff);
 

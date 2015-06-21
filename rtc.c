@@ -73,13 +73,6 @@ static void rtcSaveTime(void)
 	return;
 }
 
-void rtcStopEditTime(void)
-{
-	rtc.etm = RTC_NOEDIT;
-
-	return;
-}
-
 void rtcNextEditParam(void)
 {
 	switch (rtc.etm) {

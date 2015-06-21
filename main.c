@@ -21,8 +21,10 @@ void hwInit(void)
 	mTimerInit();
 	matrixScrollAndADCInit();
 
+	rtcReadTime();
 	alarmInit();
-	rtcStopEditTime();
+
+	rtc.etm = RTC_NOEDIT;
 
 	return;
 }
@@ -70,17 +72,8 @@ int main(void)
 			case MODE_EDIT_TIME:
 				rtcNextEditParam();
 				break;
-			case MODE_ALARM:
-				dispMode = MODE_EDIT_ALARM;
-				alarmNextEditParam();
-				break;
 			case MODE_EDIT_ALARM:
-				if (alarm.eam == ALARM_SUN) {
-					dispMode = MODE_ALARM;
-					showAlarm(MASK_ALL);
-				} else {
-					alarmNextEditParam();
-				}
+				alarmNextEditParam();
 				break;
 			default:
 				showTime(MASK_ALL);
@@ -123,7 +116,7 @@ int main(void)
 		case CMD_BTN_1_LONG:
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
-				rtcStopEditTime();
+				rtc.etm = RTC_NOEDIT;
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
 				break;
@@ -134,15 +127,14 @@ int main(void)
 			break;
 		case CMD_BTN_2_LONG:
 			switch (dispMode) {
-			case MODE_ALARM:
 			case MODE_EDIT_ALARM:
+				alarm.eam = ALARM_NOEDIT;
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
-				alarmSave();
 				break;
 			case MODE_MAIN:
-				dispMode = MODE_ALARM;
-				showAlarm(MASK_ALL);
+				dispMode = MODE_EDIT_ALARM;
+				alarmNextEditParam();
 				break;
 			}
 			break;
@@ -181,9 +173,6 @@ int main(void)
 			break;
 		case MODE_EDIT_TIME:
 			showTimeEdit(direction);
-			break;
-		case MODE_ALARM:
-			showAlarm(MASK_NONE);
 			break;
 		case MODE_EDIT_ALARM:
 			showAlarmEdit(direction);

@@ -259,6 +259,7 @@ void showTime(uint32_t mask)
 	uint8_t digit;
 
 	etmOld = RTC_NOEDIT;
+	eamOld = ALARM_NOEDIT;
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(1);
@@ -364,27 +365,6 @@ void showTimeEdit(int8_t ch_dir)
 	matrixSwitchBuf(mask, ch_dir);
 
 	etmOld = rtc.etm;
-
-	return;
-}
-
-void showAlarm(uint32_t mask)
-{
-	eamOld = ALARM_NOEDIT;
-
-	matrixSetX(0);
-	matrixLoadString(mkNumberString(alarm.hour, 2, 0, ' '));
-	matrixSetX(13);
-	matrixLoadString(mkNumberString(alarm.min, 2, 0, '0'));
-	matrixSetX(26);
-	matrixLoadString("\xA0");
-
-	mask = updateMask(mask, NUM_NORMAL, alarm.hour, alarm.min);
-
-	showHMColon(2, 10);
-	matrixPosData(23, alarmRawWeekday());
-
-	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_UP);
 
 	return;
 }
