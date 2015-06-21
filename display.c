@@ -197,7 +197,7 @@ static void showHMColon(uint8_t step, uint8_t pos)
 
 static uint8_t calcBrightness(void)
 {
-	int8_t br = 0;
+	static int8_t br = 0;
 
 	if (ADCH > 1) {							/* We have photoresistor */
 		if (br > (ADCH >> 4))
