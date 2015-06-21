@@ -71,7 +71,7 @@ static void loadDateString(void)
 	matrixLoadString(mkNumberString(rtc.date, 2, 0, ' '));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
-	matrixLoadString(mkNumberString(2000 + rtc.year, 4, 0, ' '));
+	matrixLoadString(mkNumberString(2000 + rtc.year, 5, 0, ' '));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
 
