@@ -52,13 +52,17 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 	}
 
 	for (i = 0; i < width; i++) {
-		oft = font + chOft * width + i;
-		if (memType == MATRIX_FONT_EEPROM)
-			data = eeprom_read_byte(oft);
-		else if (memType == MATRIX_FONT_PROGMEM)
-			data = pgm_read_byte(oft);
-		else
-			data = *oft;
+		if (numSize != NUM_NORMAL && (code < '0' || code > '9')) {
+			data = 0x00;
+		} else {
+			oft = font + chOft * width + i;
+			if (memType == MATRIX_FONT_EEPROM)
+				data = eeprom_read_byte(oft);
+			else if (memType == MATRIX_FONT_PROGMEM)
+				data = pgm_read_byte(oft);
+			else
+				data = *oft;
+		}
 		if (data != VOID)
 			strBuf[_col++] = data;
 	}
