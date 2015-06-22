@@ -48,7 +48,7 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 		chOft = code - ' ';
 		/* TODO: Remove it with full font */
 		if (code > 128)
-			chOft -= 0x20;
+			chOft -= 0x21;
 	}
 
 	for (i = 0; i < width; i++) {
