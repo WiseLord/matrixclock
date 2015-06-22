@@ -290,14 +290,11 @@ void showTime(uint32_t mask)
 	etmOld = RTC_NOEDIT;
 	eamOld = ALARM_NOEDIT;
 
-	if (bigNum == NUM_EXTRA)
-		matrixSetX(1);
-	else
-		matrixSetX(0);
+	matrixSetX(0);
 	matrixLoadNumString(mkNumberString(rtc.hour, 2, 0, hourZero), bigNum);
 
 	if (bigNum == NUM_EXTRA)
-		matrixSetX(18);
+		matrixSetX(19);
 	else
 		matrixSetX(13);
 	matrixLoadNumString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
@@ -326,7 +323,6 @@ void showTime(uint32_t mask)
 		matrixPosData(11, (!digit) << 7);
 		matrixPosData(12, digit << 7);
 	} else if (bigNum == NUM_EXTRA) {
-		matrixPosData(0, 0x00);
 		showHMColon(digit + 3, 15);
 	} else {
 		showHMColon(digit, 10);
