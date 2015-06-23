@@ -136,6 +136,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_EDIT_ALARM:
 				alarm.eam = ALARM_NOEDIT;
+				alarmSave();
 				dispMode = MODE_MAIN;
 				showTime(MASK_ALL);
 				break;
