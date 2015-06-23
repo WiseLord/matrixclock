@@ -344,12 +344,10 @@ void showMainScreen(void)
 			showTime(MASK_ALL);
 		else
 			showTime(MASK_NONE);
-		if (rtc.sec == 20) {
-			if (rtc.min & 0x01)
-				startScroll(SCROLL_DATE);
-			else
-				startScroll(SCROLL_TEMP);
-		}
+		if (rtc.sec == 10)
+			startScroll(SCROLL_DATE);
+		else if (rtc.sec == 40)
+			startScroll(SCROLL_TEMP);
 	}
 
 	modeOld = mode;
