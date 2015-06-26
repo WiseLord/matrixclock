@@ -96,7 +96,7 @@ static void ds18x20Select(ds18x20Dev *dev)
 	return;
 }
 
-static void getAllTemps()
+static void ds18x20GetAllTemps()
 {
 	uint8_t i, j;
 	uint8_t crc;
@@ -123,7 +123,7 @@ static void getAllTemps()
 	return;
 }
 
-static void convertTemp(void)
+static void ds18x20ConvertTemp(void)
 {
 	ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
 	ds18x20SendByte(DS18X20_CMD_CONVERT);
@@ -231,11 +231,11 @@ void ds18x20SearchDevices(void)
 
 uint8_t ds18x20Process(void)
 {
-	getAllTemps();
+	ds18x20GetAllTemps();
 
 	/* Convert temperature */
 	if (ds18x20IsOnBus())
-		convertTemp();
+		ds18x20ConvertTemp();
 
 	return devCount;
 }

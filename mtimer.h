@@ -4,8 +4,8 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define TEMP_MEASURE_TIME		1000
-#define TEMP_POLL_INTERVAL		5000
+#define TEMP_MEASURE_TIME		750
+#define TEMP_POLL_INTERVAL		10000
 
 #define BTN_STATE_0				0b000
 #define BTN_1					0b001

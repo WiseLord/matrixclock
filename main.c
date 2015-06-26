@@ -12,7 +12,7 @@
 
 void hwInit(void)
 {
-	_delay_ms(100);
+	_delay_ms(250);
 	sei();
 	ds18x20SearchDevices();
 
@@ -42,6 +42,8 @@ int main(void)
 
 	showTime(MASK_ALL);
 
+	ds18x20Process();
+	setTempStartTimer(TEMP_MEASURE_TIME);
 	while(1) {
 		/* Measure temperature with TEMP_POLL_INTERVAL period */
 		if (getTempStartTimer() == 0) {
