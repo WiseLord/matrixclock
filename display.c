@@ -199,7 +199,7 @@ static uint8_t calcBrightness(void)
 {
 	static int8_t br = 0;
 
-	if (ADCH > 1) {							/* We have photoresistor */
+	if (ADCH > 2) {							/* We have photoresistor */
 		if (br > (ADCH >> 4))
 			br--;
 		if (br < (ADCH >> 4))
@@ -211,8 +211,8 @@ static uint8_t calcBrightness(void)
 			br = 31 - (rtc.hour * 2) + brMax;
 	}
 
-	if (br > MATRIX_MAX_BRIGHTNESS)
-		br = MATRIX_MAX_BRIGHTNESS;
+	if (br > brMax)
+		br = brMax;
 	if (br < MATRIX_MIN_BRIGHTNESS)
 		br = MATRIX_MIN_BRIGHTNESS;
 
