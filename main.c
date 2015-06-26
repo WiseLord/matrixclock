@@ -56,9 +56,8 @@ int main(void)
 				bmp180Convert();
 		}
 
-		/* Monitor brightness only when no scroll or when not in brightness setup */
-		if (dispMode != MODE_BRIGHTNESS &&
-			matrixGetScrollMode() == MATRIX_SCROLL_OFF)
+		/* Update brightness only when not in brightness setup */
+		if (dispMode != MODE_BRIGHTNESS)
 			checkAlarmAndBrightness();
 
 		/* Get command from buttons */

@@ -83,11 +83,13 @@ void matrixInit(void)
 
 void matrixSetBrightness(uint8_t brightness)
 {
+	if (scrollMode == MATRIX_SCROLL_OFF) {
 #if defined(HT1632)
-	ht1632SendCmd(HT1632_CMD_DUTY | brightness);
+		ht1632SendCmd(HT1632_CMD_DUTY | brightness);
 #else
-	max7219SendCmd(MAX7219_INTENSITY, brightness);
+		max7219SendCmd(MAX7219_INTENSITY, brightness);
 #endif
+	}
 
 	return;
 }
