@@ -13,21 +13,22 @@
 void hwInit(void)
 {
 	_delay_ms(250);
-	sei();
-	ds18x20SearchDevices();
 
+	ds18x20SearchDevices();
 	bmp180Init();
 
 	displayInit();
-	matrixInit();
 
 	mTimerInit();
+
 	matrixScrollAndADCInit();
 
 	rtcReadTime();
 	alarmInit();
 
 	rtc.etm = RTC_NOEDIT;
+
+	sei();
 
 	return;
 }
@@ -36,30 +37,34 @@ int main(void)
 {
 	uint8_t cmd;
 	uint8_t dispMode = MODE_MAIN;
-	int8_t direction = PARAM_UP;
+
+	static int8_t direction = PARAM_UP;
 
 	hwInit();
 
 	showTime(MASK_ALL);
 
 	ds18x20Process();
-	setTempStartTimer(TEMP_MEASURE_TIME);
+	setSensTimer(TEMP_MEASURE_TIME);
+
 	while(1) {
-		/* Measure temperature with TEMP_POLL_INTERVAL period */
-		if (getTempStartTimer() == 0) {
-			setTempStartTimer(TEMP_POLL_INTERVAL);
+		/* Update sensors with SENSOR_POLL_INTERVAL period */
+		if (getSensTimer() == 0) {
+			setSensTimer(SENSOR_POLL_INTERVAL);
 			ds18x20Process();
 			if (bmp180HaveSensor())
 				bmp180Convert();
 		}
 
-		if (dispMode != MODE_BRIGHTNESS)
+		/* Monitor brightness only when no scroll or when not in brightness setup */
+		if (dispMode != MODE_BRIGHTNESS &&
+			matrixGetScrollMode() == MATRIX_SCROLL_OFF)
 			checkAlarmAndBrightness();
 
 		/* Get command from buttons */
 		cmd = getBtnCmd();
 
-		/* Beep when button is pressed */
+		/* Beep on button pressed */
 		if (cmd != CMD_EMPTY) {
 			if (cmd < CMD_BTN_1_LONG)
 				startBeeper(80);
@@ -67,7 +72,7 @@ int main(void)
 				startBeeper(160);
 		}
 
-		/* Stop scrolling when button is pressed */
+		/* Stop scrolling on any button pressed */
 		if (cmd != CMD_EMPTY)
 			matrixHwScroll(MATRIX_SCROLL_STOP);
 

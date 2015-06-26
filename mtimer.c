@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 
 /* Temperature */
-static volatile uint16_t tempStartTimer = 0;
+static volatile uint16_t sensTimer = 0;
 
 /* Beeper */
 static volatile uint16_t beepTimer = 0;
@@ -102,8 +102,8 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 	}
 
 	/* Temperature */
-	if (tempStartTimer)
-		tempStartTimer--;
+	if (sensTimer)
+		sensTimer--;
 
 	/* Beeper */
 	if (beepTimer)
@@ -124,13 +124,13 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 	return;
 }
 
-uint16_t getTempStartTimer(void)
+uint16_t getSensTimer(void)
 {
-	return tempStartTimer;
+	return sensTimer;
 }
-void setTempStartTimer(uint16_t val)
+void setSensTimer(uint16_t val)
 {
-	tempStartTimer = val;
+	sensTimer = val;
 
 	return;
 }

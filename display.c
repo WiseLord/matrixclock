@@ -226,6 +226,8 @@ void displayInit(void)
 	uint8_t i;
 	uint8_t *addr;
 
+	matrixInit();
+
 	/* Read text labels saved in EEPROM */
 	addr = EEPROM_LABELS;
 	i = 0;
