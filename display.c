@@ -114,21 +114,7 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 {
 	static uint8_t oldHour, oldMin;
 
-	uint8_t bits = 0;
-
-	if ((oldHour ^ hour) & 0xF0)
-		bits |= 0x80;
-	if ((oldHour ^ hour) & 0x0F)
-		bits |= 0x40;
-	oldHour = hour;
-
-	if ((oldMin ^ min) & 0xF0)
-		bits |= 0x20;
-	if ((oldMin ^ min) & 0x0F)
-		bits |= 0x10;
-	oldMin = min;
-
-	if (bits & 0x80) {
+	if ((oldHour ^ hour) & 0xF0) {
 		if (numSize == NUM_EXTRA)
 			mask |= MASK_EXTRAHOUR_TENS;
 		else if (numSize == NUM_BIG)
@@ -136,7 +122,7 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 		else
 			mask |= MASK_HOUR_TENS;
 	}
-	if (bits & 0x40) {
+	if ((oldHour ^ hour) & 0x0F) {
 		if (numSize == NUM_EXTRA)
 			mask |= MASK_EXTRAHOUR_UNITS;
 		else if (numSize == NUM_BIG)
@@ -144,7 +130,9 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 		else
 			mask |= MASK_HOUR_UNITS;
 	}
-	if (bits & 0x20) {
+	oldHour = hour;
+
+	if ((oldMin ^ min) & 0xF0) {
 		if (numSize == NUM_EXTRA)
 			mask |= MASK_EXTRAMIN_TENS;
 		else if (numSize == NUM_BIG)
@@ -152,7 +140,7 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 		else
 			mask |= MASK_MIN_TENS;
 	}
-	if (bits & 0x10) {
+	if ((oldMin ^ min) & 0x0F) {
 		if (numSize == NUM_EXTRA )
 			mask |= MASK_EXTRAMIN_UNITS;
 		else if (numSize == NUM_BIG)
@@ -160,6 +148,7 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 		else
 			mask |= MASK_MIN_UNITS;
 	}
+	oldMin = min;
 
 	return mask;
 }
