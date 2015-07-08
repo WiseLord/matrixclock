@@ -23,8 +23,6 @@ static uint8_t eamOld = ALARM_NOEDIT;
 
 static uint8_t alarmFlag = 1;
 
-static uint8_t oldHourTens, oldHourUnits, oldMinTens, oldMinUnits;
-
 static void startAlarm(uint16_t duration)
 {
 	if (getBeepTimer() == 0 && alarmFlag) {
@@ -114,28 +112,21 @@ static void loadTempString(void)
 
 static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t min)
 {
+	static uint8_t oldHour, oldMin;
+
 	uint8_t bits = 0;
-	uint8_t digit;
 
-	digit = hour / 16;
-	if (oldHourTens != digit)
+	if ((oldHour ^ hour) & 0xF0)
 		bits |= 0x80;
-	oldHourTens = digit;
-
-	digit = hour % 16;
-	if (oldHourUnits != digit)
+	if ((oldHour ^ hour) & 0x0F)
 		bits |= 0x40;
-	oldHourUnits = digit;
+	oldHour = hour;
 
-	digit = min / 16;
-	if (oldMinTens != digit)
+	if ((oldMin ^ min) & 0xF0)
 		bits |= 0x20;
-	oldMinTens = digit;
-
-	digit = min % 16;
-	if (oldMinUnits != digit)
+	if ((oldMin ^ min) & 0x0F)
 		bits |= 0x10;
-	oldMinUnits = digit;
+	oldMin = min;
 
 	if (bits & 0x80) {
 		if (numSize == NUM_EXTRA)
@@ -291,7 +282,7 @@ void startScroll(uint8_t type)
 
 void showTime(uint32_t mask)
 {
-	static uint8_t oldSecTens, oldSecUnits;
+	static uint8_t oldSec;
 	uint8_t digit;
 
 	etmOld = RTC_NOEDIT;
@@ -314,15 +305,12 @@ void showTime(uint32_t mask)
 	mask = updateMask(mask, bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
 
 	if (bigNum != NUM_EXTRA) {
-		digit = rtc.sec / 10;
-		if (oldSecTens != digit)
+		digit = rtcDecToBinDec(rtc.sec);
+		if ((oldSec ^ digit) & 0xF0)
 			mask |= MASK_SEC_TENS;
-		oldSecTens = digit;
-
-		digit = rtc.sec % 10;
-		if (oldSecUnits != digit)
+		if ((oldSec ^ digit) & 0x0F)
 			mask |= MASK_SEC_UNITS;
-		oldSecUnits = digit;
+		oldSec = digit;
 	}
 
 	digit = rtc.sec & 0x01;
