@@ -5,9 +5,6 @@
 
 #define RTC_I2C_ADDR		0xD0
 
-#define BD2D(x)				((x >> 4) * 10 + (x & 0x0F))
-#define D2BD(x)				(((x / 10) << 4) + (x % 10))
-
 enum {
 	RTC_SEC = 0,
 	RTC_MIN,
@@ -37,5 +34,8 @@ extern RTC_type rtc;
 void rtcReadTime(void);
 void rtcNextEditParam(void);
 void rtcChangeTime(int8_t diff);
+
+uint8_t rtcBinDecToDec(uint8_t num);
+uint8_t rtcDecToBinDec(uint8_t num);
 
 #endif /* RTC_H */

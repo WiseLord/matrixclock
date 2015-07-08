@@ -50,8 +50,7 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 	/* Clear buffer and go to it's tail */
 	for (pos = 0; pos < width + prec; pos++)
 		strbuf[pos] = lead;
-	strbuf[width + prec] = '\0';
-	pos = width + prec - 1;
+	strbuf[pos--] = '\0';
 
 	/* Fill buffer from right to left */
 	while (value > 0 || pos > width - 2) {
@@ -118,22 +117,22 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 	uint8_t bits = 0;
 	uint8_t digit;
 
-	digit = hour / 10;
+	digit = hour / 16;
 	if (oldHourTens != digit)
 		bits |= 0x80;
 	oldHourTens = digit;
 
-	digit = hour % 10;
+	digit = hour % 16;
 	if (oldHourUnits != digit)
 		bits |= 0x40;
 	oldHourUnits = digit;
 
-	digit = min / 10;
+	digit = min / 16;
 	if (oldMinTens != digit)
 		bits |= 0x20;
 	oldMinTens = digit;
 
-	digit = min % 10;
+	digit = min % 16;
 	if (oldMinUnits != digit)
 		bits |= 0x10;
 	oldMinUnits = digit;
@@ -312,7 +311,7 @@ void showTime(uint32_t mask)
 		matrixLoadNumString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
 
-	mask = updateMask(mask, bigNum, rtc.hour, rtc.min);
+	mask = updateMask(mask, bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
 
 	if (bigNum != NUM_EXTRA) {
 		digit = rtc.sec / 10;
@@ -376,7 +375,7 @@ void showTimeEdit(int8_t ch_dir)
 	matrixSetX(27);
 	matrixLoadString("\xAD");
 
-	mask = updateMask(mask, NUM_NORMAL, time, 0);
+	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(time), 0);
 
 	if (etmOld != rtc.etm)
 		mask |= MASK_ALL;
@@ -420,7 +419,7 @@ void showAlarmEdit(int8_t ch_dir)
 	matrixSetX(27);
 	matrixLoadString("\xA0");
 
-	mask = updateMask(mask, NUM_NORMAL, alrm, 0);
+	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(alrm), 0);
 
 	if (eamOld != alarm.eam)
 		mask |= MASK_ALL;

@@ -49,10 +49,10 @@ void rtcReadTime(void)
 	I2CswStart(RTC_I2C_ADDR | I2C_READ);
 	for (i = RTC_SEC; i < RTC_YEAR; i++) {
 		temp = I2CswReadByte(I2C_ACK);
-		*((int8_t*)&rtc + i) = BD2D(temp);
+		*((int8_t*)&rtc + i) = rtcBinDecToDec(temp);
 	}
 	temp = I2CswReadByte(I2C_NOACK);
-	rtc.year = BD2D(temp);
+	rtc.year = rtcBinDecToDec(temp);
 	I2CswStop();
 
 	return;
@@ -67,7 +67,7 @@ static void rtcSaveTime(void)
 	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(RTC_SEC);
 	for (i = RTC_SEC; i <= RTC_YEAR; i++)
-		I2CswWriteByte(D2BD(*((int8_t*)&rtc + i)));
+		I2CswWriteByte(rtcDecToBinDec(*((int8_t*)&rtc + i)));
 	I2CswStop();
 
 	return;
@@ -114,4 +114,16 @@ void rtcChangeTime(int8_t diff)
 	rtcSaveTime();
 
 	return;
+}
+
+
+uint8_t rtcBinDecToDec(uint8_t num)
+{
+	return (num >> 4) * 10 + (num & 0x0F);
+}
+
+
+uint8_t rtcDecToBinDec(uint8_t num)
+{
+	return ((num / 10) << 4) + (num % 10);
 }
