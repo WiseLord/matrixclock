@@ -167,17 +167,9 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 static void showHMColon(uint8_t step, uint8_t pos)
 {
 	uint8_t value;
+	const static uint8_t val[] PROGMEM = {0x32, 0x26, 0x46, 0x62};
 
-	if (step == 4)
-		value = 0x62;
-	else if (step == 3)
-		value = 0x46;
-	else if (step == 2)
-		value = 0x36;
-	else if (step == 1)
-		value = 0x26;
-	else
-		value = 0x32;
+	value = pgm_read_byte(&val[step]);
 
 	matrixPosData(pos, value);
 	matrixPosData(pos + 1, value);
@@ -318,7 +310,7 @@ void showTime(uint32_t mask)
 		matrixPosData(11, (!digit) << 7);
 		matrixPosData(12, digit << 7);
 	} else if (bigNum == NUM_EXTRA) {
-		showHMColon(digit + 3, 15);
+		showHMColon(digit + 2, 15);
 	} else {
 		showHMColon(digit, 10);
 		matrixPosData(23, alarmRawWeekday());
