@@ -10,7 +10,7 @@
 #define PIN(x)				CONCAT(PIN,x)
 
 #if !defined(HT1632) && !defined(MAX7219)
-#define MAX7219
+#define HT1632
 #endif
 
 #if defined(HT1632)
@@ -35,6 +35,9 @@
 
 #define ADC_CHANNEL			7
 
+#define DHT_DATA			D
+#define DHT_DATA_LINE		(1<<3)
+
 #else
 
 #define ONE_WIRE			D
@@ -56,6 +59,9 @@
 #define I2C_SDA_LINE		(1<<4)
 
 #define ADC_CHANNEL			0
+
+#define DHT_DATA			D
+#define DHT_DATA_LINE		(1<<3)
 
 #endif
 

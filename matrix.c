@@ -48,7 +48,7 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 		chOft = code - ' ';
 		/* TODO: Remove it with full font */
 		if (code > 128)
-			chOft -= 0x21;
+			chOft -= 0x20;
 	}
 
 	for (i = 0; i < width; i++) {
@@ -134,29 +134,33 @@ void matrixPosData(uint8_t pos, uint8_t data)
 void matrixSwitchBuf(uint32_t mask, int8_t effect)
 {
 	uint8_t i, j;
+	uint8_t rsBit;
+	uint8_t lsBit;
 
+	rsBit = 0x80;
+	lsBit = 0x01;
 	for (i = 0; i < 8; i++) {
 		for (j = 0; j < MATRIX_NUMBER * 8; j++) {
 			if (mask & (1UL<<(MATRIX_NUMBER * 8 - 1 - j))) {
 				switch (effect) {
 				case MATRIX_EFFECT_SCROLL_DOWN:
 					fb[j] <<= 1;
-					if (strBuf[j] & (0x80 >> i))
+					if (strBuf[j] & rsBit)
 						fb[j] |= 0x01;
 					break;
 				case MATRIX_EFFECT_SCROLL_UP:
 					fb[j] >>= 1;
-					if (strBuf[j] & (0x01 << i))
+					if (strBuf[j] & lsBit)
 						fb[j] |= 0x80;
 					break;
 				case MATRIX_EFFECT_SCROLL_BOTH:
 					if (j & 0x01) {
 						fb[j] <<= 1;
-						if (strBuf[j] & (0x80 >> i))
+						if (strBuf[j] & rsBit)
 							fb[j] |= 0x01;
 					} else {
 						fb[j] >>= 1;
-						if (strBuf[j] & (0x01 << i))
+						if (strBuf[j] & lsBit)
 							fb[j] |= 0x80;
 					}
 					break;
@@ -168,6 +172,8 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 		}
 		_delay_ms(20);
 		matrixUpdate(fb, rotate);
+		rsBit >>= 1;
+		lsBit <<= 1;
 	}
 
 	return;

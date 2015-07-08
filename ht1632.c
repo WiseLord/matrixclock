@@ -35,24 +35,33 @@ void ht1632SendCmd(uint8_t cmd)
 void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate)
 {
 	uint8_t i, j, k, data;
+	uint8_t rsBit;
+	uint8_t lsBit;
+	uint8_t dataBit;
 
 	PORT(HT1632_CS) &= ~HT1632_CS_LINE;
 	ht1632SendBits(HT1632_IDBITS_CNT, HT1632_MODE_WRITE);
 	ht1632SendBits(HT1632_ADDRBITS_CNT, 0);
 
 	for (k = 0; k < MATRIX_NUMBER; k++) {
+		rsBit = 0x80;
+		lsBit = 0x01;
 		for (i = 0; i < 8; i++) {
 			data = 0;
+			dataBit = 0x80;
 			for (j = 0; j < 8; j++) {
 				if (rotate) {
-					if (buf[((MATRIX_NUMBER - 1 - k) << 3) + 7 - j] & (0x80 >> i))
-						data |= (0x80 >> j);
+					if (buf[((MATRIX_NUMBER - 1 - k) << 3) + 7 - j] & rsBit)
+						data |= dataBit;
 				} else {
-					if (buf[k * 8 + j] & (0x01 << i))
-						data |= (0x80 >> j);
+					if (buf[k * 8 + j] & lsBit)
+						data |= dataBit;
 				}
+				dataBit >>= 1;
 			}
 			ht1632SendBits(HT1632_DATABITS_CNT, data);
+			rsBit >>= 1;
+			lsBit <<= 1;
 		}
 	}
 

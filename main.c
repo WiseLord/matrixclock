@@ -9,6 +9,7 @@
 #include "rtc.h"
 #include "alarm.h"
 #include "bmp180.h"
+#include "dht22.h"
 
 void hwInit(void)
 {
@@ -16,6 +17,7 @@ void hwInit(void)
 
 	ds18x20SearchDevices();
 	bmp180Init();
+	dht22Init();
 
 	displayInit();
 
@@ -42,7 +44,7 @@ int main(void)
 
 	hwInit();
 
-	showTime(MASK_ALL);
+	showTimeMasked();
 
 	ds18x20Process();
 	setSensTimer(TEMP_MEASURE_TIME);
@@ -54,6 +56,7 @@ int main(void)
 			ds18x20Process();
 			if (bmp180HaveSensor())
 				bmp180Convert();
+			dht22Read();
 		}
 
 		/* Update brightness only when not in brightness setup */
@@ -89,7 +92,7 @@ int main(void)
 			case MODE_BRIGHTNESS:
 				break;
 			default:
-				showTime(MASK_ALL);
+				showTimeMasked();
 			}
 			break;
 		case CMD_BTN_2:
@@ -131,7 +134,7 @@ int main(void)
 			case MODE_EDIT_TIME:
 				rtc.etm = RTC_NOEDIT;
 				dispMode = MODE_MAIN;
-				showTime(MASK_ALL);
+				showTimeMasked();
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_EDIT_TIME;
@@ -144,7 +147,7 @@ int main(void)
 				alarm.eam = ALARM_NOEDIT;
 				alarmSave();
 				dispMode = MODE_MAIN;
-				showTime(MASK_ALL);
+				showTimeMasked();
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_EDIT_ALARM;
@@ -157,7 +160,7 @@ int main(void)
 			case MODE_BRIGHTNESS:
 				dispMode = MODE_MAIN;
 				saveMaxBrightness();
-				showTime(MASK_ALL);
+				showTimeMasked();
 				break;
 			case MODE_MAIN:
 				dispMode = MODE_BRIGHTNESS;
@@ -168,12 +171,12 @@ int main(void)
 		case CMD_BTN_1_2_LONG:
 			displaySwitchHourZero();
 			dispMode = MODE_MAIN;
-			showTime(MASK_ALL);
+			showTimeMasked();
 			break;
 		case CMD_BTN_2_3_LONG:
 			displaySwitchBigNum();
 			dispMode = MODE_MAIN;
-			showTime(MASK_ALL);
+			showTimeMasked();
 			break;
 		case CMD_BTN_1_2_3_LONG:
 			matrixScreenRotate();

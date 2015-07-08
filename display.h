@@ -49,6 +49,7 @@ void displaySwitchHourZero(void);
 void startScroll(uint8_t type);
 
 void showTime(uint32_t mask);
+void showTimeMasked(void);
 void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
 void showAlarmEdit(int8_t ch_dir);

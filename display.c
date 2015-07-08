@@ -7,6 +7,7 @@
 #include "alarm.h"
 #include "eeprom.h"
 #include "bmp180.h"
+#include "dht22.h"
 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
@@ -22,6 +23,8 @@ static uint8_t etmOld = RTC_NOEDIT;
 static uint8_t eamOld = ALARM_NOEDIT;
 
 static uint8_t alarmFlag = 1;
+
+static uint8_t firstSensor;
 
 static void startAlarm(uint16_t duration)
 {
@@ -79,32 +82,68 @@ static void loadDateString(void)
 	return;
 }
 
+static void showCommaIfNeeded()
+{
+	if (firstSensor) {
+		firstSensor = 0;
+		matrixLoadStringEeprom(txtLabels[LABEL_TEMPERATURE]);
+	} else {
+		matrixLoadString(",");
+	}
+
+	return;
+}
+
+static void loadSensorString(int16_t value, uint8_t label)
+{
+	matrixLoadString(mkNumberString(value, 5, 1, ' '));
+	matrixLoadStringEeprom(txtLabels[label]);
+
+	return;
+}
+
+static void loadPlaceString(uint8_t label)
+{
+	matrixLoadString(" ");
+	matrixLoadStringEeprom(txtLabels[label]);
+}
+
 static void loadTempString(void)
 {
 	uint8_t i;
 
-	matrixLoadStringEeprom(txtLabels[LABEL_TEMPERATURE]);
+	firstSensor = 1;
 
 	for (i = 0; i < ds18x20GetDevCount(); i++) {
-		if (i > 0)
-			matrixLoadString(", ");
-		matrixLoadString(mkNumberString(ds18x20GetTemp(i), 4, 1, ' '));
-		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
-		matrixLoadString(" ");
-		matrixLoadStringEeprom(txtLabels[LABEL_TEMP1 + i]);
+		showCommaIfNeeded();
+		loadSensorString(ds18x20GetTemp(i), LABEL_DEGREE);
+		loadPlaceString(LABEL_TEMP1 + i);
 	}
+
 	if (bmp180HaveSensor()) {
-		matrixLoadString(", ");
-		matrixLoadString(mkNumberString(bmp180GetTemp(), 4, 1, ' '));
-		matrixLoadStringEeprom(txtLabels[LABEL_DEGREE]);
-		matrixLoadString(" ");
-		matrixLoadStringEeprom(txtLabels[LABEL_TEMP3]);
-		matrixLoadString(", ");
-		matrixLoadStringEeprom(txtLabels[LABEL_PRESSURE]);
-		matrixLoadString(" ");
-		matrixLoadString(mkNumberString(bmp180GetPressure(), 4, 1, ' '));
-		matrixLoadString(" ");
-		matrixLoadStringEeprom(txtLabels[LABEL_MMHG]);
+		showCommaIfNeeded();
+		loadSensorString(bmp180GetTemp(), LABEL_DEGREE);
+		loadPlaceString(LABEL_TEMP3);
+	}
+
+	if (dht22HaveSensor()) {
+		showCommaIfNeeded();
+		loadSensorString(dht22GetTemp(), LABEL_DEGREE);
+		loadPlaceString(LABEL_TEMP4);
+	}
+
+	if (bmp180HaveSensor()) {
+		showCommaIfNeeded();
+		loadPlaceString(LABEL_PRESSURE);
+
+		loadSensorString(bmp180GetPressure(), LABEL_MMHG);
+	}
+
+	if (dht22HaveSensor()) {
+		showCommaIfNeeded();
+		loadPlaceString(LABEL_HUMIDITY);
+
+		loadSensorString(dht22GetHumidity(), LABEL_PERCENT);
 	}
 
 	return;
@@ -173,10 +212,7 @@ static uint8_t calcBrightness(void)
 	uint8_t adch = ADCH;
 
 	if (adch > 2) {							/* We have photoresistor */
-		if (br > (adch >> 4))
-			br--;
-		if (br < (adch >> 4))
-			br++;
+		br = adch >> 4;
 	} else {								/* Calculate br(hour) */
 		if (rtc.hour <= 12)
 			br = (rtc.hour * 2) - 25 + brMax;
@@ -310,6 +346,11 @@ void showTime(uint32_t mask)
 	return;
 }
 
+void showTimeMasked()
+{
+	showTime(MASK_ALL);
+}
+
 void showMainScreen(void)
 {
 	uint8_t mode = matrixGetScrollMode();
@@ -317,7 +358,7 @@ void showMainScreen(void)
 
 	if (mode == MATRIX_SCROLL_OFF) {
 		if (modeOld == MATRIX_SCROLL_ON)
-			showTime(MASK_ALL);
+			showTimeMasked();
 		else
 			showTime(MASK_NONE);
 		if (rtc.sec == 10)
