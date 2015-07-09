@@ -71,8 +71,8 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 static void loadDateString(void)
 {
 	matrixLoadStringEeprom(txtLabels[(LABEL_SATURDAY + rtc.wday) % 7]);
-	matrixLoadString(", ");
-	matrixLoadString(mkNumberString(rtc.date, 2, 0, ' '));
+	matrixLoadString(",");
+	matrixLoadString(mkNumberString(rtc.date, 3, 0, ' '));
 	matrixLoadString(" ");
 	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
 	matrixLoadString(mkNumberString(2000 + rtc.year, 5, 0, ' '));
