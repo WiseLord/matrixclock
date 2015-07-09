@@ -191,17 +191,17 @@ void matrixScrollAndADCInit(void)
 	/* Enable Timer2 overflow interrupt and set prescaler to 1024 (7812 Hz) */
 #if defined(atmega8)
 	TIMSK |= (1<<TOIE2);
-	TCCR2 |= (1<<CS22) | (1<<CS21) | (1<<CS20);
+	TCCR2 = (1<<CS22) | (1<<CS21) | (1<<CS20);
 #else
-	TIMSK2 |= (1<<TOIE2);
+	TIMSK2 = (1<<TOIE2);
 	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 #endif
 
-	ADCSRA |= (1<<ADPS2) | (1<<ADPS1) | (1<<ADPS0); /* Set ADC prescaler to 128	*/
-	ADMUX = (1<<ADLAR) | (0<<REFS1) | (1<<REFS0);	/* Adjust result to left, use VCC as Vref */
-	ADMUX |= ADC_CHANNEL;							/* Set ADC channel */
-
+	/* Adjust result to left, use VCC as Vref and set ADC channel */
+	ADMUX = (1<<ADLAR) | (0<<REFS1) | (1<<REFS0) | ADC_CHANNEL;
+	/* Enable ADC */
 	ADCSRA |= (1<<ADEN);
+
 	return;
 }
 
