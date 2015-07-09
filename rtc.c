@@ -25,18 +25,18 @@ static void rtcWeekDay(void)
 
 static uint8_t rtcDaysInMonth(void)
 {
-	uint8_t m = rtc.month;
+	uint8_t ret = rtc.month;
 
-	if (m == 2) {
-		if (rtc.year & 0x03)
-			return 28;
-		return 29;
+	if (ret == 2) {
+		ret = rtc.year & 0x03;
+		ret = (ret ? 29 : 28);
+	} else {
+		if (ret > 7)
+			ret++;
+		ret |= 30;
 	}
 
-	if (m == 4 || m == 6 || m == 9 || m == 11)
-		return 30;
-
-	return 31;
+	return ret;
 }
 
 void rtcReadTime(void)
