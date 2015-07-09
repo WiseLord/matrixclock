@@ -9,7 +9,7 @@
 #define PORT(x)				CONCAT(PORT,x)
 #define PIN(x)				CONCAT(PIN,x)
 
-#if !defined(HT1632) && !defined(MAX7219)
+#if !defined(HT1632) && !defined(MAX7219) && !defined(MAX7219MOD)
 #define HT1632
 #endif
 
