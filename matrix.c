@@ -20,6 +20,14 @@ static uint8_t strBuf[MATRIX_BUFFER_SIZE];
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
+static void matrixStoreBuf(uint8_t byte)
+{
+	if (_col < MATRIX_BUFFER_SIZE)
+		strBuf[_col++] = byte;
+
+	return;
+}
+
 static void matrixLoadChar(uint8_t numSize, uint8_t code)
 {
 	uint8_t i;
@@ -64,9 +72,9 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 				data = *oft;
 		}
 		if (data != VOID)
-			strBuf[_col++] = data;
+			matrixStoreBuf(data);
 	}
-	strBuf[_col++] = 0x00;
+	matrixStoreBuf(0x00);
 
 	return;
 }
