@@ -86,7 +86,6 @@ static void showCommaIfNeeded()
 {
 	if (firstSensor) {
 		firstSensor = 0;
-		matrixLoadStringEeprom(txtLabels[LABEL_TEMPERATURE]);
 	} else {
 		matrixLoadString(",");
 	}
