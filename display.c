@@ -207,19 +207,27 @@ static void showHMColon(uint8_t step, uint8_t pos)
 
 static uint8_t calcBrightness(void)
 {
-	static int8_t br = 0;
+	int8_t br = 0;
 
+	static uint8_t adcOld;
 	uint8_t adc = ADCH;
 
 	/* Use ADC if we have photoresistor */
-	if (adc > 2)
-		return adc >> 4;
-
-	/* Calculate br(hour) instead */
-	if (rtc.hour <= 12)
-		br = (rtc.hour * 2) - 25 + brMax;
-	else
-		br = 31 - (rtc.hour * 2) + brMax;
+	if (adc > 2) {
+		adc >>= 3;
+		if (adcOld < adc) {
+			adcOld++;
+		} else if (adcOld > adc) {
+			adcOld--;
+		}
+		br = adcOld >> 1;
+	} else {
+		/* Calculate br(hour) instead */
+		if (rtc.hour <= 12)
+			br = (rtc.hour * 2) - 25 + brMax;
+		else
+			br = 31 - (rtc.hour * 2) + brMax;
+	}
 
 	if (br > brMax)
 		br = brMax;
