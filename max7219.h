@@ -1,10 +1,16 @@
 #ifndef MAX7219_H
 #define MAX7219_H
 
-#if defined(MAX7219_X3)
+#include <inttypes.h>
+#include "pins.h"
+#include "matrix.h"
+
+#ifdef MAX7219_X3
 #define MAX7219
 #define MAX7219_NUM_USED 3
-#elif defined(MAX7219MOD_X3)
+#endif
+
+#ifdef MAX7219MOD_X3
 #define MAX7219MOD
 #define MAX7219_NUM_USED 3
 #endif
@@ -12,10 +18,6 @@
 #ifndef MAX7219_NUM_USED
 #define MAX7219_NUM_USED 4
 #endif
-
-#include <inttypes.h>
-#include "pins.h"
-#include "matrix.h"
 
 // Registers
 #define MAX7219_NO_OP			0x00
