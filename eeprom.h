@@ -12,6 +12,7 @@
 #define EEPROM_HOURZERO			((void*)0x0C)
 
 #define EEPROM_BR_MAX			((void*)0x0E)
+#define EEPROM_SENS_MASK		((void*)0x0F)
 
 /* Text labels (maximum 15 byte followed by \0) */
 #define EEPROM_LABELS			((uint8_t*)0x10)

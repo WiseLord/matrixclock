@@ -15,6 +15,7 @@
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
 static int8_t brMax;
+static uint8_t sensMask;
 
 static uint8_t bigNum = 0;
 static uint8_t hourZero = '0';
@@ -111,6 +112,7 @@ static void loadPlaceString(uint8_t label)
 static void loadTempString(void)
 {
 	uint8_t i;
+	uint8_t sm = sensMask;
 
 	firstSensor = 1;
 
@@ -120,29 +122,27 @@ static void loadTempString(void)
 		loadPlaceString(LABEL_TEMP1 + i);
 	}
 
-	if (bmp180HaveSensor()) {
+	if (bmp180HaveSensor() && (sm & SENS_MASK_BMP_TEMP)) {
 		showCommaIfNeeded();
 		loadSensorString(bmp180GetTemp(), LABEL_DEGREE);
 		loadPlaceString(LABEL_TEMP3);
 	}
 
-	if (dht22HaveSensor()) {
+	if (dht22HaveSensor() && (sm & SENS_MASK_DHT_TEMP)) {
 		showCommaIfNeeded();
 		loadSensorString(dht22GetTemp(), LABEL_DEGREE);
 		loadPlaceString(LABEL_TEMP4);
 	}
 
-	if (bmp180HaveSensor()) {
+	if (bmp180HaveSensor() && (sm & SENS_MASK_BMP_PRES)) {
 		showCommaIfNeeded();
 		loadPlaceString(LABEL_PRESSURE);
-
 		loadSensorString(bmp180GetPressure(), LABEL_MMHG);
 	}
 
-	if (dht22HaveSensor()) {
+	if (dht22HaveSensor() && (sm & SENS_MASK_DHT_HUMI)) {
 		showCommaIfNeeded();
 		loadPlaceString(LABEL_HUMIDITY);
-
 		loadSensorString(dht22GetHumidity(), LABEL_PERCENT);
 	}
 
@@ -264,6 +264,7 @@ void displayInit(void)
 	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
 	hourZero = eeprom_read_byte(EEPROM_HOURZERO);
 	brMax = eeprom_read_byte(EEPROM_BR_MAX);
+	sensMask = eeprom_read_byte(EEPROM_SENS_MASK);
 
 	return;
 }

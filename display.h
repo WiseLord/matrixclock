@@ -38,6 +38,11 @@ enum {
 #define MASK_NONE				0x00000000UL
 #define MASK_ALL				0xFFFFFFFFUL
 
+#define SENS_MASK_BMP_TEMP		0x10
+#define SENS_MASK_DHT_TEMP		0x20
+#define SENS_MASK_BMP_PRES		0x40
+#define SENS_MASK_DHT_HUMI		0x80
+
 enum {
 	SCROLL_DATE = 0,
 	SCROLL_TEMP,
