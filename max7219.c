@@ -50,23 +50,35 @@ void max7219SendCmd(uint8_t reg, uint8_t data)
 void max7219SendDataBuf(uint8_t *buf, uint8_t rotate)
 {
 	uint8_t i, j, data;
+	uint8_t ci;
+
+	ci = 0x01;
 	for (i = 0; i < 8; i++) {
 		PORT(MAX7219_LOAD) &= ~MAX7219_LOAD_LINE;
 		for (j = 0; j < MAX7219_NUM_USED; j++) {
 #if defined(MAX7219MOD)
 			data = 0;
 			uint8_t k;
+			uint8_t ls, rs;
+			ls = 0x01;
+			rs = 0x80;
 			for (k = 0; k < 8; k++) {
-				if (buf[8 * (rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & (1 << i))
-					data |= (rotate ? 0x01 << k : 0x80 >> k);
+				if (buf[8 * (rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & ci)
+					data |= (rotate ? ls : rs);
+				ls <<= 1;
+				rs >>= 1;
 			}
 #else
 			data = (rotate ? max7219SwapBits(buf[8 * j + i]) : buf[8 * (MAX7219_NUM_USED - 1 - j) + i]);
 #endif
-			max7219SendByte(rotate ? MAX7219_DIGIT_7 - i : MAX7219_DIGIT_0 + i);
+			if (rotate)
+				max7219SendByte(MAX7219_DIGIT_7 - i);
+			else
+				max7219SendByte(MAX7219_DIGIT_0 + i);
 			max7219SendByte(data);
 		}
 		PORT(MAX7219_LOAD) |= MAX7219_LOAD_LINE;
+		ci <<= 1;
 	}
 
 	return;
