@@ -10,6 +10,7 @@
 #define EEPROM_SCREEN_ROTATE	((void*)0x0A)
 #define EEPROM_BIGNUM			((void*)0x0B)
 #define EEPROM_HOURZERO			((void*)0x0C)
+#define EEPROM_SCROLL_INTERVAL	((void*)0x0D)
 
 #define EEPROM_BR_MAX			((void*)0x0E)
 #define EEPROM_SENS_MASK		((void*)0x0F)

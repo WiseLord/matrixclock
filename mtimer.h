@@ -35,8 +35,12 @@ void mTimerInit(void);
 
 uint16_t getTempConvertTimer(void);
 void setTempConvertTimer(uint16_t val);
+
 uint8_t getSensTimer(void);
 void setSensTimer(uint8_t val);
+
+uint8_t getScrollTimer(void);
+void setScrollTimer(uint8_t val);
 
 void startBeeper(uint16_t time);
 uint16_t getBeepTimer(void);

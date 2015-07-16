@@ -4,6 +4,7 @@
 #include "ht1632.h"
 #include "max7219.h"
 #include "eeprom.h"
+#include "mtimer.h"
 
 #include <util/delay.h>
 #include <avr/pgmspace.h>
@@ -11,6 +12,7 @@
 #include <avr/interrupt.h>
 
 static uint8_t rotate = 0;
+static uint8_t scrollInterval = 0;
 
 static int16_t _col;						/* Current position */
 
@@ -85,6 +87,8 @@ void matrixInit(void)
 
 	matrixFill(0x00);
 	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
+	scrollInterval = eeprom_read_byte(EEPROM_SCROLL_INTERVAL);
+	setScrollTimer (scrollInterval);
 
 	return;
 }
@@ -229,8 +233,8 @@ ISR (TIMER2_OVF_vect)
 		if (scrollPos >= _col + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
 			scrollMode = MATRIX_SCROLL_OFF;
 			scrollPos = 0;
+			setScrollTimer (scrollInterval);
 		}
-
 	}
 
 	// Start ADC conversion to get brightness from photoresistor
@@ -243,6 +247,7 @@ void matrixHwScroll(uint8_t status)
 {
 	scrollPos = 0;
 	scrollMode = status;
+	setScrollTimer (scrollInterval);
 
 	return;
 }

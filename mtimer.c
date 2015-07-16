@@ -4,7 +4,9 @@
 
 /* Temperature/pressure/humidity sensor poll timer */
 static volatile uint8_t sensTimer = 0;
-/* Beeper */
+/* Scroll interval timer */
+static volatile uint8_t scrollTimer = 0;
+/* Beeper timer */
 static volatile uint16_t beepTimer = 0;
 /* Seconds timer */
 static volatile uint8_t secTimer = 0;
@@ -97,6 +99,8 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 		/* Temperature */
 		if (sensTimer)
 			sensTimer--;
+		if (scrollTimer)
+			scrollTimer--;
 	}
 
 	/* Beeper */
@@ -120,6 +124,17 @@ uint8_t getSensTimer(void)
 void setSensTimer(uint8_t val)
 {
 	sensTimer = val;
+
+	return;
+}
+
+uint8_t getScrollTimer(void)
+{
+	return scrollTimer;
+}
+void setScrollTimer(uint8_t val)
+{
+	scrollTimer = val;
 
 	return;
 }

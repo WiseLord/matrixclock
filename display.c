@@ -27,6 +27,8 @@ static uint8_t alarmFlag = 1;
 
 static uint8_t firstSensor;
 
+static uint8_t scrollType;
+
 static void startAlarm(uint16_t duration)
 {
 	if (getBeepTimer() == 0 && alarmFlag) {
@@ -302,6 +304,7 @@ void startScroll(uint8_t type)
 		loadDateString();
 	else
 		loadTempString();
+	scrollType = type;
 	matrixHwScroll(MATRIX_SCROLL_START);
 
 	return;
@@ -371,10 +374,11 @@ void showMainScreen(void)
 			showTimeMasked();
 		else
 			showTime(MASK_NONE);
-		if (rtc.sec == 10)
-			startScroll(SCROLL_DATE);
-		else if (rtc.sec == 40)
-			startScroll(SCROLL_TEMP);
+		if (getScrollTimer () == 0) {
+			if (++scrollType >= SCROLL_END)
+				scrollType = SCROLL_DATE;
+			startScroll (scrollType);
+		}
 	}
 
 	modeOld = mode;

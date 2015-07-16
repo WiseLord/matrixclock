@@ -46,6 +46,8 @@ enum {
 enum {
 	SCROLL_DATE = 0,
 	SCROLL_TEMP,
+
+	SCROLL_END,
 };
 
 void displayInit(void);
