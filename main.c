@@ -69,9 +69,9 @@ int main(void)
 		/* Beep on button pressed */
 		if (cmd != CMD_EMPTY) {
 			if (cmd < CMD_BTN_1_LONG)
-				startBeeper(80);
+				startBeeper(BEEP_SHORT);
 			else
-				startBeeper(160);
+				startBeeper(BEEP_LONG);
 		}
 
 		/* Stop scrolling on any button pressed */

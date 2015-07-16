@@ -4,8 +4,8 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define TEMP_MEASURE_TIME		750
-#define SENSOR_POLL_INTERVAL	10000
+#define TEMP_MEASURE_TIME		2
+#define SENSOR_POLL_INTERVAL	10
 
 #define BTN_STATE_0				0b000
 #define BTN_1					0b001
@@ -13,8 +13,12 @@
 #define BTN_3					0b100
 
 /* Handling long press actions */
-#define SHORT_PRESS				50
-#define LONG_PRESS				500
+#define SHORT_PRESS				25
+#define LONG_PRESS				125
+
+#define BEEP_SHORT				20
+#define BEEP_LONG				40
+#define BEEP_ALARM				15000
 
 enum {
 	CMD_EMPTY = 0,
@@ -34,8 +38,8 @@ void mTimerInit(void);
 
 uint16_t getTempConvertTimer(void);
 void setTempConvertTimer(uint16_t val);
-uint16_t getSensTimer(void);
-void setSensTimer(uint16_t val);
+uint8_t getSensTimer(void);
+void setSensTimer(uint8_t val);
 
 void startBeeper(uint16_t time);
 uint16_t getBeepTimer(void);

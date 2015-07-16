@@ -2,12 +2,14 @@
 
 #include <avr/interrupt.h>
 
-/* Temperature */
-static volatile uint16_t sensTimer = 0;
+/* Temperature/pressure/humidity sensor poll timer */
+static volatile uint8_t sensTimer = 0;
 
 /* Beeper */
 static volatile uint16_t beepTimer = 0;
-static volatile uint16_t beepSecTimer = 0;
+
+/* Seconds timer */
+static volatile uint8_t secTimer = 0;
 
 /* Command buffer */
 static volatile uint8_t cmdBuf;
@@ -16,10 +18,10 @@ void mTimerInit(void)
 {
 #if defined(atmega8)
 	TIMSK |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
-	TCCR0 = (0<<CS02) | (1<<CS01) | (1<<CS00);		/* Set timer prescaller to 64 (125kHz) */
+	TCCR0 = (1<<CS02) | (0<<CS01) | (0<<CS00);		/* Set timer prescaller to 256 (31250Hz) */
 #else
 	TIMSK0 |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
-	TCCR0B = (0<<CS02) | (1<<CS01) | (1<<CS00);	/* Set timer prescaller to 64 (125kHz) */
+	TCCR0B = (1<<CS02) | (0<<CS01) | (0<<CS00);		/* Set timer prescaller to 256 (31250Hz) */
 #endif
 
 	DDR(BEEPER) |= BEEPER_LINE;
@@ -101,34 +103,35 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 		btnCnt = 0;
 	}
 
-	/* Temperature */
-	if (sensTimer)
-		sensTimer--;
+	/* 1 second intervals */
+	if (secTimer) {
+		secTimer--;
+	} else {
+		secTimer = 250;
+		/* Temperature */
+		if (sensTimer)
+			sensTimer--;
+	}
 
 	/* Beeper */
 	if (beepTimer)
 		beepTimer--;
-	if (beepSecTimer)
-		beepSecTimer--;
-	else
-		beepSecTimer = 1000;
 
-	if (((beepTimer >> 3) & 7) > 4) {
-		if (beepSecTimer > 500)
+	if ((beepTimer & 0x0E) > 8) {
+		if (secTimer > 125)
 			PORT(BEEPER) &= ~BEEPER_LINE;
 	} else {
 		PORT(BEEPER) |= BEEPER_LINE;
-
 	}
 
 	return;
 }
 
-uint16_t getSensTimer(void)
+uint8_t getSensTimer(void)
 {
 	return sensTimer;
 }
-void setSensTimer(uint16_t val)
+void setSensTimer(uint8_t val)
 {
 	sensTimer = val;
 
@@ -137,7 +140,7 @@ void setSensTimer(uint16_t val)
 
 void startBeeper(uint16_t time)
 {
-	beepSecTimer = 0;
+	secTimer = 0;
 	beepTimer = time;
 
 	return;

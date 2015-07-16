@@ -501,11 +501,11 @@ void checkAlarmAndBrightness(void)
 	/* Check alarm */
 	if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
 		if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
-			startAlarm(60000);
+			startAlarm(BEEP_ALARM);
 	} else {
 		/* Check new hour */
 		if (rtc.hour > alarm.hour && rtc.min == 0)
-			startAlarm(160);
+			startAlarm(BEEP_LONG);
 		else
 			alarmFlag = 1;
 	}
