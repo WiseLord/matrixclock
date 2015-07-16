@@ -8,9 +8,6 @@
 #define SENSOR_POLL_INTERVAL	10
 
 #define BTN_STATE_0				0b000
-#define BTN_1					0b001
-#define BTN_2					0b010
-#define BTN_3					0b100
 
 /* Handling long press actions */
 #define SHORT_PRESS				25

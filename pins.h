@@ -21,11 +21,9 @@
 #define BEEPER				C
 #define BEEPER_LINE			(1<<0)
 
-#define BUTTON_1			D
+#define BUTTONS				D
 #define BUTTON_1_LINE		(1<<7)
-#define BUTTON_2			D
 #define BUTTON_2_LINE		(1<<6)
-#define BUTTON_3			D
 #define BUTTON_3_LINE		(1<<5)
 
 #define I2C_SCL				B
@@ -46,11 +44,9 @@
 #define BEEPER				D
 #define BEEPER_LINE			(1<<5)
 
-#define BUTTON_1			B
+#define BUTTONS				B
 #define BUTTON_1_LINE		(1<<3)
-#define BUTTON_2			B
 #define BUTTON_2_LINE		(1<<4)
-#define BUTTON_3			B
 #define BUTTON_3_LINE		(1<<5)
 
 #define I2C_SCL				C

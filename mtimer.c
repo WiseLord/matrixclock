@@ -4,10 +4,8 @@
 
 /* Temperature/pressure/humidity sensor poll timer */
 static volatile uint8_t sensTimer = 0;
-
 /* Beeper */
 static volatile uint16_t beepTimer = 0;
-
 /* Seconds timer */
 static volatile uint8_t secTimer = 0;
 
@@ -28,13 +26,8 @@ void mTimerInit(void)
 	PORT(BEEPER) |= BEEPER_LINE;
 
 	/* Setup buttons as inputs with pull-up resistors */
-	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
-	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
-	DDR(BUTTON_3) &= ~BUTTON_3_LINE;
-
-	PORT(BUTTON_1) |= BUTTON_1_LINE;
-	PORT(BUTTON_2) |= BUTTON_2_LINE;
-	PORT(BUTTON_3) |= BUTTON_3_LINE;
+	DDR(BUTTONS) &= ~(BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
+	PORT(BUTTONS) |= (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 
 	cmdBuf = CMD_EMPTY;
 
@@ -48,14 +41,7 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 	static int16_t btnCnt = 0;						/* Buttons press duration value */
 	static uint8_t btnPrev = 0;						/* Previous buttons state */
 
-	uint8_t btnNow = BTN_STATE_0;
-
-	if (~PIN(BUTTON_1) & BUTTON_1_LINE)
-		btnNow |= BTN_1;
-	if (~PIN(BUTTON_2) & BUTTON_2_LINE)
-		btnNow |= BTN_2;
-	if (~PIN(BUTTON_3) & BUTTON_3_LINE)
-		btnNow |= BTN_3;
+	uint8_t btnNow = ~PIN(BUTTONS) & (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
@@ -63,22 +49,22 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 			btnCnt++;
 			if (btnCnt == LONG_PRESS) {
 				switch (btnPrev) {
-				case BTN_1:
+				case BUTTON_1_LINE:
 					cmdBuf = CMD_BTN_1_LONG;
 					break;
-				case BTN_2:
+				case BUTTON_2_LINE:
 					cmdBuf = CMD_BTN_2_LONG;
 					break;
-				case BTN_3:
+				case BUTTON_3_LINE:
 					cmdBuf = CMD_BTN_3_LONG;
 					break;
-				case (BTN_1 | BTN_2):
+				case (BUTTON_1_LINE | BUTTON_2_LINE):
 					cmdBuf = CMD_BTN_1_2_LONG;
 					break;
-				case (BTN_2 | BTN_3):
+				case (BUTTON_2_LINE | BUTTON_3_LINE):
 					cmdBuf = CMD_BTN_2_3_LONG;
 					break;
-				case (BTN_1 | BTN_2 | BTN_3):
+				case (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE):
 					cmdBuf = CMD_BTN_1_2_3_LONG;
 					break;
 				}
@@ -89,13 +75,13 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 	} else {
 		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
 			switch (btnPrev) {
-			case BTN_1:
+			case BUTTON_1_LINE:
 				cmdBuf = CMD_BTN_1;
 				break;
-			case BTN_2:
+			case BUTTON_2_LINE:
 				cmdBuf = CMD_BTN_2;
 				break;
-			case BTN_3:
+			case BUTTON_3_LINE:
 				cmdBuf = CMD_BTN_3;
 				break;
 			}
