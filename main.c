@@ -131,24 +131,30 @@ int main(void)
 			break;
 		case CMD_BTN_1_LONG:
 			switch (dispMode) {
+			case MODE_MAIN:
+				dispMode = MODE_EDIT_TIME;
+				rtcNextEditParam();
+				break;
 			case MODE_EDIT_TIME:
 				rtc.etm = RTC_NOEDIT;
 				dispMode = MODE_MAIN;
 				showTimeMasked();
 				break;
-			case MODE_MAIN:
-				dispMode = MODE_EDIT_TIME;
-				rtcNextEditParam();
-			}
-			break;
-		case CMD_BTN_2_LONG:
-			switch (dispMode) {
 			case MODE_EDIT_ALARM:
 				alarm.eam = ALARM_NOEDIT;
 				alarmSave();
 				dispMode = MODE_MAIN;
 				showTimeMasked();
 				break;
+			case MODE_BRIGHTNESS:
+				dispMode = MODE_MAIN;
+				saveMaxBrightness();
+				showTimeMasked();
+				break;
+			}
+			break;
+		case CMD_BTN_2_LONG:
+			switch (dispMode) {
 			case MODE_MAIN:
 				dispMode = MODE_EDIT_ALARM;
 				alarmNextEditParam();
@@ -157,11 +163,6 @@ int main(void)
 			break;
 		case CMD_BTN_3_LONG:
 			switch (dispMode) {
-			case MODE_BRIGHTNESS:
-				dispMode = MODE_MAIN;
-				saveMaxBrightness();
-				showTimeMasked();
-				break;
 			case MODE_MAIN:
 				dispMode = MODE_BRIGHTNESS;
 				showBrightness(direction, MASK_ALL);
