@@ -386,18 +386,29 @@ void showMainScreen(void)
 	return;
 }
 
+static void showParamEdit(int8_t value, char *aFlag, uint8_t label, char *icon)
+{
+	matrixSetX(0);
+	if (aFlag) {
+		matrixLoadString(aFlag);
+	} else  {
+		matrixLoadString(mkNumberString(value, 2, 0, ' '));
+	}
+	matrixSetX(13);
+	matrixLoadStringEeprom(txtLabels[label]);
+	matrixSetX(27);
+	matrixLoadString(icon);
+
+	return;
+}
+
 void showTimeEdit(int8_t ch_dir)
 {
 	uint32_t mask = MASK_NONE;
 
 	int8_t time = *((int8_t*)&rtc + rtc.etm);
 
-	matrixSetX(0);
-	matrixLoadString(mkNumberString(time, 2, 0, ' '));
-	matrixSetX(13);
-	matrixLoadStringEeprom(txtLabels[LABEL_SECOND + rtc.etm]);
-	matrixSetX(27);
-	matrixLoadString("\xAD");
+	showParamEdit(time, 0, LABEL_SECOND + rtc.etm, "\xAD");
 
 	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(time), 0);
 
@@ -417,31 +428,18 @@ void showAlarmEdit(int8_t ch_dir)
 
 	int8_t alrm = *((int8_t*)&alarm + alarm.eam);
 
-	matrixSetX(0);
+	uint8_t label = LABEL_HOUR + alarm.eam;
+	char *aIcon = "\xA0";
+	char *aTrue = " \xA0";
+	char *aFalse = "  ";
+	char *aFlag = 0;
 
-	switch (alarm.eam) {
-	case ALARM_HOUR:
-		matrixLoadString(mkNumberString(alrm, 2, 0, ' '));
-		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_HOUR]);
-		break;
-	case ALARM_MIN:
-		matrixLoadString(mkNumberString(alrm, 2, 0, ' '));
-		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_MINUTE]);
-		break;
-	default:
-		if (alrm)
-			matrixLoadString(" \xA0");
-		else
-			matrixLoadString("  ");
-		matrixSetX(13);
-		matrixLoadStringEeprom(txtLabels[LABEL_MO + alarm.eam - ALARM_MON]);
-
-		break;
+	if (alarm.eam > ALARM_MIN) {
+		label = LABEL_MO + alarm.eam - ALARM_MON;
+		aFlag = alrm ? aTrue : aFalse;
 	}
-	matrixSetX(27);
-	matrixLoadString("\xA0");
+
+	showParamEdit(alrm, aFlag, label, aIcon);
 
 	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(alrm), 0);
 
@@ -472,10 +470,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 {
 	static uint8_t oldBrMax;
 
-	matrixSetX(0);
-	matrixLoadString(mkNumberString(brMax, 2, 0, ' '));
-	matrixSetX(12);
-	matrixLoadString("\xA4\xA4\xA4");
+	showParamEdit(brMax, 0, LABEL_BRIGHTNESS, "\xA4");
 
 	if (oldBrMax / 10 != brMax / 10)
 		mask  |= MASK_BR_TENS;
