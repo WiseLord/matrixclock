@@ -10,6 +10,15 @@
 #define MAX7219_NUM_USED 3
 #endif
 
+#ifdef MAX7219MOD2_X3
+#define MAX7219MOD2
+#define MAX7219_NUM_USED 3
+#endif
+
+#ifdef MAX7219MOD2
+#define MAX7219MOD
+#endif
+
 #ifdef MAX7219MOD_X3
 #define MAX7219MOD
 #define MAX7219_NUM_USED 3

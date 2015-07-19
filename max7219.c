@@ -63,7 +63,11 @@ void max7219SendDataBuf(uint8_t *buf, uint8_t rotate)
 			ls = 0x01;
 			rs = 0x80;
 			for (k = 0; k < 8; k++) {
+#if defined(MAX7219MOD2)
+				if (buf[8 * (!rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & ci)
+#else
 				if (buf[8 * (rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & ci)
+#endif
 					data |= (rotate ? ls : rs);
 				ls <<= 1;
 				rs >>= 1;
