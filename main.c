@@ -89,10 +89,6 @@ int main(void)
 			case MODE_EDIT_ALARM:
 				alarmNextEditParam();
 				break;
-			case MODE_BRIGHTNESS:
-				break;
-			default:
-				showTimeMasked();
 			}
 			break;
 		case CMD_BTN_2:
