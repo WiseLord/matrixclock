@@ -93,35 +93,21 @@ int main(void)
 			break;
 		case CMD_BTN_2:
 			direction = PARAM_UP;
-			switch (dispMode) {
-			case MODE_MAIN:
-				startScroll(SCROLL_DATE);
-				break;
-			case MODE_EDIT_TIME:
-				rtcChangeTime(PARAM_UP);
-				break;
-			case MODE_EDIT_ALARM:
-				alarmChange(PARAM_UP);
-				break;
-			case MODE_BRIGHTNESS:
-				changeBrightness(PARAM_UP);
-				break;
-			}
-			break;
 		case CMD_BTN_3:
-			direction = PARAM_DOWN;
+			if (cmd == CMD_BTN_3)
+				direction = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
-				startScroll(SCROLL_TEMP);
+				startScroll(cmd - CMD_BTN_2);
 				break;
 			case MODE_EDIT_TIME:
-				rtcChangeTime(PARAM_DOWN);
+				rtcChangeTime(direction);
 				break;
 			case MODE_EDIT_ALARM:
-				alarmChange(PARAM_DOWN);
+				alarmChange(direction);
 				break;
 			case MODE_BRIGHTNESS:
-				changeBrightness(PARAM_DOWN);
+				changeBrightness(direction);
 				break;
 			}
 			break;
