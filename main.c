@@ -126,43 +126,28 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_1_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
+			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_EDIT_TIME;
 				rtcNextEditParam();
-				break;
-			case MODE_EDIT_TIME:
+			} else {
 				rtc.etm = RTC_NOEDIT;
-				dispMode = MODE_MAIN;
-				showTimeMasked();
-				break;
-			case MODE_EDIT_ALARM:
-				alarm.eam = ALARM_NOEDIT;
 				alarmSave();
-				dispMode = MODE_MAIN;
-				showTimeMasked();
-				break;
-			case MODE_BRIGHTNESS:
-				dispMode = MODE_MAIN;
+				alarm.eam = ALARM_NOEDIT;
 				saveMaxBrightness();
+				dispMode = MODE_MAIN;
 				showTimeMasked();
-				break;
 			}
 			break;
 		case CMD_BTN_2_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
+			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_EDIT_ALARM;
 				alarmNextEditParam();
-				break;
 			}
 			break;
 		case CMD_BTN_3_LONG:
-			switch (dispMode) {
-			case MODE_MAIN:
+			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_BRIGHTNESS;
 				showBrightness(direction, MASK_ALL);
-				break;
 			}
 			break;
 		case CMD_BTN_1_2_LONG:
