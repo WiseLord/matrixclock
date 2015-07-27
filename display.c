@@ -428,15 +428,19 @@ void showAlarmEdit(int8_t ch_dir)
 
 	int8_t alrm = *((int8_t*)&alarm + alarm.eam);
 
-	uint8_t label = LABEL_HOUR + alarm.eam;
+	uint8_t label;
+	char *aFlag;
+
 	char *aIcon = "\xA0";
 	char *aTrue = " \xA0";
 	char *aFalse = "  ";
-	char *aFlag = 0;
 
 	if (alarm.eam > ALARM_MIN) {
 		label = LABEL_MO + alarm.eam - ALARM_MON;
 		aFlag = alrm ? aTrue : aFalse;
+	} else {
+		label = LABEL_HOUR - alarm.eam;
+		aFlag = 0;
 	}
 
 	showParamEdit(alrm, aFlag, label, aIcon);
