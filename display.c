@@ -247,7 +247,7 @@ void displayInit(void)
 	matrixInit();
 
 	/* Read text labels saved in EEPROM */
-	addr = EEPROM_LABELS;
+	addr = (uint8_t*)EEPROM_LABELS;
 	i = 0;
 	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
 		if (eeprom_read_byte(addr) != '\0') {
@@ -263,10 +263,10 @@ void displayInit(void)
 		}
 	}
 
-	bigNum = eeprom_read_byte(EEPROM_BIGNUM);
-	hourZero = eeprom_read_byte(EEPROM_HOURZERO);
-	brMax = eeprom_read_byte(EEPROM_BR_MAX);
-	sensMask = eeprom_read_byte(EEPROM_SENS_MASK);
+	bigNum = eeprom_read_byte((uint8_t*)EEPROM_BIGNUM);
+	hourZero = eeprom_read_byte((uint8_t*)EEPROM_HOURZERO);
+	brMax = eeprom_read_byte((uint8_t*)EEPROM_BR_MAX);
+	sensMask = eeprom_read_byte((uint8_t*)EEPROM_SENS_MASK);
 
 	return;
 }
@@ -280,7 +280,7 @@ void displaySwitchBigNum(void)
 #endif
 		bigNum = NUM_NORMAL;
 
-	eeprom_update_byte(EEPROM_BIGNUM, bigNum);
+	eeprom_update_byte((uint8_t*)EEPROM_BIGNUM, bigNum);
 
 	return;
 }
@@ -291,7 +291,7 @@ void displaySwitchHourZero(void) {
 	else
 		hourZero = '0';
 
-	eeprom_update_byte(EEPROM_HOURZERO, hourZero);
+	eeprom_update_byte((uint8_t*)EEPROM_HOURZERO, hourZero);
 	return;
 }
 
@@ -492,7 +492,7 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 
 void saveMaxBrightness(void)
 {
-	eeprom_update_byte(EEPROM_BR_MAX, brMax);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_MAX, brMax);
 
 	return;
 }

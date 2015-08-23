@@ -47,11 +47,11 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 		font = font_smallnum;
 		width = MATRIX_SMALLNUM_WIDTH;
 	} else if (numSize == NUM_BIG) {
-		font = EEPROM_BIG_NUM_FONT;
+		font = (uint8_t*)EEPROM_BIG_NUM_FONT;
 		width = MATRIX_BIGNUM_WIDTH;
 		memType = MATRIX_FONT_EEPROM;
 	} else if (numSize == NUM_EXTRA) {
-		font = EEPROM_EXTRA_NUM_FONT;
+		font = (uint8_t*)EEPROM_EXTRA_NUM_FONT;
 		width = MATRIX_EXTRANUM_WIDTH;
 		memType = MATRIX_FONT_EEPROM;
 	} else {
@@ -86,8 +86,8 @@ void matrixInit(void)
 	matrixInitDriver();
 
 	matrixFill(0x00);
-	rotate = eeprom_read_byte(EEPROM_SCREEN_ROTATE);
-	scrollInterval = eeprom_read_byte(EEPROM_SCROLL_INTERVAL);
+	rotate = eeprom_read_byte((uint8_t*)EEPROM_SCREEN_ROTATE);
+	scrollInterval = eeprom_read_byte((uint8_t*)EEPROM_SCROLL_INTERVAL);
 	setScrollTimer (scrollInterval);
 
 	return;
@@ -109,7 +109,7 @@ void matrixSetBrightness(uint8_t brightness)
 void matrixScreenRotate(void)
 {
 	rotate = !rotate;
-	eeprom_update_byte(EEPROM_SCREEN_ROTATE, rotate);
+	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, rotate);
 
 	return;
 }

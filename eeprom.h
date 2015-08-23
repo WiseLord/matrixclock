@@ -3,27 +3,27 @@
 
 #include <inttypes.h>
 
-#define EEPROM_ALARM_HOUR		((void*)0x00)
-#define EEPROM_ALARM_MIN		((void*)0x01)
-#define EEPROM_ALARM_MON		((void*)0x02)
+#define EEPROM_ALARM_HOUR			0x00
+#define EEPROM_ALARM_MIN			0x01
+#define EEPROM_ALARM_MON			0x02
 
-#define EEPROM_SCREEN_ROTATE	((void*)0x0A)
-#define EEPROM_BIGNUM			((void*)0x0B)
-#define EEPROM_HOURZERO			((void*)0x0C)
-#define EEPROM_SCROLL_INTERVAL	((void*)0x0D)
+#define EEPROM_SCREEN_ROTATE		0x0A
+#define EEPROM_BIGNUM				0x0B
+#define EEPROM_HOURZERO				0x0C
+#define EEPROM_SCROLL_INTERVAL		0x0D
 
-#define EEPROM_BR_MAX			((void*)0x0E)
-#define EEPROM_SENS_MASK		((void*)0x0F)
+#define EEPROM_BR_MAX				0x0E
+#define EEPROM_SENS_MASK			0x0F
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define EEPROM_LABELS			((uint8_t*)0x10)
+#define EEPROM_LABELS				0x10
 
 /* Big numbers font (10 * 5 bytes) */
-#define EEPROM_BIG_NUM_FONT		((uint8_t*)0x1C0)
+#define EEPROM_BIG_NUM_FONT			0x1C0
 /* Extra numbers font (10 * 6 bytes) */
-#define EEPROM_EXTRA_NUM_FONT	((uint8_t*)0x180)
+#define EEPROM_EXTRA_NUM_FONT		0x180
 
-#define EEPROM_SIZE				0x200
+#define EEPROM_SIZE					0x200
 
 enum {
 	LABEL_MONDAY,
