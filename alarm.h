@@ -37,6 +37,6 @@ void alarmInit(void);
 void alarmSave(void);
 void alarmNextEditParam(void);
 void alarmChange(int8_t diff);
-int8_t alarmRawWeekday(void);
+uint8_t alarmRawWeekday(void);
 
 #endif // ALARM_H

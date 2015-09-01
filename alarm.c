@@ -52,10 +52,9 @@ void alarmChange(int8_t diff)
 	return;
 }
 
-int8_t alarmRawWeekday(void)
+uint8_t alarmRawWeekday(void)
 {
-	int8_t rawWeekday = 0x00;
-	uint8_t i;
+	uint8_t i, rawWeekday = 0x00;
 
 	for (i = 0; i <= ALARM_SUN - ALARM_MON; i++) {
 		rawWeekday >>= 1;
