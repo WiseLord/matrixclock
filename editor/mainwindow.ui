@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>764</width>
-    <height>508</height>
+    <width>762</width>
+    <height>506</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -97,7 +97,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -623,7 +623,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>764</width>
+     <width>762</width>
      <height>22</height>
     </rect>
    </property>
@@ -788,7 +788,7 @@
      <y>62</y>
     </hint>
     <hint type="destinationlabel">
-     <x>763</x>
+     <x>761</x>
      <y>61</y>
     </hint>
    </hints>
@@ -852,7 +852,7 @@
      <y>148</y>
     </hint>
     <hint type="destinationlabel">
-     <x>764</x>
+     <x>761</x>
      <y>181</y>
     </hint>
    </hints>
@@ -884,7 +884,7 @@
      <y>225</y>
     </hint>
     <hint type="destinationlabel">
-     <x>763</x>
+     <x>761</x>
      <y>223</y>
     </hint>
    </hints>
@@ -900,7 +900,7 @@
      <y>248</y>
     </hint>
     <hint type="destinationlabel">
-     <x>762</x>
+     <x>761</x>
      <y>256</y>
     </hint>
    </hints>

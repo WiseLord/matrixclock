@@ -96,13 +96,13 @@ void MainWindow::readEepromFile(QString name)
     len = 0;
     buffer.getChar(&ch);
 
-    for (int i = 0; i < LABEL_END && buffer.pos() < EEPROM_SIZE; i++) {
-        while (ch == 0x00 && buffer.pos() < EEPROM_SIZE) {
+    for (int i = 0; i < LABEL_END && buffer.pos() < EEPROM_EXTRA_NUM_FONT; i++) {
+        while (ch == 0x00 && buffer.pos() < EEPROM_EXTRA_NUM_FONT) {
             pos = buffer.pos();
             len = 0;
             buffer.getChar(&ch);
         }
-        while (ch != 0x00 && buffer.pos() < EEPROM_SIZE) {
+        while (ch != 0x00 && buffer.pos() < EEPROM_EXTRA_NUM_FONT) {
             buffer.getChar(&ch);
             len++;
         }
@@ -134,9 +134,9 @@ void MainWindow::saveEepromFile(QString name)
 void MainWindow::openEeprom()
 {
     QString name = QFileDialog::getOpenFileName(this,
-        tr("Open eeprom binary"),
-        "../eeprom/",
-        tr("EEPROM files (*.bin);;All files (*.*)"));
+                                                tr("Open eeprom binary"),
+                                                "../eeprom/",
+                                                tr("EEPROM files (*.bin);;All files (*.*)"));
 
     readEepromFile(name);
 }
@@ -149,9 +149,9 @@ void MainWindow::saveEeprom()
 void MainWindow::saveEepromAs()
 {
     QString name = QFileDialog::getSaveFileName(this,
-        tr("Save eeprom binary"),
-        "../eeprom/" + fileName,
-        tr("EEPROM files (*.bin)"));
+                                                tr("Save eeprom binary"),
+                                                "../eeprom/" + fileName,
+                                                tr("EEPROM files (*.bin)"));
 
     if (name.isEmpty())
         return;
@@ -181,7 +181,7 @@ void MainWindow::updateTranslation(int row, int column)
         buffer.putChar('\0');
     }
 
-    while (buffer.pos() < EEPROM_SIZE) {
+    while (buffer.pos() < EEPROM_EXTRA_NUM_FONT) {
         buffer.putChar(0xFF);
     }
 
