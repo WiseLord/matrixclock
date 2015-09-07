@@ -38,6 +38,10 @@ private slots:
 
     void setOther();
     void setFontsize(int value);
+    void setBrightnessMax(int value);
+    void setScroll(int value);
+    void setRotate();
+    void setHourzero();
 };
 
 #endif // MAINWINDOW_H
