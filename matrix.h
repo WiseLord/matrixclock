@@ -2,7 +2,6 @@
 #define MATRIX_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define MATRIX_NUMBER				4
 

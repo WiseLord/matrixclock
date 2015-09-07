@@ -6,6 +6,8 @@
 #include "eeprom.h"
 #include "mtimer.h"
 
+#include "pins.h"
+
 #include <util/delay.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>

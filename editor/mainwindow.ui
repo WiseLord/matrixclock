@@ -1,0 +1,680 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>768</width>
+    <height>512</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Ampcontrol EEPROM editor</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+    <item>
+     <widget class="QTableWidget" name="wgtHexTable">
+      <property name="minimumSize">
+       <size>
+        <width>410</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::NoPen</enum>
+      </property>
+      <property name="rowCount">
+       <number>32</number>
+      </property>
+      <property name="columnCount">
+       <number>16</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>22</number>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>22</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>18</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>18</number>
+      </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tabTranslations">
+       <attribute name="title">
+        <string>Translations</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTableWidget" name="wgtTranslations">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::DotLine</enum>
+          </property>
+          <attribute name="horizontalHeaderDefaultSectionSize">
+           <number>200</number>
+          </attribute>
+          <attribute name="horizontalHeaderMinimumSectionSize">
+           <number>200</number>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>24</number>
+          </attribute>
+          <attribute name="verticalHeaderMinimumSectionSize">
+           <number>24</number>
+          </attribute>
+          <row>
+           <property name="text">
+            <string>Monday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Tuesday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Wednesday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Thursday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Friday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Saturday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Sunday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>mo</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>tu</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>we</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>th</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>fr</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>sa</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>su</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>December</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>January</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>February</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>March</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>April</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>May</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>June</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>July</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>August</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>September</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>October</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>November</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>sc</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>mn</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>hr</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>wk</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>dt</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>mo</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>yr</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>year</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Temperature</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>°C</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>in the room</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>outside</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>BMP180</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>DHT22</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>atm. pressure</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>mmHg</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>kPa</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>humidity</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>percent</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>br</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>Translation</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabParams">
+       <attribute name="title">
+        <string>Parameters</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="wgtFontsize" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFontsize">
+             <property name="text">
+              <string>Font size</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFontsize">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Standart</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Big</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Extra</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspOther">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>231</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+   <zorder>tabWidget</zorder>
+   <zorder>wgtHexTable</zorder>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>768</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpenEeprom"/>
+    <addaction name="actionSaveEeprom"/>
+    <addaction name="actionSaveEepromAs"/>
+    <addaction name="actionLoadDefaultEeprom"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpenEeprom">
+   <property name="text">
+    <string>Open eeprom binary …</string>
+   </property>
+  </action>
+  <action name="actionSaveEeprom">
+   <property name="text">
+    <string>Save eeprom binary</string>
+   </property>
+  </action>
+  <action name="actionSaveEepromAs">
+   <property name="text">
+    <string>Save eeprom binary as …</string>
+   </property>
+  </action>
+  <action name="actionLoadDefaultEeprom">
+   <property name="text">
+    <string>Load default eeprom</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>AboutQt</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionOpenEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveEepromAs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEepromAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoadDefaultEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadDefaultEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAboutQt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>aboutQt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFontsize</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFontsize(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>737</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>763</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wgtTranslations</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>updateTranslation(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>761</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openEeprom()</slot>
+  <slot>updateTranslation(int,int)</slot>
+  <slot>saveEeprom()</slot>
+  <slot>saveEepromAs()</slot>
+  <slot>loadDefaultEeprom()</slot>
+  <slot>setFontsize(int)</slot>
+  <slot>about()</slot>
+  <slot>aboutQt()</slot>
+ </slots>
+</ui>
