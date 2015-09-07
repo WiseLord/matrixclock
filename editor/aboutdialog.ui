@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>478</width>
-    <height>318</height>
+    <width>476</width>
+    <height>316</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About Ampcontrol EEPROM editor</string>
+   <string>About Matrixclock EEPROM editor</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -38,7 +38,7 @@
          <string/>
         </property>
         <property name="pixmap">
-         <pixmap>:/res/ampcontrol.png</pixmap>
+         <pixmap resource="res.qrc">:/res/matrixclock.png</pixmap>
         </property>
         <property name="alignment">
          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -76,7 +76,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

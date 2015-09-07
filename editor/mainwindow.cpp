@@ -105,7 +105,7 @@ void MainWindow::readEepromFile(QString name)
             buffer.getChar(&ch);
             len++;
         }
-        wgtTranslations->item(i, 0)->setText(lc->decode(eep.mid(pos, len)));
+        wgtTranslations->item(i, 0)->setText(lc->decode(eep.mid(pos, len), LcdConverter::MAP_CP1251));
     }
     wgtTranslations->blockSignals(false);
 
@@ -176,7 +176,7 @@ void MainWindow::updateTranslation(int row, int column)
         QString str = wgtTranslations->item(i, 0)->text();
         if (str.isEmpty())
             str = " ";
-        buffer.write(lc->encode(str));
+        buffer.write(lc->encode(str, LcdConverter::MAP_CP1251));
         buffer.putChar('\0');
     }
 
@@ -203,14 +203,14 @@ void MainWindow::aboutQt()
 
 void MainWindow::setOther()
 {
-    setFontsize(eep[EEPROM_BIGNUM]);
-    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM]);
+    setFontsize(eep[EEPROM_BIGNUM] - 1);
+    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM] - 1);
 }
 
 void MainWindow::setFontsize(int value)
 {
     if (value >= NUM_END)
         value = NUM_NORMAL;
-    eep[EEPROM_BIGNUM] = (char)value;
+    eep[EEPROM_BIGNUM] = (char)value + 1;
     updateHexTable(EEPROM_BIGNUM);
 }

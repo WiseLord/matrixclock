@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
-    <height>512</height>
+    <width>766</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Ampcontrol EEPROM editor</string>
+   <string>Matrixclock EEPROM editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
@@ -97,7 +97,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -179,37 +179,37 @@
           </row>
           <row>
            <property name="text">
-            <string>mo</string>
+            <string>Monday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>tu</string>
+            <string>Tuesday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>we</string>
+            <string>Wednesday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>th</string>
+            <string>Thursday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>fr</string>
+            <string>Friday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>sa</string>
+            <string>Saturday (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>su</string>
+            <string>Sunday (short)</string>
            </property>
           </row>
           <row>
@@ -274,42 +274,42 @@
           </row>
           <row>
            <property name="text">
-            <string>sc</string>
+            <string>Second (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>mn</string>
+            <string>Minute (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>hr</string>
+            <string>Hour (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>wk</string>
+            <string>Week (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>dt</string>
+            <string>Date (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>mo</string>
+            <string>Month (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>yr</string>
+            <string>Year (short)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>year</string>
+            <string>Year</string>
            </property>
           </row>
           <row>
@@ -324,27 +324,27 @@
           </row>
           <row>
            <property name="text">
-            <string>in the room</string>
+            <string>Temp. 1</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>outside</string>
+            <string>Temp. 2</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>BMP180</string>
+            <string>Temp. 3 (BMP180)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>DHT22</string>
+            <string>Temp. 4 (DHT22)</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>atm. pressure</string>
+            <string>Atm. pressure</string>
            </property>
           </row>
           <row>
@@ -359,17 +359,17 @@
           </row>
           <row>
            <property name="text">
-            <string>humidity</string>
+            <string>Humidity</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>percent</string>
+            <string>Percent</string>
            </property>
           </row>
           <row>
            <property name="text">
-            <string>br</string>
+            <string>Brightness (short)</string>
            </property>
           </row>
           <column>
@@ -480,7 +480,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>768</width>
+     <width>766</width>
      <height>22</height>
     </rect>
    </property>
