@@ -542,6 +542,62 @@
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_2">
+           <property name="spacing">
+            <number>-1</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblSensData">
+             <property name="text">
+              <string>Data from sensors:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxBmpTemp">
+             <property name="text">
+              <string>Temperature from BMP180</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxDhtTemp">
+             <property name="text">
+              <string>Temperature from DHT22</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxBmpPres">
+             <property name="text">
+              <string>Pressure from BMP180</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxDhtHumi">
+             <property name="text">
+              <string>Humidity from DHT22</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="vspOther">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -817,6 +873,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbxBmpTemp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSensMask()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>685</x>
+     <y>225</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>763</x>
+     <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxDhtTemp</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSensMask()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>708</x>
+     <y>248</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxBmpPres</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSensMask()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>639</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>761</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxDhtHumi</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSensMask()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>594</x>
+     <y>296</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>759</x>
+     <y>328</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -831,5 +951,6 @@
   <slot>setScroll(int)</slot>
   <slot>setRotate()</slot>
   <slot>setHourzero()</slot>
+  <slot>setSensMask()</slot>
  </slots>
 </ui>

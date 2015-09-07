@@ -42,6 +42,7 @@ private slots:
     void setScroll(int value);
     void setRotate();
     void setHourzero();
+    void setSensMask();
 };
 
 #endif // MAINWINDOW_H

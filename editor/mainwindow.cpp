@@ -7,6 +7,7 @@
 
 #include "../eeprom.h"
 #include "../matrix.h"
+#include "../display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -214,6 +215,11 @@ void MainWindow::setOther()
 
     cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
     cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
+
+    cbxBmpTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_TEMP);
+    cbxDhtTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_TEMP);
+    cbxBmpPres->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_PRES);
+    cbxDhtHumi->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_HUMI);
 }
 
 void MainWindow::setFontsize(int value)
@@ -251,4 +257,17 @@ void MainWindow::setHourzero()
 {
     eep[EEPROM_HOURZERO] = cbxHourzero->isChecked();
     updateHexTable(EEPROM_HOURZERO);
+}
+
+void MainWindow::setSensMask()
+{
+    char mask = 0;
+
+    if (cbxBmpTemp->isChecked()) mask |= SENS_MASK_BMP_TEMP;
+    if (cbxDhtTemp->isChecked()) mask |= SENS_MASK_DHT_TEMP;
+    if (cbxBmpPres->isChecked()) mask |= SENS_MASK_BMP_PRES;
+    if (cbxDhtHumi->isChecked()) mask |= SENS_MASK_DHT_HUMI;
+
+    eep[EEPROM_SENS_MASK] = mask;
+    updateHexTable(EEPROM_SENS_MASK);
 }
