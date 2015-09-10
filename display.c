@@ -18,7 +18,7 @@ static int8_t brMax;
 static uint8_t sensMask;
 
 static uint8_t bigNum = 0;
-static uint8_t hourZero = '0';
+static uint8_t hourZero = 0;
 
 static uint8_t etmOld = RTC_NOEDIT;
 static uint8_t eamOld = ALARM_NOEDIT;
@@ -286,10 +286,7 @@ void displaySwitchBigNum(void)
 }
 
 void displaySwitchHourZero(void) {
-	if (hourZero == '0')
-		hourZero = ' ';
-	else
-		hourZero = '0';
+	hourZero = !hourZero;
 
 	eeprom_update_byte((uint8_t*)EEPROM_HOURZERO, hourZero);
 	return;
@@ -319,7 +316,7 @@ void showTime(uint32_t mask)
 	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
-	matrixLoadNumString(mkNumberString(rtc.hour, 2, 0, hourZero), bigNum);
+	matrixLoadNumString(mkNumberString(rtc.hour, 2, 0, hourZero ? '0' : ' '), bigNum);
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(19);
