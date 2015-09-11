@@ -18,6 +18,7 @@ static int8_t brMax;
 static uint8_t sensMask;
 
 static uint8_t bigNum = 0;
+static uint8_t hourSignal = 1;
 static uint8_t hourZero = 0;
 
 static uint8_t etmOld = RTC_NOEDIT;
@@ -285,6 +286,13 @@ void displaySwitchBigNum(void)
 	return;
 }
 
+void displaySwitchHourSignal(void) {
+	hourSignal = !hourSignal;
+
+	eeprom_update_byte((uint8_t*)EEPROM_HOURSIGNAL, hourSignal);
+	return;
+}
+
 void displaySwitchHourZero(void) {
 	hourZero = !hourZero;
 
@@ -348,7 +356,7 @@ void showTime(uint32_t mask)
 		showHMColon(digit + 2, 15);
 	} else {
 		showHMColon(digit, 10);
-		matrixPosData(23, alarmRawWeekday());
+		matrixPosData(23, alarmRawWeekday() | hourSignal ? 0x80 : 0x00);
 	}
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);

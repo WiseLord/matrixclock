@@ -146,6 +146,11 @@ int main(void)
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
+		case CMD_BTN_1_3_LONG:
+			displaySwitchHourSignal();
+			dispMode = MODE_MAIN;
+			showTimeMasked();
+			break;
 		case CMD_BTN_1_2_3_LONG:
 			matrixScreenRotate();
 			break;

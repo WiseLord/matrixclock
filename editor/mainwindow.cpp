@@ -188,6 +188,7 @@ void MainWindow::setParams()
 
     cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
     cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
+    cbxHoursignal->setChecked(eep[EEPROM_HOURSIGNAL]);
 
     cbxBmpTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_TEMP);
     cbxDhtTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_TEMP);
@@ -340,6 +341,12 @@ void MainWindow::setRotate()
 {
     eep[EEPROM_SCREEN_ROTATE] = cbxRotate->isChecked();
     updateHexTable(EEPROM_SCREEN_ROTATE);
+}
+
+void MainWindow::setHoursignal()
+{
+    eep[EEPROM_HOURSIGNAL] = cbxHoursignal->isChecked();
+    updateHexTable(EEPROM_HOURSIGNAL);
 }
 
 void MainWindow::setHourzero()

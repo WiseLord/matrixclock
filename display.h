@@ -52,6 +52,7 @@ enum {
 
 void displayInit(void);
 void displaySwitchBigNum(void);
+void displaySwitchHourSignal(void);
 void displaySwitchHourZero(void);
 void startScroll(uint8_t type);
 

@@ -548,6 +548,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QCheckBox" name="cbxHoursignal">
+          <property name="text">
+           <string>Beep every hour</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QWidget" name="widget" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_2">
            <property name="spacing">
@@ -1267,8 +1274,8 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>685</x>
-     <y>225</y>
+     <x>747</x>
+     <y>258</y>
     </hint>
     <hint type="destinationlabel">
      <x>759</x>
@@ -1283,8 +1290,8 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>708</x>
-     <y>248</y>
+     <x>747</x>
+     <y>283</y>
     </hint>
     <hint type="destinationlabel">
      <x>759</x>
@@ -1299,8 +1306,8 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>639</x>
-     <y>275</y>
+     <x>747</x>
+     <y>308</y>
     </hint>
     <hint type="destinationlabel">
      <x>759</x>
@@ -1315,8 +1322,8 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>594</x>
-     <y>296</y>
+     <x>747</x>
+     <y>333</y>
     </hint>
     <hint type="destinationlabel">
      <x>759</x>
@@ -1500,6 +1507,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbxHoursignal</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setHoursignal()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>732</x>
+     <y>196</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>764</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -1518,5 +1541,6 @@
   <slot>setAlarmHour(int)</slot>
   <slot>setAlarmMinute(int)</slot>
   <slot>setAlarmDays()</slot>
+  <slot>setHoursignal()</slot>
  </slots>
 </ui>

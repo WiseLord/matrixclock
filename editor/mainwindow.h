@@ -47,6 +47,7 @@ private slots:
     void setBrightnessMax(int value);
     void setScroll(int value);
     void setRotate();
+    void setHoursignal();
     void setHourzero();
     void setSensMask();
 
