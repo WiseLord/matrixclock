@@ -714,7 +714,7 @@
         <item>
          <widget class="QLabel" name="lblFontExtra">
           <property name="text">
-           <string>Extra number:</string>
+           <string>Extra numbers:</string>
           </property>
          </widget>
         </item>
