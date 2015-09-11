@@ -154,6 +154,9 @@ void MainWindow::readEepromFile(QString name)
 
     // Processing fonts
     loadFonts();
+
+    // Processing alarms
+    loadalarm();
 }
 
 void MainWindow::saveEepromFile(QString name)
@@ -221,6 +224,20 @@ void MainWindow::loadFonts()
             }
         }
     }
+}
+
+void MainWindow::loadalarm()
+{
+    sbxAlarmHour->setValue(eep[EEPROM_ALARM_HOUR]);
+    sbxAlarmMinute->setValue(eep[EEPROM_ALARM_MIN]);
+
+    cbxAlarmMo->setChecked(eep[EEPROM_ALARM_MON + 0]);
+    cbxAlarmTu->setChecked(eep[EEPROM_ALARM_MON + 1]);
+    cbxAlarmWe->setChecked(eep[EEPROM_ALARM_MON + 2]);
+    cbxAlarmTh->setChecked(eep[EEPROM_ALARM_MON + 3]);
+    cbxAlarmFr->setChecked(eep[EEPROM_ALARM_MON + 4]);
+    cbxAlarmSa->setChecked(eep[EEPROM_ALARM_MON + 5]);
+    cbxAlarmSu->setChecked(eep[EEPROM_ALARM_MON + 6]);
 }
 
 void MainWindow::about()
@@ -389,3 +406,30 @@ void MainWindow::updateFontExtra()
     }
     updateHexTable();
 }
+
+void MainWindow::setAlarmHour(int value)
+{
+    eep[EEPROM_ALARM_HOUR] = (char)value;
+    updateHexTable(EEPROM_ALARM_HOUR);
+}
+
+void MainWindow::setAlarmMinute(int value)
+{
+    eep[EEPROM_ALARM_MIN] = (char)value;
+    updateHexTable(EEPROM_ALARM_MIN);
+}
+
+void MainWindow::setAlarmDays()
+{
+    eep[EEPROM_ALARM_MON + 0] = cbxAlarmMo->isChecked();
+    eep[EEPROM_ALARM_MON + 1] = cbxAlarmTu->isChecked();
+    eep[EEPROM_ALARM_MON + 2] = cbxAlarmWe->isChecked();
+    eep[EEPROM_ALARM_MON + 3] = cbxAlarmTh->isChecked();
+    eep[EEPROM_ALARM_MON + 4] = cbxAlarmFr->isChecked();
+    eep[EEPROM_ALARM_MON + 5] = cbxAlarmSa->isChecked();
+    eep[EEPROM_ALARM_MON + 6] = cbxAlarmSu->isChecked();
+
+    for (int i = 0; i < 7; i++)
+        updateHexTable(EEPROM_ALARM_MON + i);
+}
+

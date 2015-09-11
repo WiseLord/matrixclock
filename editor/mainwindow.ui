@@ -808,11 +808,195 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tabAlarm">
+       <attribute name="title">
+        <string>Alarm</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <item>
+         <widget class="QWidget" name="wgtAlarmTime" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="1,0,0,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblAlarm">
+             <property name="text">
+              <string>Alarm time:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="TimeSpinBox" name="sbxAlarmHour">
+             <property name="maximum">
+              <number>23</number>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="lblAlarmColon">
+             <property name="font">
+              <font>
+               <weight>75</weight>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="text">
+              <string> : </string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="TimeSpinBox" name="sbxAlarmMinute">
+             <property name="maximum">
+              <number>59</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtAlarmDays" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_5">
+           <property name="spacing">
+            <number>-1</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <property name="rightMargin">
+            <number>6</number>
+           </property>
+           <property name="bottomMargin">
+            <number>6</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblAlarmDays">
+             <property name="text">
+              <string>Alarm days:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QWidget" name="wgtAlarmWeek" native="true">
+             <layout class="QHBoxLayout" name="horizontalLayout_4">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <property name="leftMargin">
+               <number>0</number>
+              </property>
+              <property name="topMargin">
+               <number>0</number>
+              </property>
+              <property name="rightMargin">
+               <number>0</number>
+              </property>
+              <property name="bottomMargin">
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmMo">
+                <property name="text">
+                 <string>Mo</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmTu">
+                <property name="text">
+                 <string>Tu</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmWe">
+                <property name="text">
+                 <string>We</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmTh">
+                <property name="text">
+                 <string>Th</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmFr">
+                <property name="text">
+                 <string>Fr</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmSa">
+                <property name="text">
+                 <string>Sa</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="cbxAlarmSu">
+                <property name="text">
+                 <string>Su</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="hspAlarmWeek">
+                <property name="orientation">
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>334</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
-   <zorder>tabWidget</zorder>
-   <zorder>wgtHexTable</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -875,6 +1059,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>TimeSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>timespinbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -1156,12 +1347,156 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>446</x>
-     <y>284</y>
+     <x>459</x>
+     <y>425</y>
     </hint>
     <hint type="destinationlabel">
-     <x>505</x>
-     <y>284</y>
+     <x>473</x>
+     <y>425</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxAlarmHour</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmHour(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>662</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxAlarmMinute</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmMinute(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>717</x>
+     <y>65</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>55</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmMo</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>438</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>128</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmTu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>482</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmWe</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>532</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>155</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmTh</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>572</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>99</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmFr</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>611</x>
+     <y>114</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>417</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmSa</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>649</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAlarmSu</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAlarmDays()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>689</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>212</y>
     </hint>
    </hints>
   </connection>
@@ -1180,5 +1515,8 @@
   <slot>setRotate()</slot>
   <slot>setHourzero()</slot>
   <slot>setSensMask()</slot>
+  <slot>setAlarmHour(int)</slot>
+  <slot>setAlarmMinute(int)</slot>
+  <slot>setAlarmDays()</slot>
  </slots>
 </ui>

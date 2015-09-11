@@ -30,6 +30,7 @@ private:
 
     void setParams();
     void loadFonts();
+    void loadalarm();
 
 private slots:
     void about();
@@ -51,6 +52,10 @@ private slots:
 
     void updateFontBig();
     void updateFontExtra();
+
+    void setAlarmHour(int value);
+    void setAlarmMinute(int value);
+    void setAlarmDays();
 
 };
 

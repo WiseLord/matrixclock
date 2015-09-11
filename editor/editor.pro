@@ -22,7 +22,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     lcdconverter.h \
     aboutdialog.h \
-    fontpixel.h
+    fontpixel.h \
+    timespinbox.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui
