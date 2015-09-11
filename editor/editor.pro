@@ -16,11 +16,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
     mainwindow.cpp \
     lcdconverter.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    fontpixel.cpp
 
 HEADERS  += mainwindow.h \
     lcdconverter.h \
-    aboutdialog.h
+    aboutdialog.h \
+    fontpixel.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui

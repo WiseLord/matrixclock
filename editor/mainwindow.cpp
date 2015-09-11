@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "aboutdialog.h"
+#include "fontpixel.h"
 
 #include "../eeprom.h"
 #include "../matrix.h"
@@ -34,6 +35,42 @@ MainWindow::MainWindow(QWidget *parent) :
     for (int y = 0; y < LABEL_END; y++)
         wgtTranslations->setItem(y, 0, new QTableWidgetItem());
     wgtTranslations->blockSignals(false);
+
+    QGridLayout *grlt;
+    FontPixel *fpx;
+    for (int i = 0; i < 10; i++) {
+        lwgtFontBig->addItem(QString::number(i));
+        digBig[i] = new QWidget();
+        grlt = new QGridLayout();
+        grlt->setMargin(1);
+        grlt->setSpacing(2);
+        for (int j = 0; j < 5; j++) {
+            for (int k = 0; k < 8; k++) {
+                fpx = new FontPixel();
+                grlt->addWidget(fpx, k, j);
+                connect(fpx, SIGNAL(clicked()), this, SLOT(updateFontBig()));
+            }
+        }
+        digBig[i]->setLayout(grlt);
+        stwgtFontBig->addWidget(digBig[i]);
+
+        lwgtFontExtra->addItem(QString::number(i));
+        digExtra[i] = new QWidget();
+        grlt = new QGridLayout();
+        grlt->setMargin(1);
+        grlt->setSpacing(2);
+        for (int j = 0; j < 6; j++) {
+            for (int k = 0; k < 8; k++) {
+                fpx = new FontPixel();
+                grlt->addWidget(fpx, k, j);
+                connect(fpx, SIGNAL(clicked()), this, SLOT(updateFontExtra()));
+            }
+        }
+        digExtra[i]->setLayout(grlt);
+        stwgtFontExtra->addWidget(digExtra[i]);
+    }
+    lwgtFontBig->item(0)->setSelected(true);
+    lwgtFontExtra->item(0)->setSelected(true);
 
     /* Load default eeprom file */
     readEepromFile(EEPROM_RESOURCE);
@@ -113,7 +150,10 @@ void MainWindow::readEepromFile(QString name)
     buffer.close();
 
     // Processing other functions
-    setOther();
+    setParams();
+
+    // Processing fonts
+    loadFonts();
 }
 
 void MainWindow::saveEepromFile(QString name)
@@ -129,6 +169,70 @@ void MainWindow::saveEepromFile(QString name)
     file.close();
     Ui_MainWindow::statusBar->showMessage(tr("Saved as") + " " + name);
 
+}
+
+
+void MainWindow::setParams()
+{
+    setFontsize(eep[EEPROM_BIGNUM] - 1);
+    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM] - 1);
+
+    setBrightnessMax(eep[EEPROM_BR_MAX]);
+    sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
+
+    setScroll(eep[EEPROM_SCROLL_INTERVAL]);
+    sbxScroll->setValue(eep[EEPROM_SCROLL_INTERVAL]);
+
+    cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
+    cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
+
+    cbxBmpTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_TEMP);
+    cbxDhtTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_TEMP);
+    cbxBmpPres->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_PRES);
+    cbxDhtHumi->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_HUMI);
+}
+
+void MainWindow::loadFonts()
+{
+    QGridLayout *grlt;
+    FontPixel *fpx;
+    unsigned char data;
+
+    // Load big font
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 5; j++) {
+            grlt = dynamic_cast<QGridLayout*>(digBig[i]->layout());
+            data = eep[EEPROM_BIG_NUM_FONT + i * 5 + j];
+            for (int k = 0; k < 8; k++) {
+                fpx = dynamic_cast<FontPixel*>(grlt->itemAtPosition(k, j)->widget());
+                fpx->setChecked(data & 1<<k);
+            }
+        }
+    }
+
+    // Load extra font
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 6; j++) {
+            grlt = dynamic_cast<QGridLayout*>(digExtra[i]->layout());
+            data = eep[EEPROM_EXTRA_NUM_FONT + i * 6 + j];
+            for (int k = 0; k < 8; k++) {
+                fpx = dynamic_cast<FontPixel*>(grlt->itemAtPosition(k, j)->widget());
+                fpx->setChecked(data & 1<<k);
+            }
+        }
+    }
+}
+
+void MainWindow::about()
+{
+    AboutDialog dlg;
+
+    dlg.exec();
+}
+
+void MainWindow::aboutQt()
+{
+    qApp->aboutQt();
 }
 
 void MainWindow::openEeprom()
@@ -190,38 +294,6 @@ void MainWindow::updateTranslation(int row, int column)
     updateHexTable();
 }
 
-void MainWindow::about()
-{
-    AboutDialog dlg;
-
-    dlg.exec();
-}
-
-void MainWindow::aboutQt()
-{
-    qApp->aboutQt();
-}
-
-void MainWindow::setOther()
-{
-    setFontsize(eep[EEPROM_BIGNUM] - 1);
-    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM] - 1);
-
-    setBrightnessMax(eep[EEPROM_BR_MAX]);
-    sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
-
-    setScroll(eep[EEPROM_SCROLL_INTERVAL]);
-    sbxScroll->setValue(eep[EEPROM_SCROLL_INTERVAL]);
-
-    cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
-    cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
-
-    cbxBmpTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_TEMP);
-    cbxDhtTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_TEMP);
-    cbxBmpPres->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_PRES);
-    cbxDhtHumi->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_HUMI);
-}
-
 void MainWindow::setFontsize(int value)
 {
     if (value >= NUM_END)
@@ -270,4 +342,50 @@ void MainWindow::setSensMask()
 
     eep[EEPROM_SENS_MASK] = mask;
     updateHexTable(EEPROM_SENS_MASK);
+}
+
+void MainWindow::updateFontBig()
+{
+    QGridLayout *grlt;
+    FontPixel *fpx;
+    unsigned char data;
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 5; j++) {
+            grlt = dynamic_cast<QGridLayout*>(digBig[i]->layout());
+            data = 0;
+            for (int k = 0; k < 8; k++) {
+                fpx = dynamic_cast<FontPixel*>(grlt->itemAtPosition(k, j)->widget());
+                if (fpx->isChecked())
+                    data |= (1<<k);
+                else
+                    data &= ~(1<<k);
+            }
+            eep[EEPROM_BIG_NUM_FONT + i * 5 + j] = data;
+        }
+    }
+    updateHexTable();
+}
+
+void MainWindow::updateFontExtra()
+{
+    QGridLayout *grlt;
+    FontPixel *fpx;
+    unsigned char data;
+
+    for (int i = 0; i < 10; i++) {
+        for (int j = 0; j < 6; j++) {
+            grlt = dynamic_cast<QGridLayout*>(digExtra[i]->layout());
+            data = 0;
+            for (int k = 0; k < 8; k++) {
+                fpx = dynamic_cast<FontPixel*>(grlt->itemAtPosition(k, j)->widget());
+                if (fpx->isChecked())
+                    data |= (1<<k);
+                else
+                    data &= ~(1<<k);
+            }
+            eep[EEPROM_EXTRA_NUM_FONT + i * 6 + j] = data;
+        }
+    }
+    updateHexTable();
 }

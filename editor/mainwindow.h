@@ -22,8 +22,14 @@ private:
     QString fileName;
     QByteArray eep;
 
+    QWidget *digBig[10];
+    QWidget *digExtra[10];
+
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
+
+    void setParams();
+    void loadFonts();
 
 private slots:
     void about();
@@ -36,13 +42,16 @@ private slots:
 
     void updateTranslation(int row, int column);
 
-    void setOther();
     void setFontsize(int value);
     void setBrightnessMax(int value);
     void setScroll(int value);
     void setRotate();
     void setHourzero();
     void setSensMask();
+
+    void updateFontBig();
+    void updateFontExtra();
+
 };
 
 #endif // MAINWINDOW_H
