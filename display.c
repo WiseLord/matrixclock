@@ -195,15 +195,28 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 	return mask;
 }
 
-static void showHMColon(uint8_t step, uint8_t pos)
+static void updateColon(uint8_t bufType)
 {
-	uint8_t value;
-	const static uint8_t val[] PROGMEM = {0x32, 0x26, 0x46, 0x62};
+	const static uint8_t colonCode[] PROGMEM = {
+		0x32, 0x26, 0x46, 0x62
+	};
 
-	value = pgm_read_byte(&val[step]);
+	uint8_t colon = 0;
+	uint8_t digit = rtc.sec & 0x01;
 
-	matrixPosData(pos, value);
-	matrixPosData(pos + 1, value);
+	if (bigNum == NUM_EXTRA) {
+		colon = pgm_read_byte(&colonCode[digit + 2]);
+		matrixPlaceBuf(bufType, 15, colon);
+		matrixPlaceBuf(bufType, 16, colon);
+	} else if (bigNum == NUM_NORMAL) {
+		colon = pgm_read_byte(&colonCode[digit]);
+		matrixPlaceBuf(bufType, 10, colon);
+		matrixPlaceBuf(bufType, 11, colon);
+		matrixPlaceBuf(bufType, 23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
+	} else {
+		matrixPlaceBuf(bufType, 11, (!digit) << 7);
+		matrixPlaceBuf(bufType, 12, digit << 7);
+	}
 
 	return;
 }
@@ -348,18 +361,9 @@ void showTime(uint32_t mask)
 		oldSec = digit;
 	}
 
-	digit = rtc.sec & 0x01;
-	if (bigNum == NUM_BIG) {
-		matrixPosData(11, (!digit) << 7);
-		matrixPosData(12, digit << 7);
-	} else if (bigNum == NUM_EXTRA) {
-		showHMColon(digit + 2, 15);
-	} else {
-		showHMColon(digit, 10);
-		matrixPosData(23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
-	}
-
+	updateColon(BUF_STRING);
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
+	updateColon(BUF_FRAME);
 
 	return;
 }

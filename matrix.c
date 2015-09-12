@@ -138,9 +138,12 @@ void matrixClearBufTail(void)
 	return;
 }
 
-void matrixPosData(uint8_t pos, uint8_t data)
+void matrixPlaceBuf(uint8_t bufType, uint8_t pos, uint8_t byte)
 {
-	fb[pos] = data;
+	if (bufType)
+		fb[pos] = byte;
+	else
+		strBuf[pos] = byte;
 
 	return;
 }
@@ -184,7 +187,7 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 				}
 			}
 		}
-		_delay_ms(20);
+		_delay_ms(25);
 		matrixUpdate(fb, rotate);
 		rsBit >>= 1;
 		lsBit <<= 1;

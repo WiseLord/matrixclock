@@ -43,12 +43,20 @@ enum {
 	NUM_NORMAL,
 	NUM_BIG,
 	NUM_EXTRA,
+
 	NUM_END,
 };
 
 enum {
 	MATRIX_SCROLL_OFF = 0,
 	MATRIX_SCROLL_ON,
+};
+
+enum {
+	BUF_STRING = 0,
+	BUF_FRAME,
+
+	BUF_END
 };
 
 void matrixInit(void);
@@ -59,7 +67,7 @@ void matrixScreenRotate(void);
 void matrixFill(uint8_t data);
 void matrixClearBufTail(void);
 
-void matrixPosData(uint8_t pos, uint8_t data);
+void matrixPlaceBuf(uint8_t bufType, uint8_t pos, uint8_t byte);
 
 void matrixSwitchBuf(uint32_t mask, int8_t effect);
 
