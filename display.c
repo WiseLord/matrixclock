@@ -356,7 +356,7 @@ void showTime(uint32_t mask)
 		showHMColon(digit + 2, 15);
 	} else {
 		showHMColon(digit, 10);
-		matrixPosData(23, alarmRawWeekday() | hourSignal ? 0x80 : 0x00);
+		matrixPosData(23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
 	}
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
