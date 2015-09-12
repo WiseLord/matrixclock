@@ -274,7 +274,7 @@ void displayInit(void)
 
 void displaySwitchBigNum(void)
 {
-#if defined(MAX7219_X3) || defined(MAX7219MOD_X3)
+#if defined(MAX7219_X3) || defined(MAX7219MOD_X3) || defined(MAX7219MOD2_X3)
 	if (++bigNum >= NUM_EXTRA)
 #else
 	if (++bigNum >= NUM_END)
