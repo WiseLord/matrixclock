@@ -281,6 +281,7 @@ void displayInit(void)
 	hourZero = eeprom_read_byte((uint8_t*)EEPROM_HOURZERO);
 	brMax = eeprom_read_byte((uint8_t*)EEPROM_BR_MAX);
 	sensMask = eeprom_read_byte((uint8_t*)EEPROM_SENS_MASK);
+	hourSignal = eeprom_read_byte((uint8_t*)EEPROM_HOURSIGNAL);
 
 	return;
 }
@@ -516,7 +517,7 @@ void checkAlarmAndBrightness(void)
 			startAlarm(BEEP_ALARM);
 	} else {
 		/* Check new hour */
-		if (rtc.hour > alarm.hour && rtc.min == 0)
+		if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
 			startAlarm(BEEP_LONG);
 		else
 			alarmFlag = 1;
