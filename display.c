@@ -247,8 +247,8 @@ static uint8_t calcBrightness(void)
 
 	if (br > brMax)
 		br = brMax;
-	if (br < MATRIX_MIN_BRIGHTNESS)
-		br = MATRIX_MIN_BRIGHTNESS;
+	if (br < 0)
+		br = 0;
 
 	return br;
 }
@@ -470,12 +470,7 @@ void showAlarmEdit(int8_t ch_dir)
 void changeBrightness(int8_t diff)
 {
 	brMax += diff;
-
-	if (brMax > MATRIX_MAX_BRIGHTNESS) {
-		brMax = MATRIX_MIN_BRIGHTNESS;
-	} else if (brMax < MATRIX_MIN_BRIGHTNESS) {
-		brMax = MATRIX_MAX_BRIGHTNESS;
-	}
+	brMax &= 0x0F;
 
 	return;
 }
