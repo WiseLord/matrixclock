@@ -24,12 +24,13 @@
 
 #define DS18X20_MAX_DEV				4
 #define DS18X20_SCRATCH_LEN			9
+#define DS18X20_SCRATCH_TEMP_LEN	2
 #define DS18X20_ID_LEN				8
 
 typedef union {
 	int16_t temp;
 	struct {
-		uint8_t sp[DS18X20_SCRATCH_LEN];
+		uint8_t sp[DS18X20_SCRATCH_TEMP_LEN];
 		uint8_t id[DS18X20_ID_LEN];
 	};
 } ds18x20Dev;
