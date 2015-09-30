@@ -47,12 +47,10 @@ void rtcReadTime(void)
 	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(RTC_SEC);
 	I2CswStart(RTC_I2C_ADDR | I2C_READ);
-	for (i = RTC_SEC; i < RTC_YEAR; i++) {
-		temp = I2CswReadByte(I2C_ACK);
+	for (i = RTC_SEC; i <= RTC_YEAR; i++) {
+		temp = I2CswReadByte((i == RTC_YEAR) ? I2C_NOACK : I2C_ACK);
 		*((int8_t*)&rtc + i) = rtcBinDecToDec(temp);
 	}
-	temp = I2CswReadByte(I2C_NOACK);
-	rtc.year = rtcBinDecToDec(temp);
 	I2CswStop();
 
 	return;
@@ -61,13 +59,18 @@ void rtcReadTime(void)
 static void rtcSaveTime(void)
 {
 	uint8_t i;
-
-	rtcWeekDay();
+	uint8_t etm = rtc.etm;
 
 	I2CswStart(RTC_I2C_ADDR);
-	I2CswWriteByte(RTC_SEC);
-	for (i = RTC_SEC; i <= RTC_YEAR; i++)
-		I2CswWriteByte(rtcDecToBinDec(*((int8_t*)&rtc + i)));
+	I2CswWriteByte(etm);
+	if (etm == RTC_SEC) {
+		I2CswWriteByte(0);
+	} else {
+		rtcWeekDay();
+		for (i = etm; i <= RTC_YEAR; i++)
+			I2CswWriteByte(rtcDecToBinDec(*((int8_t*)&rtc + i)));
+	}
+
 	I2CswStop();
 
 	return;
