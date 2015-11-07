@@ -49,10 +49,12 @@ $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -D$(LED_DRIVER) -D$(MCU) -c -o $@ $<
 
+.PHONY: clean
 clean:
 	rm -rf $(BUILDDIR)
 
-flash: $(TARG)
+.PHONY: flash
+flash: $(ELF)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 eeprom_en:
@@ -67,6 +69,7 @@ eeprom_by:
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ua.bin:r
 
+.PHONY: fuse
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xd1:m
 
