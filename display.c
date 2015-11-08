@@ -74,14 +74,14 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 
 static void loadDateString(void)
 {
-	matrixLoadStringEeprom(txtLabels[(LABEL_SATURDAY + rtc.wday) % 7]);
-	matrixLoadString(",");
-	matrixLoadString(mkNumberString(rtc.date, 3, 0, ' '));
-	matrixLoadString(" ");
-	matrixLoadStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
-	matrixLoadString(mkNumberString(2000 + rtc.year, 5, 0, ' '));
-	matrixLoadString(" ");
-	matrixLoadStringEeprom(txtLabels[LABEL_Y]);
+	matrixScrollAddStringEeprom(txtLabels[(LABEL_SATURDAY + rtc.wday) % 7]);
+	matrixScrollAddString(", ");
+	matrixScrollAddString(mkNumberString(rtc.date, 3, 0, 0x7F));
+	matrixScrollAddString(" ");
+	matrixScrollAddStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
+	matrixScrollAddString(mkNumberString(2000 + rtc.year, 5, 0, ' '));
+	matrixScrollAddString(" ");
+	matrixScrollAddStringEeprom(txtLabels[LABEL_Y]);
 
 	return;
 }
@@ -90,9 +90,9 @@ static void showCommaIfNeeded()
 {
 	if (firstSensor) {
 		firstSensor = 0;
-		matrixLoadStringEeprom(txtLabels[LABEL_TEMPERATURE]);
+		matrixScrollAddStringEeprom(txtLabels[LABEL_TEMPERATURE]);
 	} else {
-		matrixLoadString(",");
+		matrixScrollAddString(",");
 	}
 
 	return;
@@ -100,16 +100,16 @@ static void showCommaIfNeeded()
 
 static void loadSensorString(int16_t value, uint8_t label)
 {
-	matrixLoadString(mkNumberString(value, 5, 1, ' '));
-	matrixLoadStringEeprom(txtLabels[label]);
+	matrixScrollAddString(mkNumberString(value, 5, 1, ' '));
+	matrixScrollAddStringEeprom(txtLabels[label]);
 
 	return;
 }
 
 static void loadPlaceString(uint8_t label)
 {
-	matrixLoadString(" ");
-	matrixLoadStringEeprom(txtLabels[label]);
+	matrixScrollAddString(" ");
+	matrixScrollAddStringEeprom(txtLabels[label]);
 }
 
 static void loadTempString(void)
@@ -195,7 +195,7 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 	return mask;
 }
 
-static void updateColon(uint8_t bufType)
+static void updateColon(void)
 {
 	const static uint8_t colonCode[] PROGMEM = {
 		0x32, 0x26, 0x46, 0x62
@@ -206,16 +206,16 @@ static void updateColon(uint8_t bufType)
 
 	if (bigNum == NUM_EXTRA) {
 		colon = pgm_read_byte(&colonCode[digit + 2]);
-		matrixPlaceBuf(bufType, 15, colon);
-		matrixPlaceBuf(bufType, 16, colon);
+		matrixPlace(15, colon);
+		matrixPlace(16, colon);
 	} else if (bigNum == NUM_NORMAL) {
 		colon = pgm_read_byte(&colonCode[digit]);
-		matrixPlaceBuf(bufType, 10, colon);
-		matrixPlaceBuf(bufType, 11, colon);
-		matrixPlaceBuf(bufType, 23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
+		matrixPlace(10, colon);
+		matrixPlace(11, colon);
+		matrixPlace(23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
 	} else {
-		matrixPlaceBuf(bufType, 11, (!digit) << 7);
-		matrixPlaceBuf(bufType, 12, digit << 7);
+		matrixPlace(11, (!digit) << 7);
+		matrixPlace(12, digit << 7);
 	}
 
 	return;
@@ -316,8 +316,6 @@ void displaySwitchHourZero(void) {
 
 void startScroll(uint8_t type)
 {
-	matrixSetX(0);
-	matrixClearBufTail();
 	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_SCROLL_BOTH);
 	if (type == SCROLL_DATE)
 		loadDateString();
@@ -338,17 +336,17 @@ void showTime(uint32_t mask)
 	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
-	matrixLoadNumString(mkNumberString(rtc.hour, 2, 0, hourZero ? '0' : ' '), bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.hour, 2, 0, hourZero ? '0' : ' '), bigNum);
 
 	if (bigNum == NUM_EXTRA)
 		matrixSetX(19);
 	else
 		matrixSetX(13);
-	matrixLoadNumString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
 
 	if (bigNum != NUM_EXTRA) {
 		matrixSetX(25);
-		matrixLoadNumString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
+		matrixFbNewAddString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
 
 	mask = updateMask(mask, bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
@@ -362,9 +360,8 @@ void showTime(uint32_t mask)
 		oldSec = digit;
 	}
 
-	updateColon(BUF_STRING);
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
-	updateColon(BUF_FRAME);
+	updateColon();
 
 	return;
 }
@@ -400,14 +397,14 @@ static void showParamEdit(int8_t value, char *aFlag, uint8_t label, char *icon)
 {
 	matrixSetX(0);
 	if (aFlag) {
-		matrixLoadString(aFlag);
+		matrixFbNewAddString(aFlag, NUM_NORMAL);
 	} else  {
-		matrixLoadString(mkNumberString(value, 2, 0, ' '));
+		matrixFbNewAddString(mkNumberString(value, 2, 0, ' '), NUM_NORMAL);
 	}
 	matrixSetX(13);
-	matrixLoadStringEeprom(txtLabels[label]);
+	matrixFbNewAddStringEeprom(txtLabels[label]);
 	matrixSetX(27);
-	matrixLoadString(icon);
+	matrixFbNewAddString(icon, NUM_NORMAL);
 
 	return;
 }

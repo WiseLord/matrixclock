@@ -12,7 +12,8 @@
 #define MATRIX_SMALLNUM_WIDTH		3
 #define MATRIX_BIGNUM_WIDTH			5
 #define MATRIX_EXTRANUM_WIDTH		6
-#define MATRIX_BUFFER_SIZE			640
+#define MATRIX_BUFFER_SIZE			32
+#define MATRIX_STRING_LEN			250
 
 enum {
 	MATRIX_FONT_RAM = 0,
@@ -49,22 +50,12 @@ enum {
 	MATRIX_SCROLL_ON,
 };
 
-enum {
-	BUF_STRING = 0,
-	BUF_FRAME,
-
-	BUF_END
-};
-
 void matrixInit(void);
 
 void matrixSetBrightness(uint8_t brightness);
 void matrixScreenRotate(void);
 
-void matrixFill(uint8_t data);
-void matrixClearBufTail(void);
-
-void matrixPlaceBuf(uint8_t bufType, uint8_t pos, uint8_t byte);
+void matrixPlace(uint8_t pos, uint8_t byte);
 
 void matrixSwitchBuf(uint32_t mask, int8_t effect);
 
@@ -74,8 +65,10 @@ void matrixScrollAndADCInit(void);
 void matrixHwScroll(uint8_t status);
 uint8_t matrixGetScrollMode(void);
 
-void matrixLoadNumString(char *string, uint8_t numSize);
-void matrixLoadString(char *string);
-void matrixLoadStringEeprom(uint8_t *string);
+void matrixScrollAddStringEeprom(uint8_t *string);
+void matrixScrollAddString(char *string);
+
+void matrixFbNewAddString(char *string, uint8_t numSize);
+void matrixFbNewAddStringEeprom(uint8_t *string);
 
 #endif /* MATRIX_H */

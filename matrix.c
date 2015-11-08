@@ -21,10 +21,16 @@ static int16_t _col;						/* Current position */
 static uint8_t fb[MATRIX_NUMBER * 8];
 static uint8_t fbNew[MATRIX_BUFFER_SIZE];
 
-static volatile int16_t scrollPos = 0;
+static char fbStr[MATRIX_STRING_LEN];
+static uint8_t fbStrPos;
+
+static char *ptrStr = fbStr;
+static volatile uint8_t chCol = 0;
+static volatile uint8_t scrollData = 0x00;
+
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
-static void matrixLoadChar(uint8_t numSize, uint8_t code)
+static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 {
 	uint8_t i;
 	uint8_t data;
@@ -75,11 +81,15 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 	return;
 }
 
+static void matrixLoadScrollChar(uint8_t ch) {
+	fbStr[fbStrPos++] = ch;
+	fbStr[fbStrPos] = '\0';
+}
+
 void matrixInit(void)
 {
 	matrixInitDriver();
 
-	matrixFill(0x00);
 	rotate = eeprom_read_byte((uint8_t*)EEPROM_SCREEN_ROTATE);
 	scrollInterval = eeprom_read_byte((uint8_t*)EEPROM_SCROLL_INTERVAL);
 	setScrollTimer (scrollInterval);
@@ -108,34 +118,9 @@ void matrixScreenRotate(void)
 	return;
 }
 
-void matrixFill(uint8_t data)
+void matrixPlace(uint8_t pos, uint8_t byte)
 {
-	uint8_t i;
-
-	for (i = 0; i < sizeof(fb); i++)
-		fb[i] = data;
-
-	matrixUpdate(fb, rotate);
-
-	return;
-}
-
-void matrixClearBufTail(void)
-{
-	int16_t ptr = _col;
-
-	while(ptr < MATRIX_BUFFER_SIZE)
-		fbNew[ptr++] = 0x00;
-
-	return;
-}
-
-void matrixPlaceBuf(uint8_t bufType, uint8_t pos, uint8_t byte)
-{
-	if (bufType)
-		fb[pos] = byte;
-	else
-		fbNew[pos] = byte;
+	fb[pos] = byte;
 
 	return;
 }
@@ -185,6 +170,8 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 		lsBit <<= 1;
 	}
 
+	fbStrPos = 0;
+
 	return;
 }
 
@@ -217,21 +204,36 @@ void matrixScrollAndADCInit(void)
 /* Interrupt will be executed 7812 / 256 = 30 times/sec */
 ISR (TIMER2_OVF_vect)
 {
+	int8_t i;
+	uint8_t code;
+
 	if (scrollMode == MATRIX_SCROLL_ON) {
-		int8_t i;
+		if (*ptrStr) {
+			if (chCol < 5) {
+				code = *ptrStr;
+				code -= (code > 128 ? 0x40 : 0x20);
+				scrollData = pgm_read_byte(font_cp1251_08 + code * 5 + chCol);
+				if (scrollData == VOID)
+					chCol = 5;
+			}
+			if (++chCol >= 6) {
+				chCol = 0;
+				ptrStr++;
+				scrollData = 0x00;
+			}
 
-		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++)
-			fb[i] = fb[i + 1];
-		fb[MATRIX_NUMBER * 8 - 1] = fbNew[scrollPos];
-		matrixUpdate(fb, rotate);
-
-		scrollPos++;
-
-		if (scrollPos >= _col + MATRIX_NUMBER * 8 - 1 || scrollPos >= MATRIX_BUFFER_SIZE) {
+			for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++)
+				fb[i] = fb[i + 1];
+			fb[MATRIX_NUMBER * 8 - 1] = scrollData;
+			matrixUpdate(fb, rotate);
+		} else {
 			scrollMode = MATRIX_SCROLL_OFF;
-			scrollPos = 0;
 			setScrollTimer (scrollInterval);
 		}
+	} else {
+		ptrStr = fbStr;
+		chCol = 0;
+		scrollData = 0x00;
 	}
 
 	// Start ADC conversion to get brightness from photoresistor
@@ -242,7 +244,14 @@ ISR (TIMER2_OVF_vect)
 
 void matrixHwScroll(uint8_t status)
 {
-	scrollPos = 0;
+	uint8_t i;
+
+	for (i = 0; i < sizeof(fbNew); i++)
+		fbNew[i] = 0x00;
+
+	for (i = 0; i < 6; i++)
+		matrixLoadScrollChar(' ');
+
 	scrollMode = status;
 	setScrollTimer (scrollInterval);
 
@@ -254,34 +263,39 @@ uint8_t matrixGetScrollMode(void)
 	return scrollMode;
 }
 
-
-void matrixLoadNumString(char *string, uint8_t numSize)
+void matrixScrollAddString(char *string)
 {
 	while(*string)
-		matrixLoadChar(numSize, *string++);
-
-	matrixClearBufTail();
-}
-
-void matrixLoadString(char *string)
-{
-	matrixLoadNumString(string, NUM_NORMAL);
+		matrixLoadScrollChar(*string++);
 
 	return;
 }
 
-void matrixLoadStringEeprom(uint8_t *string)
+void matrixScrollAddStringEeprom(uint8_t *string)
 {
-	char ch;
+	uint8_t ch;
 	uint8_t i = 0;
 
 	ch = eeprom_read_byte(&string[i++]);
 	while(ch) {
-		matrixLoadChar(NUM_NORMAL, ch);
+		matrixLoadScrollChar(ch);
 		ch = eeprom_read_byte(&string[i++]);
 	}
 
-	matrixClearBufTail();
+	return;
+}
+
+void matrixFbNewAddString(char *string, uint8_t numSize)
+{
+	while(*string)
+		matrixLoadCharFb(*string++, numSize);
+}
+
+void matrixFbNewAddStringEeprom(uint8_t *string)
+{
+	fbStrPos = 0;
+	matrixScrollAddStringEeprom(string);
+	matrixFbNewAddString(fbStr, NUM_NORMAL);
 
 	return;
 }
