@@ -19,18 +19,10 @@ static uint8_t scrollInterval = 0;
 static int16_t _col;						/* Current position */
 
 static uint8_t fb[MATRIX_NUMBER * 8];
-static uint8_t strBuf[MATRIX_BUFFER_SIZE];
+static uint8_t fbNew[MATRIX_BUFFER_SIZE];
 
 static volatile int16_t scrollPos = 0;
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
-
-static void matrixStoreBuf(uint8_t byte)
-{
-	if (_col < MATRIX_BUFFER_SIZE)
-		strBuf[_col++] = byte;
-
-	return;
-}
 
 static void matrixLoadChar(uint8_t numSize, uint8_t code)
 {
@@ -76,9 +68,9 @@ static void matrixLoadChar(uint8_t numSize, uint8_t code)
 				data = *oft;
 		}
 		if (data != VOID)
-			matrixStoreBuf(data);
+			fbNew[_col++] = data;
 	}
-	matrixStoreBuf(0x00);
+	fbNew[_col++] = 0x00;
 
 	return;
 }
@@ -133,7 +125,7 @@ void matrixClearBufTail(void)
 	int16_t ptr = _col;
 
 	while(ptr < MATRIX_BUFFER_SIZE)
-		strBuf[ptr++] = 0x00;
+		fbNew[ptr++] = 0x00;
 
 	return;
 }
@@ -143,7 +135,7 @@ void matrixPlaceBuf(uint8_t bufType, uint8_t pos, uint8_t byte)
 	if (bufType)
 		fb[pos] = byte;
 	else
-		strBuf[pos] = byte;
+		fbNew[pos] = byte;
 
 	return;
 }
@@ -162,27 +154,27 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 				switch (effect) {
 				case MATRIX_EFFECT_SCROLL_DOWN:
 					fb[j] <<= 1;
-					if (strBuf[j] & rsBit)
+					if (fbNew[j] & rsBit)
 						fb[j] |= 0x01;
 					break;
 				case MATRIX_EFFECT_SCROLL_UP:
 					fb[j] >>= 1;
-					if (strBuf[j] & lsBit)
+					if (fbNew[j] & lsBit)
 						fb[j] |= 0x80;
 					break;
 				case MATRIX_EFFECT_SCROLL_BOTH:
 					if (j & 0x01) {
 						fb[j] <<= 1;
-						if (strBuf[j] & rsBit)
+						if (fbNew[j] & rsBit)
 							fb[j] |= 0x01;
 					} else {
 						fb[j] >>= 1;
-						if (strBuf[j] & lsBit)
+						if (fbNew[j] & lsBit)
 							fb[j] |= 0x80;
 					}
 					break;
 				default:
-					fb[j] = strBuf[j];
+					fb[j] = fbNew[j];
 					break;
 				}
 			}
@@ -230,7 +222,7 @@ ISR (TIMER2_OVF_vect)
 
 		for (i = 0; i < MATRIX_NUMBER * 8 - 1; i++)
 			fb[i] = fb[i + 1];
-		fb[MATRIX_NUMBER * 8 - 1] = strBuf[scrollPos];
+		fb[MATRIX_NUMBER * 8 - 1] = fbNew[scrollPos];
 		matrixUpdate(fb, rotate);
 
 		scrollPos++;
