@@ -76,7 +76,8 @@ static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 		if (data != VOID)
 			fbNew[_col++] = data;
 	}
-	fbNew[_col++] = 0x00;
+	if (_col < MATRIX_BUFFER_SIZE - 1)
+		fbNew[_col++] = 0x00;
 
 	return;
 }

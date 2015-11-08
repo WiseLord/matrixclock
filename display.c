@@ -316,6 +316,7 @@ void displaySwitchHourZero(void) {
 
 void startScroll(uint8_t type)
 {
+	matrixHwScroll(MATRIX_SCROLL_STOP);
 	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_SCROLL_BOTH);
 	if (type == SCROLL_DATE)
 		loadDateString();
