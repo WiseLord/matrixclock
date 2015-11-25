@@ -14,19 +14,19 @@ TARGET = matrixclockeditor
 TEMPLATE = app
 
 SOURCES += main.cpp\
-    mainwindow.cpp \
-    lcdconverter.cpp \
-    aboutdialog.cpp \
-    fontpixel.cpp
+	mainwindow.cpp \
+	lcdconverter.cpp \
+	aboutdialog.cpp \
+	fontpixel.cpp
 
 HEADERS  += mainwindow.h \
-    lcdconverter.h \
-    aboutdialog.h \
-    fontpixel.h \
-    timespinbox.h
+	lcdconverter.h \
+	aboutdialog.h \
+	fontpixel.h \
+	timespinbox.h
 
 FORMS    += mainwindow.ui \
-    aboutdialog.ui
+	aboutdialog.ui
 
 RESOURCES += \
-    res.qrc
+	res.qrc

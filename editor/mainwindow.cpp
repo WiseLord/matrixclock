@@ -322,10 +322,10 @@ void MainWindow::setFontsize(int value)
 
 void MainWindow::setBrightnessMax(int value)
 {
-    if (value < MATRIX_MIN_BRIGHTNESS)
-        value = MATRIX_MIN_BRIGHTNESS;
-    if (value > MATRIX_MAX_BRIGHTNESS)
-        value = MATRIX_MAX_BRIGHTNESS;
+    if (value < 0)
+        value = 0;
+    if (value > 15)
+        value = 15;
 
     eep[EEPROM_BR_MAX] = (char)value;
     updateHexTable(EEPROM_BR_MAX);
