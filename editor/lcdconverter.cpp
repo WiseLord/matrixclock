@@ -18,7 +18,7 @@ LcdConverter::LcdConverter()
         map_ks0066ru[0x041e] = 'O';
         map_ks0066ru[0x0420] = 'P';
         map_ks0066ru[0x0422] = 'T';
-        map_ks0066ru[0x0422] = 'X';
+        map_ks0066ru[0x0425] = 'X';
 
         map_ks0066ru[0x0430] = 'a';
         map_ks0066ru[0x042c] = 'b';
@@ -226,10 +226,8 @@ QByteArray LcdConverter::encode(QString text, int map)
     case MAP_KS0066_RU:
         pmap = &map_ks0066ru;
         break;
-    case MAP_CP1251:
-        pmap = &map_cp1251;
-        break;
     default:
+        pmap = &map_cp1251;
         break;
     }
 
