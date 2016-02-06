@@ -61,12 +61,16 @@ static void rtcSaveTime(void)
 	uint8_t i;
 	uint8_t etm = rtc.etm;
 
+	if (etm > RTC_WDAY) {
+		rtcWeekDay();
+		etm = RTC_WDAY;
+	}
+
 	I2CswStart(RTC_I2C_ADDR);
 	I2CswWriteByte(etm);
 	if (etm == RTC_SEC) {
 		I2CswWriteByte(0);
 	} else {
-		rtcWeekDay();
 		for (i = etm; i <= RTC_YEAR; i++)
 			I2CswWriteByte(rtcDecToBinDec(*((int8_t*)&rtc + i)));
 	}
