@@ -229,13 +229,12 @@ static uint8_t calcBrightness(void)
 	uint8_t adc = ADCH;
 
 	/* Use ADC if we have photoresistor */
-	if (adc) {
+	if (adc > 4) {
 		adc >>= 3;
-		if (adcOld < adc) {
+		if (adcOld < adc)
 			adcOld++;
-		} else if (adcOld > adc) {
+		else if (adcOld > adc)
 			adcOld--;
-		}
 		br = adcOld >> 1;
 	} else {
 		/* Calculate br(hour) instead */
