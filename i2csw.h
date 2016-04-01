@@ -14,4 +14,4 @@ void I2CswStop(void);
 void I2CswWriteByte(uint8_t data);
 uint8_t I2CswReadByte(uint8_t ack);
 
-#endif /* I2CSW_H */
+#endif // I2CSW_H

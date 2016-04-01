@@ -36,4 +36,4 @@ void ht1632SendCmd(uint8_t cmd);
 void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate);
 void ht1632Init(void);
 
-#endif /* HT1632_H */
+#endif // HT1632_H

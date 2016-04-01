@@ -75,4 +75,4 @@
 #define MAX7219_DIN			D
 #define MAX7219_DIN_LINE	(1<<0)
 
-#endif /* PINS_H */
+#endif // PINS_H

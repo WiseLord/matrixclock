@@ -16,12 +16,12 @@
 #define EEPROM_BR_MAX				0x0E
 #define EEPROM_SENS_MASK			0x0F
 
-/* Text labels (maximum 15 byte followed by \0) */
+// Text labels (maximum 15 byte followed by \0)
 #define EEPROM_LABELS				0x10
 
-/* Big numbers font (10 * 5 bytes) */
+// Big numbers font (10 * 5 bytes)
 #define EEPROM_BIG_NUM_FONT			0x1C0
-/* Extra numbers font (10 * 6 bytes) */
+// Extra numbers font (10 * 6 bytes)
 #define EEPROM_EXTRA_NUM_FONT		0x180
 
 #define EEPROM_SIZE					0x200
@@ -83,4 +83,4 @@ enum {
 	LABEL_END
 };
 
-#endif /* EEPROM_H */
+#endif // EEPROM_H

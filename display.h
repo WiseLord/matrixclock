@@ -6,7 +6,7 @@
 #define PARAM_UP				1
 #define PARAM_DOWN				-1
 
-/* Display modes */
+// Display modes
 enum {
 	MODE_MAIN,
 	MODE_EDIT_TIME,
@@ -67,4 +67,4 @@ void showBrightness(int8_t ch_dir, uint32_t mask);
 void saveMaxBrightness(void);
 void checkAlarmAndBrightness(void);
 
-#endif /* DISPLAY_H */
+#endif // DISPLAY_H

@@ -38,4 +38,4 @@ void rtcChangeTime(int8_t diff);
 uint8_t rtcBinDecToDec(uint8_t num);
 uint8_t rtcDecToBinDec(uint8_t num);
 
-#endif /* RTC_H */
+#endif // RTC_H

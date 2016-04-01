@@ -50,7 +50,7 @@ int main(void)
 	setSensTimer(TEMP_MEASURE_TIME);
 
 	while(1) {
-		/* Update sensors with SENSOR_POLL_INTERVAL period */
+		// Update sensors with SENSOR_POLL_INTERVAL period
 		if (getSensTimer() == 0) {
 			setSensTimer(SENSOR_POLL_INTERVAL);
 			ds18x20Process();
@@ -59,14 +59,14 @@ int main(void)
 			dht22Read();
 		}
 
-		/* Update brightness only when not in brightness setup */
+		// Update brightness only when not in brightness setup
 		if (dispMode != MODE_BRIGHTNESS)
 			checkAlarmAndBrightness();
 
-		/* Get command from buttons */
+		// Get command from buttons
 		cmd = getBtnCmd();
 
-		/* Beep on button pressed */
+		// Beep on button pressed
 		if (cmd != CMD_EMPTY) {
 			if (cmd < CMD_BTN_1_LONG)
 				startBeeper(BEEP_SHORT);
@@ -74,11 +74,11 @@ int main(void)
 				startBeeper(BEEP_LONG);
 		}
 
-		/* Stop scrolling on any button pressed */
+		// Stop scrolling on any button pressed
 		if (cmd != CMD_EMPTY)
 			matrixHwScroll(MATRIX_SCROLL_STOP);
 
-		/* Handle command */
+		// Handle command
 		switch (cmd) {
 		case CMD_BTN_1:
 			direction = PARAM_UP;
@@ -156,7 +156,7 @@ int main(void)
 			break;
 		}
 
-		/* Show things */
+		// Show things
 		switch (dispMode) {
 		case MODE_MAIN:
 			showMainScreen();

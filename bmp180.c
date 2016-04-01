@@ -32,7 +32,7 @@ void bmp180Init(void)
 	for (i = 0; i < BMP180_CAL_LEN; i++) {
 		param = bmp180ReadI2CWord(BMP180_CAL_DATA_START + 2 * i);
 		if (param == 0x0000 || param == 0xFFFF) {
-			bmp180Sensor = 0;										/* No valid sensor on bus */
+			bmp180Sensor = 0;										// No valid sensor on bus
 			return;
 		}
 		cd.arr[i] = param;
@@ -76,7 +76,7 @@ void bmp180Convert (void)
 	x2 = ((int32_t)cd.mc << 11) / (x1 + cd.md);
 	b5 = x1 + x2;
 
-	temperature = (b5 + 8) >> 4;							/* Value in 0.1 °C */
+	temperature = (b5 + 8) >> 4;							// Value in 0.1 °C
 
 	b6 = b5 - 4000;
 	b8 = (b6 * b6) >> 12;
@@ -94,8 +94,8 @@ void bmp180Convert (void)
 	x1 = (x1 * 3038) >> 16;
 	x2 = (-7357 * p) >> 16;
 
-	pressure = (p + ((x1 + x2 + 3791) >> 4)) * 3 / 40;		/* Value in 10*mmHg */
-//	pressure = (p + ((x1 + x2 + 3791) >> 4)) * 4 / 400;		/* Value in 10*kPa */
+	pressure = (p + ((x1 + x2 + 3791) >> 4)) * 3 / 40;		// Value in 10*mmHg
+	//	pressure = (p + ((x1 + x2 + 3791) >> 4)) * 4 / 400;		// Value in 10*kPa
 
 }
 

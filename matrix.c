@@ -16,7 +16,7 @@
 static uint8_t rotate = 0;
 static uint8_t scrollInterval = 0;
 
-static int16_t _col;						/* Current position */
+static int16_t _col;						// Current position
 
 static uint8_t fb[MATRIX_NUMBER * 8];
 static uint8_t fbNew[MATRIX_BUFFER_SIZE];
@@ -56,7 +56,7 @@ static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 		memType = MATRIX_FONT_EEPROM;
 	} else {
 		chOft = code - ' ';
-		/* TODO: Remove it with full font */
+		// TODO: Remove it with full font
 		if (code > 128)
 			chOft -= 0x20;
 	}
@@ -185,7 +185,7 @@ void matrixSetX(int16_t x)
 
 void matrixScrollAndADCInit(void)
 {
-	/* Enable Timer2 overflow interrupt and set prescaler to 1024 (7812 Hz) */
+	// Enable Timer2 overflow interrupt and set prescaler to 1024 (7812 Hz)
 #if defined(atmega8)
 	TIMSK |= (1<<TOIE2);
 	TCCR2 = (1<<CS22) | (1<<CS21) | (1<<CS20);
@@ -194,15 +194,15 @@ void matrixScrollAndADCInit(void)
 	TCCR2B |= (1<<CS22) | (1<<CS21) | (1<<CS20);
 #endif
 
-	/* Adjust result to left, use VCC as Vref and set ADC channel */
+	// Adjust result to left, use VCC as Vref and set ADC channel
 	ADMUX = (1<<ADLAR) | (0<<REFS1) | (1<<REFS0) | ADC_CHANNEL;
-	/* Enable ADC */
+	// Enable ADC
 	ADCSRA |= (1<<ADEN);
 
 	return;
 }
 
-/* Interrupt will be executed 7812 / 256 = 30 times/sec */
+// Interrupt will be executed 7812 / 256 = 30 times/sec
 ISR (TIMER2_OVF_vect)
 {
 	int8_t i;

@@ -98,11 +98,11 @@ void max7219Init(void)
 	PORT(MAX7219_DIN) &= ~MAX7219_DIN_LINE;
 	PORT(MAX7219_CLK) &= ~MAX7219_CLK_LINE;
 
-	max7219SendCmd(MAX7219_SHUTDOWN, 1);		/* Power on */
-	max7219SendCmd(MAX7219_DISP_TEST, 0);		/* Test mode off */
-	max7219SendCmd(MAX7219_DEC_MODE, 0);		/* Use led matrix */
-	max7219SendCmd(MAX7219_INTENSITY, 0);		/* Set brightness */
-	max7219SendCmd(MAX7219_SCAN_LIMIT, 7);		/* Scan all 8 digits (cols) */
+	max7219SendCmd(MAX7219_SHUTDOWN, 1);		// Power on
+	max7219SendCmd(MAX7219_DISP_TEST, 0);		// Test mode off
+	max7219SendCmd(MAX7219_DEC_MODE, 0);		// Use led matrix
+	max7219SendCmd(MAX7219_INTENSITY, 0);		// Set brightness
+	max7219SendCmd(MAX7219_SCAN_LIMIT, 7);		// Scan all 8 digits (cols)
 
 	return;
 }

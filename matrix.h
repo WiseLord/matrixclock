@@ -71,4 +71,4 @@ void matrixScrollAddString(char *string);
 void matrixFbNewAddString(char *string, uint8_t numSize);
 void matrixFbNewAddStringEeprom(uint8_t *string);
 
-#endif /* MATRIX_H */
+#endif // MATRIX_H

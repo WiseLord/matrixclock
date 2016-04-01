@@ -2,32 +2,32 @@
 
 #include <avr/interrupt.h>
 
-/* Temperature/pressure/humidity sensor poll timer */
+// Temperature/pressure/humidity sensor poll timer
 static volatile uint8_t sensTimer = 0;
-/* Scroll interval timer */
+// Scroll interval timer
 static volatile uint8_t scrollTimer = 0;
-/* Beeper timer */
+// Beeper timer
 static volatile uint16_t beepTimer = 0;
-/* Seconds timer */
+// Seconds timer
 static volatile uint8_t secTimer = 0;
 
-/* Command buffer */
+// Command buffer
 static volatile uint8_t cmdBuf;
 
 void mTimerInit(void)
 {
 #if defined(atmega8)
-	TIMSK |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
-	TCCR0 = (1<<CS02) | (0<<CS01) | (0<<CS00);		/* Set timer prescaller to 256 (31250Hz) */
+	TIMSK |= (1<<TOIE0);							// Enable Timer0 overflow interrupt
+	TCCR0 = (1<<CS02) | (0<<CS01) | (0<<CS00);		// Set timer prescaller to 256 (31250Hz)
 #else
-	TIMSK0 |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
-	TCCR0B = (1<<CS02) | (0<<CS01) | (0<<CS00);		/* Set timer prescaller to 256 (31250Hz) */
+	TIMSK0 |= (1<<TOIE0);							// Enable Timer0 overflow interrupt
+	TCCR0B = (1<<CS02) | (0<<CS01) | (0<<CS00);		// Set timer prescaller to 256 (31250Hz)
 #endif
 
 	DDR(BEEPER) |= BEEPER_LINE;
 	PORT(BEEPER) |= BEEPER_LINE;
 
-	/* Setup buttons as inputs with pull-up resistors */
+	// Setup buttons as inputs with pull-up resistors
 	DDR(BUTTONS) &= ~(BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 	PORT(BUTTONS) |= (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 
@@ -36,16 +36,16 @@ void mTimerInit(void)
 	return;
 }
 
-ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
+ISR (TIMER0_OVF_vect)								// 125kHz / (256 - 131) = 1000 polls/sec
 {
 	TCNT0 = 131;
 
-	static int16_t btnCnt = 0;						/* Buttons press duration value */
-	static uint8_t btnPrev = 0;						/* Previous buttons state */
+	static int16_t btnCnt = 0;						// Buttons press duration value
+	static uint8_t btnPrev = 0;						// Previous buttons state
 
 	uint8_t btnNow = ~PIN(BUTTONS) & (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 
-	/* If button event has happened, place it to command buffer */
+	// If button event has happened, place it to command buffer
 	if (btnNow) {
 		if (btnNow == btnPrev) {
 			btnCnt++;
@@ -94,19 +94,19 @@ ISR (TIMER0_OVF_vect)								/* 125kHz / (256 - 131) = 1000 polls/sec */
 		btnCnt = 0;
 	}
 
-	/* 1 second intervals */
+	// 1 second intervals
 	if (secTimer) {
 		secTimer--;
 	} else {
 		secTimer = 250;
-		/* Temperature */
+		// Temperature
 		if (sensTimer)
 			sensTimer--;
 		if (scrollTimer)
 			scrollTimer--;
 	}
 
-	/* Beeper */
+	// Beeper
 	if (beepTimer)
 		beepTimer--;
 

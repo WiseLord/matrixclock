@@ -12,7 +12,7 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
-uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
+uint8_t *txtLabels[LABEL_END];				// Array with text label pointers
 
 static int8_t brMax;
 static uint8_t sensMask;
@@ -52,12 +52,12 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 		value = -value;
 	}
 
-	/* Clear buffer and go to it's tail */
+	// Clear buffer and go to it's tail
 	for (pos = 0; pos < width + prec; pos++)
 		strbuf[pos] = lead;
 	strbuf[pos--] = '\0';
 
-	/* Fill buffer from right to left */
+	// Fill buffer from right to left
 	while (value > 0 || pos > width - 2) {
 		if (prec && (width - pos - 1 == 0))
 			strbuf[pos--] = '.';
@@ -228,7 +228,7 @@ static uint8_t calcBrightness(void)
 	static uint8_t adcOld;
 	uint8_t adc = ADCH;
 
-	/* Use ADC if we have photoresistor */
+	// Use ADC if we have photoresistor
 	if (adc > 4) {
 		adc >>= 3;
 		if (adcOld < adc)
@@ -237,7 +237,7 @@ static uint8_t calcBrightness(void)
 			adcOld--;
 		br = adcOld >> 1;
 	} else {
-		/* Calculate br(hour) instead */
+		// Calculate br(hour) instead
 		if (rtc.hour <= 12)
 			br = (rtc.hour * 2) - 25 + brMax;
 		else
@@ -259,7 +259,7 @@ void displayInit(void)
 
 	matrixInit();
 
-	/* Read text labels saved in EEPROM */
+	// Read text labels saved in EEPROM
 	addr = (uint8_t*)EEPROM_LABELS;
 	i = 0;
 	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
@@ -503,19 +503,19 @@ void checkAlarmAndBrightness(void)
 {
 	rtcReadTime();
 
-	/* Check alarm */
+	// Check alarm
 	if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
 		if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
 			startAlarm(BEEP_ALARM);
 	} else {
-		/* Check new hour */
+		// Check new hour
 		if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
 			startAlarm(BEEP_LONG);
 		else
 			alarmFlag = 1;
 	}
 
-	/* Check brightness */
+	// Check brightness
 	matrixSetBrightness(calcBrightness());
 
 	return;

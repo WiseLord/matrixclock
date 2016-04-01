@@ -5,18 +5,18 @@
 
 #define BMP180_ADDR					0xEE
 
-/* EEPROM calibration addresses */
+// EEPROM calibration addresses
 #define BMP180_CAL_DATA_START		0xAA
 
-/* Oversampling settings*/
+// Oversampling settings
 #define BMP180_OSS					0
 
-/* BMP180 registers */
+// BMP180 registers
 #define BMP180_CTRL_REG				0xF4
 #define BMP180_TEMP_MEASURE			0x2E
 #define BMP180_PRESSURE_MEASURE		(0x34 | (BMP180_OSS << 6))
 
-/* Conversion parameters */
+// Conversion parameters
 #define BMP180_CONV_REG				0xF6
 #define BMP085_CONV_TIME			5
 
@@ -49,4 +49,4 @@ void bmp180Convert(void);
 int16_t bmp180GetTemp(void);
 int16_t bmp180GetPressure(void);
 
-#endif /* BMP180_H */
+#endif // BMP180_H

@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lc = new LcdConverter();
 
-    /* Create hex table */
+    // Create hex table
     wgtHexTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
     wgtHexTable->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
     wgtHexTable->verticalHeader()->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
     for (int x = 0; x < 16; x++)
         wgtHexTable->setHorizontalHeaderItem(x, new QTableWidgetItem(QString("%1").arg(x, 0, 16).toUpper()));
 
-    /* Create translations table */
+    // Create translations table
     wgtTranslations->blockSignals(true);
     for (int y = 0; y < LABEL_END; y++)
         wgtTranslations->setItem(y, 0, new QTableWidgetItem());
@@ -72,7 +72,7 @@ MainWindow::MainWindow(QWidget *parent) :
     lwgtFontBig->item(0)->setSelected(true);
     lwgtFontExtra->item(0)->setSelected(true);
 
-    /* Load default eeprom file */
+    // Load default eeprom file
     readEepromFile(EEPROM_RESOURCE);
 }
 
@@ -96,7 +96,7 @@ void MainWindow::updateHexTable()
 
 void MainWindow::readEepromFile(QString name)
 {
-    /* Reading file to QByteArray buffer */
+    // Reading file to QByteArray buffer
 
     QFile file(name);
 
@@ -123,7 +123,7 @@ void MainWindow::readEepromFile(QString name)
     char ch;
     int pos, len;
 
-    /* Load text labels */
+    // Load text labels
     wgtTranslations->blockSignals(true);
 
     buffer.open(QIODevice::ReadOnly);

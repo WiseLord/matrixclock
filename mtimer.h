@@ -9,7 +9,7 @@
 
 #define BTN_STATE_0				0b000
 
-/* Handling long press actions */
+// Handling long press actions
 #define SHORT_PRESS				25
 #define LONG_PRESS				125
 
@@ -49,4 +49,4 @@ void stopBeeper(void);
 
 uint8_t getBtnCmd(void);
 
-#endif /* MTIMER_H */
+#endif // MTIMER_H

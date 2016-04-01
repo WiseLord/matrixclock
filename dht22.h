@@ -25,4 +25,4 @@ int16_t dht22GetTemp();
 
 uint8_t dht22HaveSensor(void);
 
-#endif /* DHT22_H */
+#endif // DHT22_H
