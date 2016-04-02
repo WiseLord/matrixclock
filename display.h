@@ -2,6 +2,7 @@
 #define DISPLAY_H
 
 #include <inttypes.h>
+#include "matrix.h"
 
 #define PARAM_UP				1
 #define PARAM_DOWN				-1
@@ -29,14 +30,23 @@ enum {
 #define MASK_EXTRAMIN_TENS		0x00001F80UL
 #define MASK_EXTRAMIN_UNITS		0x0000003FUL
 
+#if MATRIX_CNT == 4
+#define MASK_SEC_TENS			0x000003C0UL
+#define MASK_SEC_UNITS			0x0000003CUL
+#define SECONDS_POS				23
+#define WEEKDAY_POS				31
+#else
 #define MASK_SEC_TENS			0x000000F0UL
 #define MASK_SEC_UNITS			0x0000000FUL
+#define WEEKDAY_POS				23
+#endif
 
 #define MASK_BR_TENS			0xF0000000UL
 #define MASK_BR_UNITS			0x07800000UL
 
 #define MASK_NONE				0x00000000UL
 #define MASK_ALL				0xFFFFFFFFUL
+
 
 #define SENS_MASK_BMP_TEMP		0x10
 #define SENS_MASK_DHT_TEMP		0x20

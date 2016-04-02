@@ -1,7 +1,6 @@
 #include "display.h"
 
 #include "rtc.h"
-#include "matrix.h"
 #include "ds18x20.h"
 #include "mtimer.h"
 #include "alarm.h"
@@ -157,36 +156,44 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 	static uint8_t oldHour, oldMin;
 
 	if ((oldHour ^ hour) & 0xF0) {
-		if (numSize == NUM_EXTRA)
+		if (numSize == NUM_BIG)
+#if MATRIX_CNT == 4
 			mask |= MASK_EXTRAHOUR_TENS;
-		else if (numSize == NUM_BIG)
+#else
 			mask |= MASK_BIGHOUR_TENS;
+#endif
 		else
 			mask |= MASK_HOUR_TENS;
 	}
 	if ((oldHour ^ hour) & 0x0F) {
-		if (numSize == NUM_EXTRA)
+		if (numSize == NUM_BIG)
+#if MATRIX_CNT == 4
 			mask |= MASK_EXTRAHOUR_UNITS;
-		else if (numSize == NUM_BIG)
+#else
 			mask |= MASK_BIGHOUR_UNITS;
+#endif
 		else
 			mask |= MASK_HOUR_UNITS;
 	}
 	oldHour = hour;
 
 	if ((oldMin ^ min) & 0xF0) {
-		if (numSize == NUM_EXTRA)
+		if (numSize == NUM_BIG)
+#if MATRIX_CNT == 4
 			mask |= MASK_EXTRAMIN_TENS;
-		else if (numSize == NUM_BIG)
+#else
 			mask |= MASK_BIGMIN_TENS;
+#endif
 		else
 			mask |= MASK_MIN_TENS;
 	}
 	if ((oldMin ^ min) & 0x0F) {
-		if (numSize == NUM_EXTRA )
+		if (numSize == NUM_BIG)
+#if MATRIX_CNT == 4
 			mask |= MASK_EXTRAMIN_UNITS;
-		else if (numSize == NUM_BIG)
+#else
 			mask |= MASK_BIGMIN_UNITS;
+#endif
 		else
 			mask |= MASK_MIN_UNITS;
 	}
@@ -204,18 +211,20 @@ static void updateColon(void)
 	uint8_t colon = 0;
 	uint8_t digit = rtc.sec & 0x01;
 
-	if (bigNum == NUM_EXTRA) {
+	if (bigNum == NUM_BIG) {
+#if MATRIX_CNT == 4
 		colon = pgm_read_byte(&colonCode[digit + 2]);
 		matrixPlace(15, colon);
 		matrixPlace(16, colon);
-	} else if (bigNum == NUM_NORMAL) {
+#else
+		matrixPlace(11, (!digit) << 7);
+		matrixPlace(12, digit << 7);
+#endif
+	} else {
 		colon = pgm_read_byte(&colonCode[digit]);
 		matrixPlace(10, colon);
 		matrixPlace(11, colon);
-		matrixPlace(23, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
-	} else {
-		matrixPlace(11, (!digit) << 7);
-		matrixPlace(12, digit << 7);
+		matrixPlace(WEEKDAY_POS, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
 	}
 
 	return;
@@ -287,12 +296,7 @@ void displayInit(void)
 
 void displaySwitchBigNum(void)
 {
-#if MATRIX_CNT == 3
-	if (++bigNum > NUM_BIG)
-#else
-	if (++bigNum > NUM_EXTRA)
-#endif
-		bigNum = NUM_NORMAL;
+	bigNum = !bigNum;
 
 	eeprom_update_byte((uint8_t*)EEPROM_BIGNUM, bigNum);
 
@@ -329,8 +333,10 @@ void startScroll(uint8_t type)
 
 void showTime(uint32_t mask)
 {
+#if MATRIX_CNT == 4
 	static uint8_t oldSec;
 	uint8_t digit;
+#endif
 
 	etmOld = RTC_NOEDIT;
 	eamOld = ALARM_NOEDIT;
@@ -338,20 +344,27 @@ void showTime(uint32_t mask)
 	matrixSetX(0);
 	matrixFbNewAddString(mkNumberString(rtc.hour, 2, 0, hourZero ? '0' : ' '), bigNum);
 
-	if (bigNum == NUM_EXTRA)
+	if (bigNum == NUM_BIG)
+#if MATRIX_CNT == 4
 		matrixSetX(19);
+#else
+		matrixSetX(13);
+#endif
 	else
 		matrixSetX(13);
 	matrixFbNewAddString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
 
-	if (bigNum != NUM_EXTRA) {
-		matrixSetX(25);
+#if MATRIX_CNT == 4
+	if (bigNum == NUM_NORMAL) {
+		matrixSetX(SECONDS_POS);
 		matrixFbNewAddString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
+#endif
 
 	mask = updateMask(mask, bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
 
-	if (bigNum != NUM_EXTRA) {
+#if MATRIX_CNT == 4
+	if (bigNum == NUM_NORMAL) {
 		digit = rtcDecToBinDec(rtc.sec);
 		if ((oldSec ^ digit) & 0xF0)
 			mask |= MASK_SEC_TENS;
@@ -359,6 +372,7 @@ void showTime(uint32_t mask)
 			mask |= MASK_SEC_UNITS;
 		oldSec = digit;
 	}
+#endif
 
 	matrixSwitchBuf(mask, MATRIX_EFFECT_SCROLL_DOWN);
 	updateColon();

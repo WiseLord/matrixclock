@@ -3,8 +3,6 @@
 
 #include <inttypes.h>
 
-#define MATRIX_NUMBER				4
-
 #define MATRIX_SCROLL_STOP			0
 #define MATRIX_SCROLL_START			1
 
@@ -29,9 +27,11 @@ enum {
 };
 
 #if defined(HT1632)
+#include "ht1632.h"
 #define matrixInitDriver() ht1632Init()
 #define matrixUpdate(x, y) ht1632SendDataBuf(x, y)
 #else
+#include "max7219.h"
 #define matrixInitDriver() max7219Init()
 #define matrixUpdate(x, y) max7219SendDataBuf(x, y)
 #endif
@@ -39,7 +39,6 @@ enum {
 enum {
 	NUM_NORMAL = 0,
 	NUM_BIG,
-	NUM_EXTRA,
 	NUM_SMALL,
 
 	NUM_END,

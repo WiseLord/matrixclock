@@ -1,6 +1,7 @@
 #include "max7219.h"
 
 #include <avr/pgmspace.h>
+#include "pins.h"
 
 #if !defined(MAX7219MOD)
 static uint8_t max7219SwapBits(uint8_t data)

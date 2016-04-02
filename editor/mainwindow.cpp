@@ -177,8 +177,8 @@ void MainWindow::saveEepromFile(QString name)
 
 void MainWindow::setParams()
 {
-    setFontsize(eep[EEPROM_BIGNUM] - 1);
-    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM] - 1);
+    setFontsize(eep[EEPROM_BIGNUM]);
+    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM]);
 
     setBrightnessMax(eep[EEPROM_BR_MAX]);
     sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
@@ -316,7 +316,7 @@ void MainWindow::setFontsize(int value)
 {
     if (value >= NUM_END)
         value = NUM_NORMAL;
-    eep[EEPROM_BIGNUM] = (char)value + 1;
+    eep[EEPROM_BIGNUM] = (char)value;
     updateHexTable(EEPROM_BIGNUM);
 }
 

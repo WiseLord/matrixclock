@@ -2,8 +2,6 @@
 #define HT1632_H
 
 #include <inttypes.h>
-#include "pins.h"
-#include "matrix.h"
 
 #define HT1632_MODE_READ			0x06
 #define HT1632_MODE_WRITE			0x05
@@ -34,6 +32,7 @@
 
 #ifndef MATRIX_CNT
 #define MATRIX_CNT					4
+#define MATRIX_NUMBER				4
 #endif
 
 void ht1632SendCmd(uint8_t cmd);

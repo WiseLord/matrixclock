@@ -2,8 +2,6 @@
 #define MAX7219_H
 
 #include <inttypes.h>
-#include "pins.h"
-#include "matrix.h"
 
 #ifdef MAX7219_X3
 #define MAX7219
@@ -27,6 +25,8 @@
 #ifndef MATRIX_CNT
 #define MATRIX_CNT				4
 #endif
+
+#define MATRIX_NUMBER				4
 
 // Registers
 #define MAX7219_NO_OP			0x00

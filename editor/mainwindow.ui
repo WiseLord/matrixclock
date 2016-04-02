@@ -435,11 +435,6 @@
                <string>Big</string>
               </property>
              </item>
-             <item>
-              <property name="text">
-               <string>Extra</string>
-              </property>
-             </item>
             </widget>
            </item>
           </layout>

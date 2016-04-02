@@ -1,6 +1,7 @@
 #include "ht1632.h"
 
 #include <avr/pgmspace.h>
+#include "pins.h"
 
 static void ht1632SendBits(uint8_t cnt, uint8_t bits)
 {

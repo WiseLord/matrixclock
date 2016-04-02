@@ -1,8 +1,6 @@
 #include "matrix.h"
 
 #include "fonts.h"
-#include "ht1632.h"
-#include "max7219.h"
 #include "eeprom.h"
 #include "mtimer.h"
 
@@ -47,13 +45,15 @@ static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 		font = font_smallnum;
 		width = MATRIX_SMALLNUM_WIDTH;
 	} else if (numSize == NUM_BIG) {
-		font = (uint8_t*)EEPROM_BIG_NUM_FONT;
-		width = MATRIX_BIGNUM_WIDTH;
-		memType = MATRIX_FONT_EEPROM;
-	} else if (numSize == NUM_EXTRA) {
+#if MATRIX_CNT == 4
 		font = (uint8_t*)EEPROM_EXTRA_NUM_FONT;
 		width = MATRIX_EXTRANUM_WIDTH;
 		memType = MATRIX_FONT_EEPROM;
+#else
+		font = (uint8_t*)EEPROM_BIG_NUM_FONT;
+		width = MATRIX_BIGNUM_WIDTH;
+		memType = MATRIX_FONT_EEPROM;
+#endif
 	} else {
 		chOft = code - ' ';
 		// TODO: Remove it with full font
