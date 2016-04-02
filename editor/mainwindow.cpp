@@ -177,18 +177,16 @@ void MainWindow::saveEepromFile(QString name)
 
 void MainWindow::setParams()
 {
-    setFontsize(eep[EEPROM_BIGNUM]);
-    cbxFontsize->setCurrentIndex(eep[EEPROM_BIGNUM]);
-
     setBrightnessMax(eep[EEPROM_BR_MAX]);
     sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
 
     setScroll(eep[EEPROM_SCROLL_INTERVAL]);
     sbxScroll->setValue(eep[EEPROM_SCROLL_INTERVAL]);
 
-    cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
-    cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
     cbxHoursignal->setChecked(eep[EEPROM_HOURSIGNAL]);
+    cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
+    cbxFontsize->setChecked(eep[EEPROM_BIGNUM]);
+    cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
 
     cbxBmpTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_BMP_TEMP);
     cbxDhtTemp->setChecked(eep[EEPROM_SENS_MASK] & SENS_MASK_DHT_TEMP);
@@ -239,6 +237,8 @@ void MainWindow::loadalarm()
     cbxAlarmFr->setChecked(eep[EEPROM_ALARM_MON + 4]);
     cbxAlarmSa->setChecked(eep[EEPROM_ALARM_MON + 5]);
     cbxAlarmSu->setChecked(eep[EEPROM_ALARM_MON + 6]);
+
+    sbxAlarmTimeout->setValue(eep[EEPROM_ALARM_TIMEOUT]);
 }
 
 void MainWindow::about()
@@ -312,14 +312,6 @@ void MainWindow::updateTranslation(int row, int column)
     updateHexTable();
 }
 
-void MainWindow::setFontsize(int value)
-{
-    if (value >= NUM_END)
-        value = NUM_NORMAL;
-    eep[EEPROM_BIGNUM] = (char)value;
-    updateHexTable(EEPROM_BIGNUM);
-}
-
 void MainWindow::setBrightnessMax(int value)
 {
     if (value < 0)
@@ -335,6 +327,12 @@ void MainWindow::setScroll(int value)
 {
     eep[EEPROM_SCROLL_INTERVAL] = (unsigned char)value;
     updateHexTable(EEPROM_SCROLL_INTERVAL);
+}
+
+void MainWindow::setFontsize()
+{
+    eep[EEPROM_BIGNUM] = cbxFontsize->isChecked();
+    updateHexTable(EEPROM_BIGNUM);
 }
 
 void MainWindow::setRotate()
@@ -438,5 +436,11 @@ void MainWindow::setAlarmDays()
 
     for (int i = 0; i < 7; i++)
         updateHexTable(EEPROM_ALARM_MON + i);
+}
+
+void MainWindow::setAlarmTimeout(int value)
+{
+    eep[EEPROM_ALARM_TIMEOUT] = (unsigned char)value;
+    updateHexTable(EEPROM_ALARM_TIMEOUT);
 }
 

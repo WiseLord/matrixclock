@@ -20,6 +20,8 @@ static uint8_t bigNum = 0;
 static uint8_t hourSignal = 1;
 static uint8_t hourZero = 0;
 
+static uint8_t alarmTimeout = 1;
+
 static uint8_t etmOld = RTC_NOEDIT;
 static uint8_t eamOld = ALARM_NOEDIT;
 
@@ -247,6 +249,8 @@ void displayInit(void)
 	brMax = eeprom_read_byte((uint8_t*)EEPROM_BR_MAX);
 	sensMask = eeprom_read_byte((uint8_t*)EEPROM_SENS_MASK);
 	hourSignal = eeprom_read_byte((uint8_t*)EEPROM_HOURSIGNAL);
+
+	alarmTimeout = eeprom_read_byte((uint8_t*)EEPROM_ALARM_TIMEOUT);
 
 	return;
 }
@@ -483,7 +487,7 @@ void checkAlarm(void)
 			// Check alarm
 			if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
 				if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
-					startAlarm(ALARM_TIME);
+					startAlarm(alarmTimeout);
 			} else {
 				// Check new hour
 				if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)

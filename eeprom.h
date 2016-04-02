@@ -24,6 +24,9 @@
 // Extra numbers font (10 * 6 bytes)
 #define EEPROM_EXTRA_NUM_FONT		0x180
 
+// Alarm timeout
+#define EEPROM_ALARM_TIMEOUT		0x1F8
+
 #define EEPROM_SIZE					0x200
 
 enum {

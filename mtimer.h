@@ -16,8 +16,6 @@
 #define BEEP_SHORT				20
 #define BEEP_LONG				40
 
-#define ALARM_TIME				2
-
 #define TIME_SEC				250
 
 enum {

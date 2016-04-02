@@ -43,9 +43,9 @@ private slots:
 
     void updateTranslation(int row, int column);
 
-    void setFontsize(int value);
     void setBrightnessMax(int value);
     void setScroll(int value);
+    void setFontsize();
     void setRotate();
     void setHoursignal();
     void setHourzero();
@@ -57,6 +57,7 @@ private slots:
     void setAlarmHour(int value);
     void setAlarmMinute(int value);
     void setAlarmDays();
+    void setAlarmTimeout(int value);
 
 };
 
