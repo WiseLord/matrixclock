@@ -75,6 +75,7 @@ void showAlarmEdit(int8_t ch_dir);
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
 void saveMaxBrightness(void);
-void checkAlarmAndBrightness(void);
+void checkAlarm(void);
+void calcBrightness(void);
 
 #endif // DISPLAY_H

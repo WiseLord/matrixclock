@@ -15,7 +15,10 @@
 
 #define BEEP_SHORT				20
 #define BEEP_LONG				40
-#define BEEP_ALARM				15000
+
+#define ALARM_TIME				2
+
+#define TIME_SEC				250
 
 enum {
 	CMD_EMPTY = 0,
@@ -42,9 +45,8 @@ void setSensTimer(uint8_t val);
 uint8_t getScrollTimer(void);
 void setScrollTimer(uint8_t val);
 
-void startBeeper(uint16_t time);
-uint16_t getBeepTimer(void);
-void stopBeeper(void);
+void startBeeper(uint8_t time);
+void startAlarm(uint8_t time);
 
 uint8_t getBtnCmd(void);
 

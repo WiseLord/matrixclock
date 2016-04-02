@@ -25,7 +25,6 @@ void hwInit(void)
 
 	matrixScrollAndADCInit();
 
-	rtcReadTime();
 	alarmInit();
 
 	rtc.etm = RTC_NOEDIT;
@@ -59,9 +58,12 @@ int main(void)
 			dht22Read();
 		}
 
+		// Check alarm
+		checkAlarm();
+
 		// Update brightness only when not in brightness setup
 		if (dispMode != MODE_BRIGHTNESS)
-			checkAlarmAndBrightness();
+			calcBrightness();
 
 		// Get command from buttons
 		cmd = getBtnCmd();

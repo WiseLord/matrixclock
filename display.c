@@ -23,21 +23,9 @@ static uint8_t hourZero = 0;
 static uint8_t etmOld = RTC_NOEDIT;
 static uint8_t eamOld = ALARM_NOEDIT;
 
-static uint8_t alarmFlag = 1;
-
 static uint8_t firstSensor;
 
 static uint8_t scrollType;
-
-static void startAlarm(uint16_t duration)
-{
-	if (getBeepTimer() == 0 && alarmFlag) {
-		alarmFlag = 0;
-		startBeeper(duration);
-	}
-
-	return;
-}
 
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
 {
@@ -228,37 +216,6 @@ static void updateColon(void)
 	}
 
 	return;
-}
-
-static uint8_t calcBrightness(void)
-{
-	int8_t br = 0;
-
-	static uint8_t adcOld;
-	uint8_t adc = ADCH;
-
-	// Use ADC if we have photoresistor
-	if (adc > 4) {
-		adc >>= 3;
-		if (adcOld < adc)
-			adcOld++;
-		else if (adcOld > adc)
-			adcOld--;
-		br = adcOld >> 1;
-	} else {
-		// Calculate br(hour) instead
-		if (rtc.hour <= 12)
-			br = (rtc.hour * 2) - 25 + brMax;
-		else
-			br = 31 - (rtc.hour * 2) + brMax;
-	}
-
-	if (br > brMax)
-		br = brMax;
-	if (br < 0)
-		br = 0;
-
-	return br;
 }
 
 void displayInit(void)
@@ -513,24 +470,62 @@ void saveMaxBrightness(void)
 	return;
 }
 
-void checkAlarmAndBrightness(void)
+void checkAlarm(void)
 {
+	static uint8_t firstCheck = 1;
+
 	rtcReadTime();
 
-	// Check alarm
-	if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
-		if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
-			startAlarm(BEEP_ALARM);
+	// Once check if it's a new second
+	if (rtc.sec == 0) {
+		if (firstCheck) {
+			firstCheck = 0;
+			// Check alarm
+			if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
+				if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
+					startAlarm(ALARM_TIME);
+			} else {
+				// Check new hour
+				if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
+					startBeeper(BEEP_LONG);
+			}
+		}
 	} else {
-		// Check new hour
-		if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
-			startAlarm(BEEP_LONG);
-		else
-			alarmFlag = 1;
+		firstCheck = 1;
 	}
 
-	// Check brightness
-	matrixSetBrightness(calcBrightness());
+	return;
+}
+
+void calcBrightness(void)
+{
+	int8_t br = 0;
+
+	static uint8_t adcOld;
+	uint8_t adc = ADCH;
+
+	// Use ADC if we have photoresistor
+	if (adc > 4) {
+		adc >>= 3;
+		if (adcOld < adc)
+			adcOld++;
+		else if (adcOld > adc)
+			adcOld--;
+		br = adcOld >> 1;
+	} else {
+		// Calculate br(hour) instead
+		if (rtc.hour <= 12)
+			br = (rtc.hour * 2) - 25 + brMax;
+		else
+			br = 31 - (rtc.hour * 2) + brMax;
+	}
+
+	if (br > brMax)
+		br = brMax;
+	if (br < 0)
+		br = 0;
+
+	matrixSetBrightness(br);
 
 	return;
 }
