@@ -55,7 +55,7 @@ void max7219SendDataBuf(uint8_t *buf, uint8_t rotate)
 	ci = 0x01;
 	for (i = 0; i < 8; i++) {
 		PORT(MAX7219_LOAD) &= ~MAX7219_LOAD_LINE;
-		for (j = 0; j < MAX7219_NUM_USED; j++) {
+		for (j = 0; j < MATRIX_CNT; j++) {
 #if defined(MAX7219MOD)
 			data = 0;
 			uint8_t k;
@@ -64,16 +64,16 @@ void max7219SendDataBuf(uint8_t *buf, uint8_t rotate)
 			rs = 0x80;
 			for (k = 0; k < 8; k++) {
 #if defined(MAX7219MOD2)
-				if (buf[8 * (!rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & ci)
+				if (buf[8 * (!rotate ? j : MATRIX_CNT - 1 - j) + k] & ci)
 #else
-				if (buf[8 * (rotate ? j : MAX7219_NUM_USED - 1 - j) + k] & ci)
+				if (buf[8 * (rotate ? j : MATRIX_CNT - 1 - j) + k] & ci)
 #endif
 					data |= (rotate ? ls : rs);
 				ls <<= 1;
 				rs >>= 1;
 			}
 #else
-			data = (rotate ? max7219SwapBits(buf[8 * j + i]) : buf[8 * (MAX7219_NUM_USED - 1 - j) + i]);
+			data = (rotate ? max7219SwapBits(buf[8 * j + i]) : buf[8 * (MATRIX_CNT - 1 - j) + i]);
 #endif
 			if (rotate)
 				max7219SendByte(MAX7219_DIGIT_7 - i);

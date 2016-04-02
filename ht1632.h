@@ -32,6 +32,10 @@
 #define HT1632_ADDRBITS_CNT			7
 #define HT1632_DATABITS_CNT			8
 
+#ifndef MATRIX_CNT
+#define MATRIX_CNT					4
+#endif
+
 void ht1632SendCmd(uint8_t cmd);
 void ht1632SendDataBuf(uint8_t *buf, uint8_t rotate);
 void ht1632Init(void);

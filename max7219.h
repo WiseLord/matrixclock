@@ -7,12 +7,12 @@
 
 #ifdef MAX7219_X3
 #define MAX7219
-#define MAX7219_NUM_USED 3
+#define MATRIX_CNT				3
 #endif
 
 #ifdef MAX7219MOD2_X3
 #define MAX7219MOD2
-#define MAX7219_NUM_USED 3
+#define MATRIX_CNT				3
 #endif
 
 #ifdef MAX7219MOD2
@@ -21,11 +21,11 @@
 
 #ifdef MAX7219MOD_X3
 #define MAX7219MOD
-#define MAX7219_NUM_USED 3
+#define MATRIX_CNT				3
 #endif
 
-#ifndef MAX7219_NUM_USED
-#define MAX7219_NUM_USED 4
+#ifndef MATRIX_CNT
+#define MATRIX_CNT				4
 #endif
 
 // Registers
