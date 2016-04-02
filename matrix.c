@@ -111,14 +111,6 @@ void matrixSetBrightness(uint8_t brightness)
 	return;
 }
 
-void matrixScreenRotate(void)
-{
-	rotate = !rotate;
-	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, rotate);
-
-	return;
-}
-
 void matrixPlace(uint8_t pos, uint8_t byte)
 {
 	fb[pos] = byte;

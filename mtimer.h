@@ -29,7 +29,6 @@ enum {
 	CMD_BTN_1_2_LONG,
 	CMD_BTN_2_3_LONG,
 	CMD_BTN_1_3_LONG,
-	CMD_BTN_1_2_3_LONG,
 };
 
 void mTimerInit(void);

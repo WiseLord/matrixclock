@@ -69,9 +69,6 @@ ISR (TIMER0_OVF_vect)								// 125kHz / (256 - 131) = 1000 polls/sec
 				case (BUTTON_1_LINE | BUTTON_3_LINE):
 					cmdBuf = CMD_BTN_1_3_LONG;
 					break;
-				case (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE):
-					cmdBuf = CMD_BTN_1_2_3_LONG;
-					break;
 				}
 			}
 		} else {

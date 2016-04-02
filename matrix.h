@@ -52,7 +52,6 @@ enum {
 void matrixInit(void);
 
 void matrixSetBrightness(uint8_t brightness);
-void matrixScreenRotate(void);
 
 void matrixPlace(uint8_t pos, uint8_t byte);
 
