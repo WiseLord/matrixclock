@@ -288,9 +288,9 @@ void displayInit(void)
 void displaySwitchBigNum(void)
 {
 #if MATRIX_CNT == 3
-	if (++bigNum >= NUM_EXTRA)
+	if (++bigNum > NUM_BIG)
 #else
-	if (++bigNum >= NUM_END)
+	if (++bigNum > NUM_EXTRA)
 #endif
 		bigNum = NUM_NORMAL;
 

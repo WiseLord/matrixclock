@@ -37,10 +37,10 @@ enum {
 #endif
 
 enum {
-	NUM_SMALL = 0,
-	NUM_NORMAL,
+	NUM_NORMAL = 0,
 	NUM_BIG,
 	NUM_EXTRA,
+	NUM_SMALL,
 
 	NUM_END,
 };
