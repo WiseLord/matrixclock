@@ -46,12 +46,12 @@ int main(void)
 	showTimeMasked();
 
 	ds18x20Process();
-	setSensTimer(TEMP_MEASURE_TIME);
+	sensTimer = TEMP_MEASURE_TIME;
 
 	while(1) {
 		// Update sensors with SENSOR_POLL_INTERVAL period
-		if (getSensTimer() == 0) {
-			setSensTimer(SENSOR_POLL_INTERVAL);
+		if (!sensTimer == 0) {
+			sensTimer = SENSOR_POLL_INTERVAL;
 			ds18x20Process();
 			if (bmp180HaveSensor())
 				bmp180Convert();

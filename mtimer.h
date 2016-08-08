@@ -24,16 +24,10 @@
 
 #define TIME_SEC				250
 
+extern uint8_t sensTimer;
+extern uint8_t scrollTimer;
+
 void mTimerInit(void);
-
-uint16_t getTempConvertTimer(void);
-void setTempConvertTimer(uint16_t val);
-
-uint8_t getSensTimer(void);
-void setSensTimer(uint8_t val);
-
-uint8_t getScrollTimer(void);
-void setScrollTimer(uint8_t val);
 
 void startBeeper(uint8_t time);
 void startAlarm(uint8_t time);

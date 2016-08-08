@@ -3,9 +3,9 @@
 #include <avr/interrupt.h>
 
 // Temperature/pressure/humidity sensor poll timer
-static volatile uint8_t sensTimer = 0;
+uint8_t sensTimer = 0;
 // Scroll interval timer
-static volatile uint8_t scrollTimer = 0;
+uint8_t scrollTimer = 0;
 // Beeper timer
 static volatile uint8_t beepTimer = 0;
 
@@ -107,28 +107,6 @@ ISR (TIMER0_OVF_vect)								// 31250 / (256 - 131) = 250 polls/sec
 	} else {
 		PORT(BEEPER) |= BEEPER_LINE;
 	}
-
-	return;
-}
-
-uint8_t getSensTimer(void)
-{
-	return sensTimer;
-}
-void setSensTimer(uint8_t val)
-{
-	sensTimer = val;
-
-	return;
-}
-
-uint8_t getScrollTimer(void)
-{
-	return scrollTimer;
-}
-void setScrollTimer(uint8_t val)
-{
-	scrollTimer = val;
 
 	return;
 }

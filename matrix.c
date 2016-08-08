@@ -93,7 +93,7 @@ void matrixInit(void)
 
 	rotate = eeprom_read_byte((uint8_t*)EEPROM_SCREEN_ROTATE);
 	scrollInterval = eeprom_read_byte((uint8_t*)EEPROM_SCROLL_INTERVAL);
-	setScrollTimer (scrollInterval);
+	scrollTimer = scrollInterval;
 
 	return;
 }
@@ -221,7 +221,7 @@ ISR (TIMER2_OVF_vect)
 			matrixUpdate(fb, rotate);
 		} else {
 			scrollMode = MATRIX_SCROLL_OFF;
-			setScrollTimer (scrollInterval);
+			scrollTimer = scrollInterval;
 		}
 	} else {
 		ptrStr = fbStr;
@@ -246,7 +246,7 @@ void matrixHwScroll(uint8_t status)
 		matrixLoadScrollChar(' ');
 
 	scrollMode = status;
-	setScrollTimer (scrollInterval);
+	scrollTimer = scrollInterval;
 
 	return;
 }
