@@ -17,7 +17,7 @@ static volatile uint8_t alarmSecTimer = 0;
 static volatile uint8_t alarmMinTimer = 0;
 
 // Command buffer
-static volatile uint8_t cmdBuf;
+static volatile uint8_t		cmdBuf;
 
 void mTimerInit(void)
 {
@@ -36,7 +36,7 @@ void mTimerInit(void)
 	DDR(BUTTONS) &= ~(BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 	PORT(BUTTONS) |= (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
 
-	cmdBuf = CMD_EMPTY;
+	cmdBuf = BTN_STATE_0;
 
 	return;
 }
@@ -48,51 +48,27 @@ ISR (TIMER0_OVF_vect)								// 31250 / (256 - 131) = 250 polls/sec
 	static int16_t btnCnt = 0;						// Buttons press duration value
 	static uint8_t btnPrev = 0;						// Previous buttons state
 
-	uint8_t btnNow = ~PIN(BUTTONS) & (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
+	uint8_t btnNow = BTN_STATE_0;
+
+	if (~PIN(BUTTONS) & BUTTON_1_LINE)
+		btnNow |= BTN_0;
+	if (~PIN(BUTTONS) & BUTTON_2_LINE)
+		btnNow |= BTN_1;
+	if (~PIN(BUTTONS) & BUTTON_3_LINE)
+		btnNow |= BTN_2;
 
 	// If button event has happened, place it to command buffer
 	if (btnNow) {
 		if (btnNow == btnPrev) {
 			btnCnt++;
-			if (btnCnt == LONG_PRESS) {
-				switch (btnPrev) {
-				case BUTTON_1_LINE:
-					cmdBuf = CMD_BTN_1_LONG;
-					break;
-				case BUTTON_2_LINE:
-					cmdBuf = CMD_BTN_2_LONG;
-					break;
-				case BUTTON_3_LINE:
-					cmdBuf = CMD_BTN_3_LONG;
-					break;
-				case (BUTTON_1_LINE | BUTTON_2_LINE):
-					cmdBuf = CMD_BTN_1_2_LONG;
-					break;
-				case (BUTTON_2_LINE | BUTTON_3_LINE):
-					cmdBuf = CMD_BTN_2_3_LONG;
-					break;
-				case (BUTTON_1_LINE | BUTTON_3_LINE):
-					cmdBuf = CMD_BTN_1_3_LONG;
-					break;
-				}
-			}
+			if (btnCnt == LONG_PRESS)
+				cmdBuf = (btnPrev << 4);
 		} else {
 			btnPrev = btnNow;
 		}
 	} else {
-		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
-			switch (btnPrev) {
-			case BUTTON_1_LINE:
-				cmdBuf = CMD_BTN_1;
-				break;
-			case BUTTON_2_LINE:
-				cmdBuf = CMD_BTN_2;
-				break;
-			case BUTTON_3_LINE:
-				cmdBuf = CMD_BTN_3;
-				break;
-			}
-		}
+		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS))
+			cmdBuf = btnPrev;
 		btnCnt = 0;
 	}
 
@@ -177,7 +153,7 @@ void startAlarm(uint8_t time)
 uint8_t getBtnCmd(void)
 {
 	uint8_t ret = cmdBuf;
-	cmdBuf = CMD_EMPTY;
+	cmdBuf = BTN_STATE_0;
 
 	return ret;
 }

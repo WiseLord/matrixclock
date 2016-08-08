@@ -69,20 +69,20 @@ int main(void)
 		cmd = getBtnCmd();
 
 		// Beep on button pressed
-		if (cmd != CMD_EMPTY) {
-			if (cmd < CMD_BTN_1_LONG)
+		if (cmd != BTN_STATE_0) {
+			if (cmd < BTN_0_LONG)
 				startBeeper(BEEP_SHORT);
 			else
 				startBeeper(BEEP_LONG);
 		}
 
 		// Stop scrolling on any button pressed
-		if (cmd != CMD_EMPTY)
+		if (cmd != BTN_STATE_0)
 			matrixHwScroll(MATRIX_SCROLL_STOP);
 
 		// Handle command
 		switch (cmd) {
-		case CMD_BTN_1:
+		case BTN_0:
 			direction = PARAM_UP;
 			switch (dispMode) {
 			case MODE_EDIT_TIME:
@@ -93,14 +93,14 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_BTN_2:
+		case BTN_1:
 			direction = PARAM_UP;
-		case CMD_BTN_3:
-			if (cmd == CMD_BTN_3)
+		case BTN_2:
+			if (cmd == BTN_2)
 				direction = PARAM_DOWN;
 			switch (dispMode) {
 			case MODE_MAIN:
-				startScroll(cmd - CMD_BTN_2);
+				startScroll(cmd - BTN_1);
 				break;
 			case MODE_EDIT_TIME:
 				rtcChangeTime(direction);
@@ -113,7 +113,7 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_BTN_1_LONG:
+		case BTN_0_LONG:
 			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_EDIT_TIME;
 				rtcNextEditParam();
@@ -126,29 +126,29 @@ int main(void)
 				showTimeMasked();
 			}
 			break;
-		case CMD_BTN_2_LONG:
+		case BTN_1_LONG:
 			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_EDIT_ALARM;
 				alarmNextEditParam();
 			}
 			break;
-		case CMD_BTN_3_LONG:
+		case BTN_2_LONG:
 			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_BRIGHTNESS;
 				showBrightness(direction, MASK_ALL);
 			}
 			break;
-		case CMD_BTN_1_2_LONG:
+		case BTN_0_LONG | BTN_1_LONG:
 			displaySwitchHourZero();
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
-		case CMD_BTN_2_3_LONG:
+		case BTN_1_LONG | BTN_2_LONG:
 			displaySwitchBigNum();
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
-		case CMD_BTN_1_3_LONG:
+		case BTN_0_LONG | BTN_2_LONG:
 			displaySwitchHourSignal();
 			dispMode = MODE_MAIN;
 			showTimeMasked();

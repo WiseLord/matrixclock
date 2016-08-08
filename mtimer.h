@@ -7,7 +7,13 @@
 #define TEMP_MEASURE_TIME		2
 #define SENSOR_POLL_INTERVAL	10
 
-#define BTN_STATE_0				0b000
+#define BTN_STATE_0				0x00
+#define BTN_0					(1<<0)
+#define BTN_1					(1<<1)
+#define BTN_2					(1<<2)
+#define BTN_0_LONG				(BTN_0<<4)
+#define BTN_1_LONG				(BTN_1<<4)
+#define BTN_2_LONG				(BTN_2<<4)
 
 // Handling long press actions
 #define SHORT_PRESS				25
@@ -17,20 +23,6 @@
 #define BEEP_LONG				40
 
 #define TIME_SEC				250
-
-enum {
-	CMD_EMPTY = 0,
-
-	CMD_BTN_1,
-	CMD_BTN_2,
-	CMD_BTN_3,
-	CMD_BTN_1_LONG,
-	CMD_BTN_2_LONG,
-	CMD_BTN_3_LONG,
-	CMD_BTN_1_2_LONG,
-	CMD_BTN_2_3_LONG,
-	CMD_BTN_1_3_LONG,
-};
 
 void mTimerInit(void);
 
