@@ -6,18 +6,17 @@
 uint8_t sensTimer = 0;
 // Scroll interval timer
 uint8_t scrollTimer = 0;
+// Alarm timer
+uint16_t alarmTimer = 0;
+
 // Beeper timer
 static volatile uint8_t beepTimer = 0;
 
 // Seconds timer
 static volatile uint8_t secTimer = TIME_SEC;
 
-// Alarm timer
-static volatile uint8_t alarmSecTimer = 0;
-static volatile uint8_t alarmMinTimer = 0;
-
 // Command buffer
-static volatile uint8_t		cmdBuf;
+static volatile uint8_t cmdBuf;
 
 void mTimerInit(void)
 {
@@ -83,21 +82,15 @@ ISR (TIMER0_OVF_vect)								// 31250 / (256 - 131) = 250 polls/sec
 		if (scrollTimer)
 			scrollTimer--;
 
-		if (alarmSecTimer) {
-			alarmSecTimer--;
-		} else {
-			if (alarmMinTimer) {
-				alarmMinTimer--;
-				alarmSecTimer = 59;
-			}
-		}
+		if (alarmTimer)
+			alarmTimer--;
 	}
 
 	// Beeper
 	if (beepTimer) {
 		beepTimer--;
 	} else {
-		if (alarmSecTimer || alarmMinTimer)
+		if (alarmTimer)
 			beepTimer = TIME_SEC;
 	}
 
@@ -115,15 +108,7 @@ void startBeeper(uint8_t time)
 {
 	beepTimer = time;
 	secTimer = TIME_SEC;
-	alarmSecTimer = 0;
-	alarmMinTimer = 0;
-
-	return;
-}
-
-void startAlarm(uint8_t time)
-{
-	alarmMinTimer = time;
+	alarmTimer = 0;
 
 	return;
 }

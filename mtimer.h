@@ -26,11 +26,11 @@
 
 extern uint8_t sensTimer;
 extern uint8_t scrollTimer;
+extern uint16_t alarmTimer;
 
 void mTimerInit(void);
 
 void startBeeper(uint8_t time);
-void startAlarm(uint8_t time);
 
 uint8_t getBtnCmd(void);
 

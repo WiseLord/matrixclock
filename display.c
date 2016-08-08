@@ -487,7 +487,7 @@ void checkAlarm(void)
 			// Check alarm
 			if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
 				if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
-					startAlarm(alarmTimeout);
+					alarmTimer = 60 * (uint16_t)alarmTimeout;
 			} else {
 				// Check new hour
 				if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
