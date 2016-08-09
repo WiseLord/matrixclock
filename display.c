@@ -446,8 +446,8 @@ void showTest(void)
 	uint8_t i;
 
 	for (i = 0; i < MATRIX_CNT; i++) {
-		matrixSetX(i * 8 + 1);
-		matrixFbNewAddString(mkNumberString(i + 1, 1, 0, '0'), NUM_BIG);
+		matrixSetX(i * 8 + 2);
+		matrixFbNewAddString(mkNumberString(i + 1, 1, 0, '0'), NUM_NORMAL);
 	}
 	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_NONE);
 }

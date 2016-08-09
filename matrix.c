@@ -29,15 +29,6 @@ static volatile uint8_t scrollData = 0x00;
 
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
-static uint8_t swapBits(uint8_t data)
-{
-	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
-	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
-	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
-
-	return data;
-}
-
 static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 {
 	uint8_t i;
@@ -136,6 +127,7 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 
 	rsBit = 0x80;
 	lsBit = 0x01;
+
 	for (i = 0; i < 8; i++) {
 		for (j = 0; j < MATRIX_CNT * 8; j++) {
 			if (mask & (1UL<<j)) {
@@ -306,23 +298,41 @@ void matrixFbNewAddStringEeprom(uint8_t *string)
 void matrixChangeRotate(int8_t diff)
 {
 	rotate += diff;
-	rotate &= 0x0F;
+//	rotate &= 0x0F;
 
 	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, rotate);
 
 	return;
 }
 
+
+inline uint8_t swapBits(uint8_t data) __attribute__((always_inline));
+inline uint8_t swapBits(uint8_t data)
+{
+	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
+	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
+	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
+
+	return data;
+}
+
 void matrixWrite(void)
 {
-	uint8_t i;
-	uint8_t data;
+	uint8_t m, mp, mn;
+	uint8_t r, rp, rn;
 
-	for (i = 0; i < MATRIX_BUFFER_SIZE; i++) {
-		data = fb[i];
-		if (rotate & 0x02)
-			data = swapBits(data);
-		fbRaw[i] = data;
+	uint8_t data;
+	uint8_t *pRaw = fbRaw;
+
+	for (mp = 0, mn = MATRIX_CNT - 1; mp < MATRIX_CNT; mp++, mn--) {
+		m = (rotate & 0x04) ? mn : mp;
+		for (rp = 0, rn = 7; rp < 8; rp++, rn--) {
+			r = (rotate & 0x01) ? rn : rp;
+			data = fb[m * 8 + r];
+			if (rotate & 0x02)
+				data = swapBits(data);
+			*pRaw++ = data;
+		}
 	}
 
 	matrixUpdate(fbRaw);
