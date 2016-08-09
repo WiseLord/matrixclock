@@ -16,8 +16,9 @@ static uint8_t scrollInterval = 0;
 
 static int16_t _col;						// Current position
 
-static uint8_t fb[MATRIX_CNT * 8];
-static uint8_t fbRaw[MATRIX_CNT * 8];
+uint8_t fb[MATRIX_BUFFER_SIZE];
+
+static uint8_t fbRaw[MATRIX_BUFFER_SIZE];
 static uint8_t fbNew[MATRIX_BUFFER_SIZE];
 
 static char fbStr[MATRIX_STRING_LEN];
@@ -112,13 +113,6 @@ void matrixSetBrightness(uint8_t brightness)
 	return;
 }
 
-void matrixPlace(uint8_t pos, uint8_t byte)
-{
-	fb[pos] = byte;
-
-	return;
-}
-
 void matrixSwitchBuf(uint32_t mask, int8_t effect)
 {
 	uint8_t i, j;
@@ -129,7 +123,7 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 	lsBit = 0x01;
 
 	for (i = 0; i < 8; i++) {
-		for (j = 0; j < MATRIX_CNT * 8; j++) {
+		for (j = 0; j < MATRIX_BUFFER_SIZE; j++) {
 			if (mask & (1UL<<j)) {
 				switch (effect) {
 				case MATRIX_EFFECT_SCROLL_DOWN:
@@ -217,9 +211,9 @@ ISR (TIMER2_OVF_vect)
 				scrollData = 0x00;
 			}
 
-			for (i = 0; i < MATRIX_CNT * 8 - 1; i++)
+			for (i = 0; i < MATRIX_BUFFER_SIZE - 1; i++)
 				fb[i] = fb[i + 1];
-			fb[MATRIX_CNT * 8 - 1] = scrollData;
+			fb[MATRIX_BUFFER_SIZE - 1] = scrollData;
 			matrixWrite();
 		} else {
 			scrollMode = MATRIX_SCROLL_OFF;

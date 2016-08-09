@@ -49,11 +49,11 @@ enum {
 	MATRIX_SCROLL_ON,
 };
 
+extern uint8_t fb[MATRIX_BUFFER_SIZE];
+
 void matrixInit(void);
 
 void matrixSetBrightness(uint8_t brightness);
-
-void matrixPlace(uint8_t pos, uint8_t byte);
 
 void matrixSwitchBuf(uint32_t mask, int8_t effect);
 

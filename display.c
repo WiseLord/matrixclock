@@ -204,17 +204,17 @@ static void updateColon(void)
 	if (bigNum == NUM_BIG) {
 #if MATRIX_CNT == 4
 		colon = pgm_read_byte(&colonCode[digit + 2]);
-		matrixPlace(15, colon);
-		matrixPlace(16, colon);
+		fb[15] = colon;
+		fb[16] = colon;
 #else
-		matrixPlace(11, (!digit) << 7);
-		matrixPlace(12, digit << 7);
+		fb[11] = (!digit) << 7;
+		fb[12] = digit << 7;
 #endif
 	} else {
 		colon = pgm_read_byte(&colonCode[digit]);
-		matrixPlace(10, colon);
-		matrixPlace(11, colon);
-		matrixPlace(WEEKDAY_POS, alarmRawWeekday() | (hourSignal ? 0x80 : 0x00));
+		fb[10] = colon;
+		fb[11] = colon;
+		fb[WEEKDAY_POS] = alarmRawWeekday() | (hourSignal ? 0x80 : 0x00);
 	}
 
 	return;
