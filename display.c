@@ -441,6 +441,17 @@ void showAlarmEdit(int8_t ch_dir)
 	return;
 }
 
+void showTest(void)
+{
+	uint8_t i;
+
+	for (i = 0; i < MATRIX_CNT; i++) {
+		matrixSetX(i * 8 + 1);
+		matrixFbNewAddString(mkNumberString(i + 1, 1, 0, '0'), NUM_BIG);
+	}
+	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_NONE);
+}
+
 void changeBrightness(int8_t diff)
 {
 	brMax += diff;

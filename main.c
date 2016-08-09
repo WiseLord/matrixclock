@@ -111,6 +111,9 @@ int main(void)
 			case MODE_BRIGHTNESS:
 				changeBrightness(direction);
 				break;
+			case MODE_TEST:
+				matrixChangeRotate(direction);
+				break;
 			}
 			break;
 		case BTN_0_LONG:
@@ -153,6 +156,9 @@ int main(void)
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
+		case BTN_0_LONG | BTN_1_LONG | BTN_2_LONG:
+			dispMode = MODE_TEST;
+			break;
 		}
 
 		// Show things
@@ -168,6 +174,9 @@ int main(void)
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(direction, MASK_NONE);
+			break;
+		case MODE_TEST:
+			showTest();
 			break;
 		}
 	}

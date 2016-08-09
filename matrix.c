@@ -17,6 +17,7 @@ static uint8_t scrollInterval = 0;
 static int16_t _col;						// Current position
 
 static uint8_t fb[MATRIX_CNT * 8];
+static uint8_t fbRaw[MATRIX_CNT * 8];
 static uint8_t fbNew[MATRIX_BUFFER_SIZE];
 
 static char fbStr[MATRIX_STRING_LEN];
@@ -28,14 +29,14 @@ static volatile uint8_t scrollData = 0x00;
 
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
-//static uint8_t swapBits(uint8_t data)
-//{
-//	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
-//	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
-//	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
+static uint8_t swapBits(uint8_t data)
+{
+	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
+	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
+	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
 
-//	return data;
-//}
+	return data;
+}
 
 static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 {
@@ -167,7 +168,7 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 			}
 		}
 		_delay_ms(25);
-		matrixUpdate(fb);
+		matrixWrite();
 		rsBit >>= 1;
 		lsBit <<= 1;
 	}
@@ -227,7 +228,7 @@ ISR (TIMER2_OVF_vect)
 			for (i = 0; i < MATRIX_CNT * 8 - 1; i++)
 				fb[i] = fb[i + 1];
 			fb[MATRIX_CNT * 8 - 1] = scrollData;
-			matrixUpdate(fb);
+			matrixWrite();
 		} else {
 			scrollMode = MATRIX_SCROLL_OFF;
 			scrollTimer = scrollInterval;
@@ -298,6 +299,33 @@ void matrixFbNewAddStringEeprom(uint8_t *string)
 	fbStrPos = 0;
 	matrixScrollAddStringEeprom(string);
 	matrixFbNewAddString(fbStr, NUM_NORMAL);
+
+	return;
+}
+
+void matrixChangeRotate(int8_t diff)
+{
+	rotate += diff;
+	rotate &= 0x0F;
+
+	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, rotate);
+
+	return;
+}
+
+void matrixWrite(void)
+{
+	uint8_t i;
+	uint8_t data;
+
+	for (i = 0; i < MATRIX_BUFFER_SIZE; i++) {
+		data = fb[i];
+		if (rotate & 0x02)
+			data = swapBits(data);
+		fbRaw[i] = data;
+	}
+
+	matrixUpdate(fbRaw);
 
 	return;
 }

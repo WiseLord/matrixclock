@@ -12,7 +12,10 @@ enum {
 	MODE_MAIN,
 	MODE_EDIT_TIME,
 	MODE_EDIT_ALARM,
-	MODE_BRIGHTNESS
+	MODE_BRIGHTNESS,
+	MODE_TEST,
+
+	MODE_END
 };
 
 #define MASK_HOUR_TENS			0x0000001FUL
@@ -71,6 +74,7 @@ void showTimeMasked(void);
 void showMainScreen(void);
 void showTimeEdit(int8_t ch_dir);
 void showAlarmEdit(int8_t ch_dir);
+void showTest(void);
 
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
