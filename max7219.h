@@ -8,20 +8,6 @@
 #define MATRIX_CNT				3
 #endif
 
-#ifdef MAX7219MOD2_X3
-#define MAX7219MOD2
-#define MATRIX_CNT				3
-#endif
-
-#ifdef MAX7219MOD2
-#define MAX7219MOD
-#endif
-
-#ifdef MAX7219MOD_X3
-#define MAX7219MOD
-#define MATRIX_CNT				3
-#endif
-
 #ifndef MATRIX_CNT
 #define MATRIX_CNT				4
 #endif
@@ -43,7 +29,7 @@
 #define MAX7219_DISP_TEST		0x0F
 
 void max7219SendCmd(uint8_t reg, uint8_t data);
-void max7219SendDataBuf(uint8_t *buf, uint8_t rotate);
+void max7219SendDataBuf(uint8_t *buf);
 void max7219Init(void);
 
 #endif // MAX7219_H

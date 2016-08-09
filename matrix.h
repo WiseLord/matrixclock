@@ -29,11 +29,11 @@ enum {
 #if defined(HT1632)
 #include "ht1632.h"
 #define matrixInitDriver() ht1632Init()
-#define matrixUpdate(x, y) ht1632SendDataBuf(x, y)
+#define matrixUpdate(buf) ht1632SendDataBuf(buf)
 #else
 #include "max7219.h"
 #define matrixInitDriver() max7219Init()
-#define matrixUpdate(x, y) max7219SendDataBuf(x, y)
+#define matrixUpdate(buf) max7219SendDataBuf(buf)
 #endif
 
 enum {

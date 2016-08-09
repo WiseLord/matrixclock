@@ -28,6 +28,15 @@ static volatile uint8_t scrollData = 0x00;
 
 static volatile uint8_t scrollMode = MATRIX_SCROLL_OFF;
 
+//static uint8_t swapBits(uint8_t data)
+//{
+//	data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
+//	data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
+//	data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
+
+//	return data;
+//}
+
 static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
 {
 	uint8_t i;
@@ -158,7 +167,7 @@ void matrixSwitchBuf(uint32_t mask, int8_t effect)
 			}
 		}
 		_delay_ms(25);
-		matrixUpdate(fb, rotate);
+		matrixUpdate(fb);
 		rsBit >>= 1;
 		lsBit <<= 1;
 	}
@@ -218,7 +227,7 @@ ISR (TIMER2_OVF_vect)
 			for (i = 0; i < MATRIX_CNT * 8 - 1; i++)
 				fb[i] = fb[i + 1];
 			fb[MATRIX_CNT * 8 - 1] = scrollData;
-			matrixUpdate(fb, rotate);
+			matrixUpdate(fb);
 		} else {
 			scrollMode = MATRIX_SCROLL_OFF;
 			scrollTimer = scrollInterval;
