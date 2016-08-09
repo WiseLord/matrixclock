@@ -244,12 +244,10 @@ uint8_t ds18x20Process(void)
 
 int16_t ds18x20GetTemp(uint8_t num)
 {
-	int16_t ret = devs[num].temp;
+	int16_t ret = devs[num].temp * 5;
 
-	if (devs[num].id[0] == 0x28) // DS18B20
-		ret = ret * 5 / 8;
-	else if (devs[num].id[0] == 0x10) // DS18S20
-		ret = ret * 5;
+	if (devs[num].id[0] == 0x28) // DS18B20 has 8X better resolution
+		ret /= 8;
 
 	// Return value is in 0.1°C units
 	return ret;
