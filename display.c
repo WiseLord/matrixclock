@@ -378,8 +378,10 @@ static void showParamEdit(int8_t value, char *aFlag, uint8_t label, char *icon)
 	}
 	matrixSetX(13);
 	matrixFbNewAddStringEeprom(txtLabels[label]);
+#if MATRIX_CNT == 4
 	matrixSetX(27);
 	matrixFbNewAddString(icon, NUM_NORMAL);
+#endif
 
 	return;
 }

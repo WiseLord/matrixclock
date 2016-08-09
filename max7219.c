@@ -39,7 +39,7 @@ void max7219SendCmd(uint8_t reg, uint8_t data)
 	uint8_t j;
 
 	PORT(MAX7219_LOAD) &= ~MAX7219_LOAD_LINE;
-	for (j = 0; j < MATRIX_NUMBER; j++) {
+	for (j = 0; j < MATRIX_CNT; j++) {
 		max7219SendByte(reg);
 		max7219SendByte(data);
 	}

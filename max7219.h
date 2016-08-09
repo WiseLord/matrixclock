@@ -26,8 +26,6 @@
 #define MATRIX_CNT				4
 #endif
 
-#define MATRIX_NUMBER				4
-
 // Registers
 #define MAX7219_NO_OP			0x00
 #define MAX7219_DIGIT_0			0x01
