@@ -135,7 +135,7 @@ int main(void)
 				alarmNextEditParam();
 			}
 			break;
-		case BTN_0_LONG | BTN_1_LONG | BTN_2_LONG:
+		case BTN_2_LONG:
 			if (dispMode == MODE_MAIN) {
 				dispMode = MODE_BRIGHTNESS;
 				showBrightness(direction, MASK_ALL);
@@ -156,7 +156,7 @@ int main(void)
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
-		case BTN_2_LONG:
+		case BTN_0_LONG | BTN_1_LONG | BTN_2_LONG:
 			dispMode = MODE_TEST;
 			break;
 		}
@@ -170,7 +170,7 @@ int main(void)
 			showTimeEdit(direction);
 			break;
 		case MODE_EDIT_ALARM:
-//			showAlarmEdit(direction);
+			showAlarmEdit(direction);
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(direction, MASK_NONE);

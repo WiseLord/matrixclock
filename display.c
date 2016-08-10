@@ -13,15 +13,6 @@
 
 uint8_t *txtLabels[LABEL_END];				// Array with text label pointers
 
-static int8_t brMax;
-static uint8_t sensMask;
-
-static uint8_t bigNum = 0;
-static uint8_t hourSignal = 1;
-static uint8_t hourZero = 0;
-
-static uint8_t alarmTimeout = 1;
-
 static uint8_t etmOld = RTC_NOEDIT;
 static uint8_t eamOld = ALARM_NOEDIT;
 
@@ -104,7 +95,7 @@ static void loadPlaceString(uint8_t label)
 static void loadTempString(void)
 {
 	uint8_t i;
-	uint8_t sm = sensMask;
+	uint8_t sm = eep.sensMask;
 
 	firstSensor = 1;
 
@@ -201,7 +192,7 @@ static void updateColon(void)
 	uint8_t colon = 0;
 	uint8_t digit = rtc.sec & 0x01;
 
-	if (bigNum == NUM_BIG) {
+	if (eep.bigNum == NUM_BIG) {
 #if MATRIX_CNT == 4
 		colon = pgm_read_byte(&colonCode[digit + 2]);
 		fb[15] = colon;
@@ -214,7 +205,7 @@ static void updateColon(void)
 		colon = pgm_read_byte(&colonCode[digit]);
 		fb[10] = colon;
 		fb[11] = colon;
-		fb[WEEKDAY_POS] = alarmRawWeekday() | (hourSignal ? 0x80 : 0x00);
+		fb[WEEKDAY_POS] = alarmRawWeekday() | (eep.hourSignal ? 0x80 : 0x00);
 	}
 
 	return;
@@ -224,6 +215,8 @@ void displayInit(void)
 {
 	uint8_t i;
 	uint8_t *addr;
+
+	eeprom_read_block(&eep, (void*)EEPROM_HOURSIGNAL, sizeof(EE_Param));
 
 	matrixInit();
 
@@ -244,37 +237,29 @@ void displayInit(void)
 		}
 	}
 
-	bigNum = eeprom_read_byte((uint8_t*)EEPROM_BIGNUM);
-	hourZero = eeprom_read_byte((uint8_t*)EEPROM_HOURZERO);
-	brMax = eeprom_read_byte((uint8_t*)EEPROM_BR_MAX);
-	sensMask = eeprom_read_byte((uint8_t*)EEPROM_SENS_MASK);
-	hourSignal = eeprom_read_byte((uint8_t*)EEPROM_HOURSIGNAL);
-
-	alarmTimeout = eeprom_read_byte((uint8_t*)EEPROM_ALARM_TIMEOUT);
-
 	return;
 }
 
 void displaySwitchBigNum(void)
 {
-	bigNum = !bigNum;
+	eep.bigNum = !eep.bigNum;
 
-	eeprom_update_byte((uint8_t*)EEPROM_BIGNUM, bigNum);
+	eeprom_update_byte((uint8_t*)EEPROM_BIGNUM, eep.bigNum);
 
 	return;
 }
 
 void displaySwitchHourSignal(void) {
-	hourSignal = !hourSignal;
+	eep.hourSignal = !eep.hourSignal;
 
-	eeprom_update_byte((uint8_t*)EEPROM_HOURSIGNAL, hourSignal);
+	eeprom_update_byte((uint8_t*)EEPROM_HOURSIGNAL, eep.hourSignal);
 	return;
 }
 
 void displaySwitchHourZero(void) {
-	hourZero = !hourZero;
+	eep.hourZero = !eep.hourZero;
 
-	eeprom_update_byte((uint8_t*)EEPROM_HOURZERO, hourZero);
+	eeprom_update_byte((uint8_t*)EEPROM_HOURZERO, eep.hourZero);
 	return;
 }
 
@@ -303,9 +288,9 @@ void showTime(uint32_t mask)
 	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
-	matrixFbNewAddString(mkNumberString(rtc.hour, 2, 0, hourZero ? '0' : ' '), bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.hour, 2, 0, eep.hourZero ? '0' : ' '), eep.bigNum);
 
-	if (bigNum == NUM_BIG)
+	if (eep.bigNum == NUM_BIG)
 #if MATRIX_CNT == 4
 		matrixSetX(19);
 #else
@@ -313,19 +298,19 @@ void showTime(uint32_t mask)
 #endif
 	else
 		matrixSetX(13);
-	matrixFbNewAddString(mkNumberString(rtc.min, 2, 0, '0'), bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.min, 2, 0, '0'), eep.bigNum);
 
 #if MATRIX_CNT == 4
-	if (bigNum == NUM_NORMAL) {
+	if (eep.bigNum == NUM_NORMAL) {
 		matrixSetX(SECONDS_POS);
 		matrixFbNewAddString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
 	}
 #endif
 
-	mask = updateMask(mask, bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
+	mask = updateMask(mask, eep.bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
 
 #if MATRIX_CNT == 4
-	if (bigNum == NUM_NORMAL) {
+	if (eep.bigNum == NUM_NORMAL) {
 		digit = rtcDecToBinDec(rtc.sec);
 		if ((oldSec ^ digit) & 0xF0)
 			mask |= MASK_SEC_TENS;
@@ -454,8 +439,8 @@ void showTest(void)
 
 void changeBrightness(int8_t diff)
 {
-	brMax += diff;
-	brMax &= 0x0F;
+	eep.brMax += diff;
+	eep.brMax &= 0x0F;
 
 	return;
 }
@@ -464,25 +449,25 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 {
 	static uint8_t oldBrMax;
 
-	showParamEdit(brMax, 0, LABEL_BRIGHTNESS, "\xA4");
+	showParamEdit(eep.brMax, 0, LABEL_BRIGHTNESS, "\xA4");
 
-	if (oldBrMax / 10 != brMax / 10)
+	if (oldBrMax / 10 != eep.brMax / 10)
 		mask  |= MASK_BR_TENS;
-	if (oldBrMax % 10 != brMax % 10)
+	if (oldBrMax % 10 != eep.brMax % 10)
 		mask  |= MASK_BR_UNITS;
 
 	matrixSwitchBuf(mask, ch_dir);
 
-	oldBrMax = brMax;
+	oldBrMax = eep.brMax;
 
-	matrixSetBrightness(brMax);
+	matrixSetBrightness(eep.brMax);
 
 	return;
 }
 
 void saveMaxBrightness(void)
 {
-	eeprom_update_byte((uint8_t*)EEPROM_BR_MAX, brMax);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_MAX, eep.brMax);
 
 	return;
 }
@@ -500,10 +485,10 @@ void checkAlarm(void)
 			// Check alarm
 			if (rtc.hour == alarm.hour && rtc.min == alarm.min) {
 				if (*((int8_t*)&alarm.mon + ((rtc.wday + 5) % 7)))
-					alarmTimer = 60 * (uint16_t)alarmTimeout;
+					alarmTimer = 60 * (uint16_t)eep.alarmTimeout;
 			} else {
 				// Check new hour
-				if (rtc.hour > alarm.hour && rtc.min == 0 && hourSignal)
+				if (rtc.hour > alarm.hour && rtc.min == 0 && eep.hourSignal)
 					startBeeper(BEEP_LONG);
 			}
 		}
@@ -532,13 +517,13 @@ void calcBrightness(void)
 	} else {
 		// Calculate br(hour) instead
 		if (rtc.hour <= 12)
-			br = (rtc.hour * 2) - 25 + brMax;
+			br = (rtc.hour * 2) - 25 + eep.brMax;
 		else
-			br = 31 - (rtc.hour * 2) + brMax;
+			br = 31 - (rtc.hour * 2) + eep.brMax;
 	}
 
-	if (br > brMax)
-		br = brMax;
+	if (br > eep.brMax)
+		br = eep.brMax;
 	if (br < 0)
 		br = 0;
 
