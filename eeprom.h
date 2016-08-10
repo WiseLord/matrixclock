@@ -7,25 +7,22 @@
 #define EEPROM_ALARM_MIN			0x01
 #define EEPROM_ALARM_MON			0x02
 
-#define EEPROM_HOURSIGNAL			0x09
-#define EEPROM_SCREEN_ROTATE		0x0A
-#define EEPROM_BIGNUM				0x0B
-#define EEPROM_HOURZERO				0x0C
-#define EEPROM_SCROLL_INTERVAL		0x0D
-
-#define EEPROM_BR_MAX				0x0E
-#define EEPROM_SENS_MASK			0x0F
+#define EEPROM_HOURSIGNAL			0x10
+#define EEPROM_SCREEN_ROTATE		0x11
+#define EEPROM_BIGNUM				0x12
+#define EEPROM_HOURZERO				0x13
+#define EEPROM_SCROLL_INTERVAL		0x14
+#define EEPROM_BR_MAX				0x15
+#define EEPROM_SENS_MASK			0x16
+#define EEPROM_ALARM_TIMEOUT		0x17
 
 // Text labels (maximum 15 byte followed by \0)
-#define EEPROM_LABELS				0x10
+#define EEPROM_LABELS				0x20
 
 // Big numbers font (10 * 5 bytes)
 #define EEPROM_BIG_NUM_FONT			0x1C0
 // Extra numbers font (10 * 6 bytes)
 #define EEPROM_EXTRA_NUM_FONT		0x180
-
-// Alarm timeout
-#define EEPROM_ALARM_TIMEOUT		0x1F8
 
 #define EEPROM_SIZE					0x200
 
