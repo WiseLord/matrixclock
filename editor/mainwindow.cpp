@@ -179,12 +179,12 @@ void MainWindow::setParams()
 {
     setBrightnessMax(eep[EEPROM_BR_MAX]);
     sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
-
     setScroll(eep[EEPROM_SCROLL_INTERVAL]);
     sbxScroll->setValue(eep[EEPROM_SCROLL_INTERVAL]);
+	setRotate(eep[EEPROM_SCREEN_ROTATE]);
+	sbxRotate->setValue(eep[EEPROM_SCREEN_ROTATE]);
 
     cbxHoursignal->setChecked(eep[EEPROM_HOURSIGNAL]);
-    cbxRotate->setChecked(eep[EEPROM_SCREEN_ROTATE]);
     cbxFontsize->setChecked(eep[EEPROM_BIGNUM]);
     cbxHourzero->setChecked(eep[EEPROM_HOURZERO]);
 
@@ -314,11 +314,6 @@ void MainWindow::updateTranslation(int row, int column)
 
 void MainWindow::setBrightnessMax(int value)
 {
-    if (value < 0)
-        value = 0;
-    if (value > 15)
-        value = 15;
-
     eep[EEPROM_BR_MAX] = (char)value;
     updateHexTable(EEPROM_BR_MAX);
 }
@@ -329,17 +324,18 @@ void MainWindow::setScroll(int value)
     updateHexTable(EEPROM_SCROLL_INTERVAL);
 }
 
+void MainWindow::setRotate(int value)
+{
+	eep[EEPROM_SCREEN_ROTATE] = (unsigned char)value;
+	updateHexTable(EEPROM_SCREEN_ROTATE);
+}
+
 void MainWindow::setFontsize()
 {
     eep[EEPROM_BIGNUM] = cbxFontsize->isChecked();
     updateHexTable(EEPROM_BIGNUM);
 }
 
-void MainWindow::setRotate()
-{
-    eep[EEPROM_SCREEN_ROTATE] = cbxRotate->isChecked();
-    updateHexTable(EEPROM_SCREEN_ROTATE);
-}
 
 void MainWindow::setHoursignal()
 {

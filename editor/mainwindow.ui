@@ -481,16 +481,53 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="cbxFontsize">
-          <property name="text">
-           <string>Use big font by default</string>
-          </property>
+         <widget class="QWidget" name="wgtRotate" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblRotate">
+             <property name="text">
+              <string>Screen rotate feature</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbxRotate">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>15</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="cbxRotate">
+         <widget class="QCheckBox" name="cbxFontsize">
           <property name="text">
-           <string>Rotate screen 180°</string>
+           <string>Use big font by default</string>
           </property>
          </widget>
         </item>
@@ -1017,7 +1054,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>Fi&amp;le</string>
     </property>
     <addaction name="actionOpenEeprom"/>
     <addaction name="actionSaveEeprom"/>
@@ -1037,32 +1074,32 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenEeprom">
    <property name="text">
-    <string>Open eeprom binary …</string>
+    <string>&amp;Open eeprom binary …</string>
    </property>
   </action>
   <action name="actionSaveEeprom">
    <property name="text">
-    <string>Save eeprom binary</string>
+    <string>&amp;Save eeprom binary</string>
    </property>
   </action>
   <action name="actionSaveEepromAs">
    <property name="text">
-    <string>Save eeprom binary as …</string>
+    <string>Save &amp;eeprom binary as …</string>
    </property>
   </action>
   <action name="actionLoadDefaultEeprom">
    <property name="text">
-    <string>Load default eeprom</string>
+    <string>&amp;Load default eeprom</string>
    </property>
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
    </property>
   </action>
   <action name="actionAboutQt">
    <property name="text">
-    <string>AboutQt</string>
+    <string>A&amp;boutQt</string>
    </property>
   </action>
  </widget>
@@ -1179,12 +1216,12 @@
    <slot>updateTranslation(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>517</x>
-     <y>75</y>
+     <x>465</x>
+     <y>64</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>26</y>
+     <x>448</x>
+     <y>64</y>
     </hint>
    </hints>
   </connection>
@@ -1199,8 +1236,8 @@
      <y>78</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>103</y>
+     <x>651</x>
+     <y>67</y>
     </hint>
    </hints>
   </connection>
@@ -1215,24 +1252,8 @@
      <y>105</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>143</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbxRotate</sender>
-   <signal>clicked()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setRotate()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>595</x>
-     <y>148</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>759</x>
-     <y>181</y>
+     <x>647</x>
+     <y>95</y>
     </hint>
    </hints>
   </connection>
@@ -1247,8 +1268,8 @@
      <y>168</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>173</y>
+     <x>425</x>
+     <y>171</y>
     </hint>
    </hints>
   </connection>
@@ -1263,8 +1284,8 @@
      <y>254</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>223</y>
+     <x>427</x>
+     <y>247</y>
     </hint>
    </hints>
   </connection>
@@ -1275,12 +1296,12 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>747</x>
-     <y>279</y>
+     <x>570</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>256</y>
+     <x>428</x>
+     <y>273</y>
     </hint>
    </hints>
   </connection>
@@ -1295,8 +1316,8 @@
      <y>304</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>295</y>
+     <x>429</x>
+     <y>300</y>
     </hint>
    </hints>
   </connection>
@@ -1307,12 +1328,12 @@
    <slot>setSensMask()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>747</x>
-     <y>329</y>
+     <x>674</x>
+     <y>323</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>328</y>
+     <x>428</x>
+     <y>323</y>
     </hint>
    </hints>
   </connection>
@@ -1323,12 +1344,12 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>449</x>
-     <y>93</y>
+     <x>446</x>
+     <y>108</y>
     </hint>
     <hint type="destinationlabel">
      <x>509</x>
-     <y>90</y>
+     <y>108</y>
     </hint>
    </hints>
   </connection>
@@ -1340,11 +1361,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>459</x>
-     <y>425</y>
+     <y>296</y>
     </hint>
     <hint type="destinationlabel">
      <x>473</x>
-     <y>425</y>
+     <y>296</y>
     </hint>
    </hints>
   </connection>
@@ -1359,8 +1380,8 @@
      <y>67</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>25</y>
+     <x>627</x>
+     <y>59</y>
     </hint>
    </hints>
   </connection>
@@ -1375,8 +1396,8 @@
      <y>65</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>55</y>
+     <x>680</x>
+     <y>74</y>
     </hint>
    </hints>
   </connection>
@@ -1391,8 +1412,8 @@
      <y>144</y>
     </hint>
     <hint type="destinationlabel">
-     <x>420</x>
-     <y>128</y>
+     <x>438</x>
+     <y>169</y>
     </hint>
    </hints>
   </connection>
@@ -1407,8 +1428,8 @@
      <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>420</x>
-     <y>123</y>
+     <x>482</x>
+     <y>166</y>
     </hint>
    </hints>
   </connection>
@@ -1423,8 +1444,8 @@
      <y>141</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>155</y>
+     <x>532</x>
+     <y>169</y>
     </hint>
    </hints>
   </connection>
@@ -1439,8 +1460,8 @@
      <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>99</y>
+     <x>572</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>
@@ -1455,8 +1476,8 @@
      <y>141</y>
     </hint>
     <hint type="destinationlabel">
-     <x>417</x>
-     <y>81</y>
+     <x>611</x>
+     <y>171</y>
     </hint>
    </hints>
   </connection>
@@ -1471,8 +1492,8 @@
      <y>143</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>186</y>
+     <x>649</x>
+     <y>166</y>
     </hint>
    </hints>
   </connection>
@@ -1487,8 +1508,8 @@
      <y>146</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>212</y>
+     <x>689</x>
+     <y>162</y>
     </hint>
    </hints>
   </connection>
@@ -1503,8 +1524,8 @@
      <y>196</y>
     </hint>
     <hint type="destinationlabel">
-     <x>764</x>
-     <y>206</y>
+     <x>427</x>
+     <y>197</y>
     </hint>
    </hints>
   </connection>
@@ -1515,12 +1536,12 @@
    <slot>setFontsize()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>671</x>
-     <y>117</y>
+     <x>753</x>
+     <y>157</y>
     </hint>
     <hint type="destinationlabel">
-     <x>767</x>
-     <y>129</y>
+     <x>418</x>
+     <y>148</y>
     </hint>
    </hints>
   </connection>
@@ -1531,12 +1552,28 @@
    <slot>setAlarmTimeout(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>737</x>
-     <y>93</y>
+     <x>715</x>
+     <y>105</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>247</y>
+     <x>691</x>
+     <y>93</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxRotate</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setRotate(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>677</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>646</x>
+     <y>120</y>
     </hint>
    </hints>
   </connection>
@@ -1552,7 +1589,7 @@
   <slot>aboutQt()</slot>
   <slot>setBrightnessMax(int)</slot>
   <slot>setScroll(int)</slot>
-  <slot>setRotate()</slot>
+  <slot>setRotate(int)</slot>
   <slot>setHourzero()</slot>
   <slot>setSensMask()</slot>
   <slot>setAlarmHour(int)</slot>

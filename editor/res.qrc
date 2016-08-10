@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/eeprom.bin</file>
         <file>res/matrixclock.png</file>
+        <file>res/matrixclock_en.bin</file>
     </qresource>
 </RCC>

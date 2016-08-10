@@ -2,10 +2,9 @@
 #define MAINWINDOW_H
 
 #include "ui_mainwindow.h"
-
 #include "lcdconverter.h"
 
-#define EEPROM_RESOURCE ":/res/eeprom.bin"
+#define EEPROM_RESOURCE ":/res/matrixclock_en.bin"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
@@ -45,8 +44,8 @@ private slots:
 
     void setBrightnessMax(int value);
     void setScroll(int value);
-    void setFontsize();
-    void setRotate();
+	void setRotate(int value);
+	void setFontsize();
     void setHoursignal();
     void setHourzero();
     void setSensMask();
@@ -58,7 +57,6 @@ private slots:
     void setAlarmMinute(int value);
     void setAlarmDays();
     void setAlarmTimeout(int value);
-
 };
 
 #endif // MAINWINDOW_H
