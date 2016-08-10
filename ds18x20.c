@@ -100,7 +100,8 @@ static void ds18x20GetAllTemps()
 {
 	uint8_t i, j;
 	uint8_t crc;
-	static uint8_t arr[DS18X20_SCRATCH_LEN];
+
+	uint8_t arr[DS18X20_SCRATCH_LEN];
 
 	for (i = 0; i < devCount; i++) {
 		if (ds18x20IsOnBus()) {

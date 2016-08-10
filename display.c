@@ -20,7 +20,7 @@ static uint8_t firstSensor;
 
 static uint8_t scrollType;
 
-static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t lead)
+static char *mkNumberString(int16_t value, uint8_t width, uint8_t lead)
 {
 	static char strbuf[8];
 
@@ -33,14 +33,12 @@ static char *mkNumberString(int16_t value, uint8_t width, uint8_t prec, uint8_t 
 	}
 
 	// Clear buffer and go to it's tail
-	for (pos = 0; pos < width + prec; pos++)
+	for (pos = 0; pos < width; pos++)
 		strbuf[pos] = lead;
 	strbuf[pos--] = '\0';
 
 	// Fill buffer from right to left
 	while (value > 0 || pos > width - 2) {
-		if (prec && (width - pos - 1 == 0))
-			strbuf[pos--] = '.';
 		strbuf[pos] = value % 10 + 0x30;
 		pos--;
 		value /= 10;
@@ -56,10 +54,10 @@ static void loadDateString(void)
 {
 	matrixScrollAddStringEeprom(txtLabels[(LABEL_SATURDAY + rtc.wday) % 7]);
 	matrixScrollAddString(", ");
-	matrixScrollAddString(mkNumberString(rtc.date, 3, 0, 0x7F));
+	matrixScrollAddString(mkNumberString(rtc.date, 3, 0x7F));
 	matrixScrollAddString(" ");
 	matrixScrollAddStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
-	matrixScrollAddString(mkNumberString(2000 + rtc.year, 5, 0, ' '));
+	matrixScrollAddString(mkNumberString(2000 + rtc.year, 5, ' '));
 	matrixScrollAddString(" ");
 	matrixScrollAddStringEeprom(txtLabels[LABEL_Y]);
 
@@ -80,7 +78,9 @@ static void showCommaIfNeeded()
 
 static void loadSensorString(int16_t value, uint8_t label)
 {
-	matrixScrollAddString(mkNumberString(value, 5, 1, ' '));
+	matrixScrollAddString(mkNumberString(value / 10, 4, ' '));
+	matrixScrollAddString(".");
+	matrixScrollAddString(mkNumberString(value % 10, 1, '0'));
 	matrixScrollAddStringEeprom(txtLabels[label]);
 
 	return;
@@ -288,7 +288,7 @@ void showTime(uint32_t mask)
 	eamOld = ALARM_NOEDIT;
 
 	matrixSetX(0);
-	matrixFbNewAddString(mkNumberString(rtc.hour, 2, 0, eep.hourZero ? '0' : ' '), eep.bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.hour, 2, eep.hourZero ? '0' : ' '), eep.bigNum);
 
 	if (eep.bigNum == NUM_BIG)
 #if MATRIX_CNT == 4
@@ -298,12 +298,12 @@ void showTime(uint32_t mask)
 #endif
 	else
 		matrixSetX(13);
-	matrixFbNewAddString(mkNumberString(rtc.min, 2, 0, '0'), eep.bigNum);
+	matrixFbNewAddString(mkNumberString(rtc.min, 2, '0'), eep.bigNum);
 
 #if MATRIX_CNT == 4
 	if (eep.bigNum == NUM_NORMAL) {
 		matrixSetX(SECONDS_POS);
-		matrixFbNewAddString(mkNumberString(rtc.sec, 2, 0, '0'), NUM_SMALL);
+		matrixFbNewAddString(mkNumberString(rtc.sec, 2, '0'), NUM_SMALL);
 	}
 #endif
 
@@ -359,7 +359,7 @@ static void showParamEdit(int8_t value, char *aFlag, uint8_t label, char *icon)
 	if (aFlag) {
 		matrixFbNewAddString(aFlag, NUM_NORMAL);
 	} else  {
-		matrixFbNewAddString(mkNumberString(value, 2, 0, ' '), NUM_NORMAL);
+		matrixFbNewAddString(mkNumberString(value, 2, ' '), NUM_NORMAL);
 	}
 	matrixSetX(13);
 	matrixFbNewAddStringEeprom(txtLabels[label]);
@@ -432,7 +432,7 @@ void showTest(void)
 
 	for (i = 0; i < MATRIX_CNT; i++) {
 		matrixSetX(i * 8 + 2);
-		matrixFbNewAddString(mkNumberString(i + 1, 1, 0, '0'), NUM_NORMAL);
+		matrixFbNewAddString(mkNumberString(i + 1, 1, '0'), NUM_NORMAL);
 	}
 	matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_NONE);
 }
