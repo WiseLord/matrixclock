@@ -49,6 +49,11 @@ enum {
 	MATRIX_SCROLL_ON,
 };
 
+#define BIT_MIRROR				(1<<3)
+#define BIT_ROTATE				(1<<2)
+#define BIT_SCAN				(1<<1)
+#define BIT_SWAP				(1<<0)
+
 extern uint8_t fb[MATRIX_BUFFER_SIZE];
 
 void matrixInit(void);

@@ -292,7 +292,6 @@ void matrixFbNewAddStringEeprom(uint8_t *string)
 void matrixChangeRotate(int8_t diff)
 {
 	rotate += diff;
-//	rotate &= 0x0F;
 
 	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, rotate);
 
@@ -318,13 +317,29 @@ void matrixWrite(void)
 	uint8_t data;
 	uint8_t *pRaw = fbRaw;
 
+	uint8_t bit;
+
+	// Rotate magic
+
 	for (mp = 0, mn = MATRIX_CNT - 1; mp < MATRIX_CNT; mp++, mn--) {
-		m = (rotate & 0x04) ? mn : mp;
+		m = (rotate & BIT_MIRROR) ? mn : mp;
+
 		for (rp = 0, rn = 7; rp < 8; rp++, rn--) {
-			r = (rotate & 0x01) ? rn : rp;
-			data = fb[m * 8 + r];
-			if (rotate & 0x02)
+			r = (rotate & BIT_SCAN) ? rn : rp;
+
+			if (rotate & BIT_ROTATE) {
+				data = 0;
+				for (bit = 0; bit < 8; bit++) {
+					if (fb[m * 8 + bit] & (1 << r))
+						data |= (1 << bit);
+				}
+			} else {
+				data = fb[m * 8 + r];
+			}
+
+			if (rotate & BIT_SWAP)
 				data = swapBits(data);
+
 			*pRaw++ = data;
 		}
 	}

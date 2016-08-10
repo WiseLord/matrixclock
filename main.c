@@ -170,7 +170,7 @@ int main(void)
 			showTimeEdit(direction);
 			break;
 		case MODE_EDIT_ALARM:
-			showAlarmEdit(direction);
+//			showAlarmEdit(direction);
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(direction, MASK_NONE);
