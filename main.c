@@ -112,7 +112,7 @@ int main(void)
 				changeBrightness(direction);
 				break;
 			case MODE_TEST:
-				matrixChangeRotate(direction);
+				displayChangeRotate(direction);
 				break;
 			}
 			break;
@@ -124,7 +124,6 @@ int main(void)
 				rtc.etm = RTC_NOEDIT;
 				alarmSave();
 				alarm.eam = ALARM_NOEDIT;
-				saveMaxBrightness();
 				dispMode = MODE_MAIN;
 				showTimeMasked();
 			}

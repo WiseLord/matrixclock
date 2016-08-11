@@ -67,6 +67,7 @@ void displayInit(void);
 void displaySwitchBigNum(void);
 void displaySwitchHourSignal(void);
 void displaySwitchHourZero(void);
+void displayChangeRotate(int8_t diff);
 void startScroll(uint8_t type);
 
 void showTime(uint32_t mask);
@@ -78,7 +79,6 @@ void showTest(void);
 
 void changeBrightness(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
-void saveMaxBrightness(void);
 void checkAlarm(void);
 void calcBrightness(void);
 

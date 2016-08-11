@@ -87,7 +87,6 @@ void matrixScrollAddString(char *string);
 void matrixFbNewAddString(char *string, uint8_t numSize);
 void matrixFbNewAddStringEeprom(uint8_t *string);
 
-void matrixChangeRotate(int8_t diff);
 void matrixWrite(void);
 
 #endif // MATRIX_H

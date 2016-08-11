@@ -211,6 +211,13 @@ static void updateColon(void)
 	return;
 }
 
+static void saveEeParam(void)
+{
+	eeprom_update_block(&eep, (void*)EEPROM_HOURSIGNAL, sizeof(EE_Param));
+
+	return;
+}
+
 void displayInit(void)
 {
 	uint8_t i;
@@ -243,23 +250,32 @@ void displayInit(void)
 void displaySwitchBigNum(void)
 {
 	eep.bigNum = !eep.bigNum;
-
-	eeprom_update_byte((uint8_t*)EEPROM_BIGNUM, eep.bigNum);
+	saveEeParam();
 
 	return;
 }
 
-void displaySwitchHourSignal(void) {
+void displaySwitchHourSignal(void)
+{
 	eep.hourSignal = !eep.hourSignal;
+	saveEeParam();
 
-	eeprom_update_byte((uint8_t*)EEPROM_HOURSIGNAL, eep.hourSignal);
 	return;
 }
 
-void displaySwitchHourZero(void) {
+void displaySwitchHourZero(void)
+{
 	eep.hourZero = !eep.hourZero;
+	saveEeParam();
 
-	eeprom_update_byte((uint8_t*)EEPROM_HOURZERO, eep.hourZero);
+	return;
+}
+
+void displayChangeRotate(int8_t diff)
+{
+	eep.rotate += diff;
+	saveEeParam();
+
 	return;
 }
 
@@ -442,6 +458,8 @@ void changeBrightness(int8_t diff)
 	eep.brMax += diff;
 	eep.brMax &= 0x0F;
 
+	saveEeParam();
+
 	return;
 }
 
@@ -461,13 +479,6 @@ void showBrightness(int8_t ch_dir, uint32_t mask)
 	oldBrMax = eep.brMax;
 
 	matrixSetBrightness(eep.brMax);
-
-	return;
-}
-
-void saveMaxBrightness(void)
-{
-	eeprom_update_byte((uint8_t*)EEPROM_BR_MAX, eep.brMax);
 
 	return;
 }

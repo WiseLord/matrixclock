@@ -285,16 +285,6 @@ void matrixFbNewAddStringEeprom(uint8_t *string)
 	return;
 }
 
-void matrixChangeRotate(int8_t diff)
-{
-	eep.rotate += diff;
-
-	eeprom_update_byte((uint8_t*)EEPROM_SCREEN_ROTATE, eep.rotate);
-
-	return;
-}
-
-
 inline uint8_t swapBits(uint8_t data) __attribute__((always_inline));
 inline uint8_t swapBits(uint8_t data)
 {
