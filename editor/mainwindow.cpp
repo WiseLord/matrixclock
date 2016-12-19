@@ -180,7 +180,7 @@ void MainWindow::setParams()
     setBrightnessMax(eep[EEPROM_BR_MAX]);
     sbxBrmax->setValue(eep[EEPROM_BR_MAX]);
     setScroll(eep[EEPROM_SCROLL_INTERVAL]);
-    sbxScroll->setValue(eep[EEPROM_SCROLL_INTERVAL]);
+    sbxScroll->setValue((uint8_t)eep[EEPROM_SCROLL_INTERVAL]);
 	setRotate(eep[EEPROM_SCREEN_ROTATE]);
 	sbxRotate->setValue(eep[EEPROM_SCREEN_ROTATE]);
 
