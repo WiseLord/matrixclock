@@ -79,7 +79,7 @@ ISR (TIMER0_OVF_vect)								// 31250 / (256 - 131) = 250 polls/sec
 		// Temperature
 		if (sensTimer)
 			sensTimer--;
-		if (scrollTimer)
+		if (scrollTimer > 1)
 			scrollTimer--;
 
 		if (alarmTimer)

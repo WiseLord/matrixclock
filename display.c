@@ -357,7 +357,7 @@ void showMainScreen(void)
 			showTimeMasked();
 		else
 			showTime(MASK_NONE);
-		if (!scrollTimer) {
+		if (scrollTimer == 1) {
 			if (++scrollType >= SCROLL_END)
 				scrollType = SCROLL_DATE;
 			startScroll (scrollType);
