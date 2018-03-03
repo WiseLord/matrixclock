@@ -13,6 +13,7 @@ enum {
 	MODE_EDIT_TIME,
 	MODE_EDIT_ALARM,
 	MODE_BRIGHTNESS,
+	MODE_CORRECTION,
 	MODE_TEST,
 
 	MODE_END
@@ -44,11 +45,16 @@ enum {
 #define WEEKDAY_POS				23
 #endif
 
-#define MASK_BR_TENS			0x0000000FUL
-#define MASK_BR_UNITS			0x000001E0UL
-
 #define MASK_NONE				0x00000000UL
 #define MASK_ALL				0xFFFFFFFFUL
+#define MASK_ICON				0xF8000000UL
+
+#define ICON_ALARM				'\xA0'
+#define ICON_TIME				'\xAD'
+#define ICON_BRIGHTNESS			'\xA4'
+#define ICON_LESS				'<'
+#define ICON_EQUAL				'='
+#define ICON_MORE				'>'
 
 
 #define SENS_MASK_BMP_TEMP		0x10
@@ -78,7 +84,9 @@ void showAlarmEdit(int8_t ch_dir);
 void showTest(void);
 
 void changeBrightness(int8_t diff);
+void changeCorrection(int8_t diff);
 void showBrightness(int8_t ch_dir, uint32_t mask);
+void showCorrection(int8_t ch_dir, uint32_t mask);
 void checkAlarm(void);
 void calcBrightness(void);
 

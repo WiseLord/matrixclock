@@ -13,11 +13,10 @@
 
 uint8_t *txtLabels[LABEL_END];				// Array with text label pointers
 
-static uint8_t etmOld = RTC_NOEDIT;
-static uint8_t eamOld = ALARM_NOEDIT;
+#define PARAM_FF	0xFF
 
+static uint8_t paramOld = PARAM_FF;
 static uint8_t firstSensor;
-
 static uint8_t scrollType;
 
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t lead)
@@ -300,8 +299,7 @@ void showTime(uint32_t mask)
 	uint8_t digit;
 #endif
 
-	etmOld = RTC_NOEDIT;
-	eamOld = ALARM_NOEDIT;
+	paramOld = PARAM_FF;
 
 	matrixSetX(0);
 	matrixFbNewAddString(mkNumberString(rtc.hour, 2, eep.hourZero ? '0' : ' '), eep.bigNum);
@@ -369,22 +367,38 @@ void showMainScreen(void)
 	return;
 }
 
-static void showParamEdit(int8_t value, char *aFlag, uint8_t label, char *icon)
+static void showParamEdit(int8_t value, uint8_t label, char icon)
 {
 	matrixSetX(0);
-	if (aFlag) {
-		matrixFbNewAddString(aFlag, NUM_NORMAL);
-	} else  {
+//	if (aFlag) {
+//		matrixFbNewAddString(aFlag, NUM_NORMAL);
+//	} else  {
 		matrixFbNewAddString(mkNumberString(value, 2, ' '), NUM_NORMAL);
-	}
+//	}
 	matrixSetX(13);
 	matrixFbNewAddStringEeprom(txtLabels[label]);
 #if MATRIX_CNT == 4
 	matrixSetX(27);
-	matrixFbNewAddString(icon, NUM_NORMAL);
+	char iconStr[] = " ";
+	iconStr[0] = icon;
+	matrixFbNewAddString(iconStr, NUM_NORMAL);
 #endif
 
 	return;
+}
+
+static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon, int8_t effect)
+{
+	static char oldIcon = '=';
+
+	showParamEdit(value, label, icon);
+	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(value), 0);
+	if (oldIcon != icon) {
+		mask |= MASK_ICON;
+		oldIcon = icon;
+	}
+	matrixSwitchBuf(mask, effect);
+	paramOld = value;
 }
 
 void showTimeEdit(int8_t ch_dir)
@@ -393,16 +407,12 @@ void showTimeEdit(int8_t ch_dir)
 
 	int8_t time = *((int8_t*)&rtc + rtc.etm);
 
-	showParamEdit(time, 0, LABEL_SECOND + rtc.etm, "\xAD");
+	if (paramOld != rtc.etm)
+		mask = MASK_ALL;
 
-	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(time), 0);
+	showParam(mask, time, LABEL_SECOND + rtc.etm, ICON_TIME, ch_dir);
 
-	if (etmOld != rtc.etm)
-		mask |= MASK_ALL;
-
-	matrixSwitchBuf(mask, ch_dir);
-
-	etmOld = rtc.etm;
+	paramOld = rtc.etm;
 
 	return;
 }
@@ -414,30 +424,19 @@ void showAlarmEdit(int8_t ch_dir)
 	int8_t alrm = *((int8_t*)&alarm + alarm.eam);
 
 	uint8_t label;
-	char *aFlag;
-
-	char *aIcon = "\xA0";
-	char *aTrue = " \xA0";
-	char *aFalse = "  ";
 
 	if (alarm.eam > ALARM_MIN) {
 		label = LABEL_MO + alarm.eam - ALARM_MON;
-		aFlag = alrm ? aTrue : aFalse;
 	} else {
 		label = LABEL_HOUR - alarm.eam;
-		aFlag = 0;
 	}
 
-	showParamEdit(alrm, aFlag, label, aIcon);
+	if (paramOld != alarm.eam)
+		mask = MASK_ALL;
 
-	mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(alrm), 0);
+	showParam(mask, alrm, label, ICON_ALARM, ch_dir);
 
-	if (eamOld != alarm.eam)
-		mask |= MASK_ALL;
-
-	matrixSwitchBuf(mask, ch_dir);
-
-	eamOld = alarm.eam;
+	paramOld = alarm.eam;
 
 	return;
 }
@@ -463,24 +462,35 @@ void changeBrightness(int8_t diff)
 	return;
 }
 
+void changeCorrection(int8_t diff)
+{
+	eep.corr += diff;
+	if (eep.corr > 55 || eep.corr < -55) {
+		eep.corr = 0;
+	}
+
+	saveEeParam();
+}
+
 void showBrightness(int8_t ch_dir, uint32_t mask)
 {
-	static uint8_t oldBrMax;
-
-	showParamEdit(eep.brMax, 0, LABEL_BRIGHTNESS, "\xA4");
-
-	if (oldBrMax / 10 != eep.brMax / 10)
-		mask  |= MASK_BR_TENS;
-	if (oldBrMax % 10 != eep.brMax % 10)
-		mask  |= MASK_BR_UNITS;
-
-	matrixSwitchBuf(mask, ch_dir);
-
-	oldBrMax = eep.brMax;
+	showParam(mask, eep.brMax, LABEL_BRIGHTNESS, ICON_BRIGHTNESS, ch_dir);
 
 	matrixSetBrightness(eep.brMax);
 
 	return;
+}
+
+void showCorrection(int8_t ch_dir, uint32_t mask)
+{
+	int8_t val = eep.corr;
+
+	char sign = (val < 0 ? ICON_LESS : (val > 0 ? ICON_MORE : ICON_EQUAL));
+
+	if (val < 0)
+		val = -val;
+
+	showParam(mask, val, LABEL_CORRECTION, sign, ch_dir);
 }
 
 void checkAlarm(void)

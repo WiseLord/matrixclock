@@ -111,6 +111,9 @@ int main(void)
 			case MODE_BRIGHTNESS:
 				changeBrightness(direction);
 				break;
+			case MODE_CORRECTION:
+				changeCorrection(direction);
+				break;
 			case MODE_TEST:
 				displayChangeRotate(direction);
 				break;
@@ -135,9 +138,12 @@ int main(void)
 			}
 			break;
 		case BTN_2_LONG:
-			if (dispMode == MODE_MAIN) {
+			if (dispMode == MODE_MAIN || dispMode == MODE_CORRECTION) {
 				dispMode = MODE_BRIGHTNESS;
 				showBrightness(direction, MASK_ALL);
+			} else if (dispMode == MODE_BRIGHTNESS) {
+				dispMode = MODE_CORRECTION;
+				showCorrection(direction, MASK_ALL);
 			}
 			break;
 		case BTN_0_LONG | BTN_1_LONG:
@@ -173,6 +179,9 @@ int main(void)
 			break;
 		case MODE_BRIGHTNESS:
 			showBrightness(direction, MASK_NONE);
+			break;
+		case MODE_CORRECTION:
+			showCorrection(direction, MASK_NONE);
 			break;
 		case MODE_TEST:
 			showTest();
