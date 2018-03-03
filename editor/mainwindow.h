@@ -24,6 +24,8 @@ private:
     QWidget *digBig[10];
     QWidget *digExtra[10];
 
+    QFont fontHex;
+
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
 
@@ -44,8 +46,9 @@ private slots:
 
     void setBrightnessMax(int value);
     void setScroll(int value);
-	void setRotate(int value);
-	void setFontsize();
+    void setRotate(int value);
+    void setCorrection(int value);
+    void setFontsize();
     void setHoursignal();
     void setHourzero();
     void setSensMask();

@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>res/matrixclock.png</file>
         <file>res/matrixclock_en.bin</file>
+        <file>fonts/LiberationMono-Bold.ttf</file>
     </qresource>
 </RCC>
