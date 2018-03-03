@@ -315,9 +315,11 @@ void matrixWrite(void)
 
 			if (eep.rotate & BIT_ROTATE) {
 				data = 0;
+				uint8_t bs = 0x01;
 				for (bit = 0; bit < 8; bit++) {
 					if (fb[m * 8 + bit] & (1 << r))
-						data |= (1 << bit);
+						data |= bs;
+					bs <<= 1;
 				}
 			} else {
 				data = fb[m * 8 + r];

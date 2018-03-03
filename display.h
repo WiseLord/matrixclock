@@ -70,9 +70,7 @@ enum {
 };
 
 void displayInit(void);
-void displaySwitchBigNum(void);
-void displaySwitchHourSignal(void);
-void displaySwitchHourZero(void);
+void displaySwitchParam(uint8_t eeParam);
 void displayChangeRotate(int8_t diff);
 void startScroll(uint8_t type);
 

@@ -246,28 +246,12 @@ void displayInit(void)
 	return;
 }
 
-void displaySwitchBigNum(void)
+void displaySwitchParam(uint8_t eeParam)
 {
-	eep.bigNum = !eep.bigNum;
+	uint8_t *param = &eep.hourSignal + (eeParam - EEPROM_HOURSIGNAL);
+
+	*param = !(*param);
 	saveEeParam();
-
-	return;
-}
-
-void displaySwitchHourSignal(void)
-{
-	eep.hourSignal = !eep.hourSignal;
-	saveEeParam();
-
-	return;
-}
-
-void displaySwitchHourZero(void)
-{
-	eep.hourZero = !eep.hourZero;
-	saveEeParam();
-
-	return;
 }
 
 void displayChangeRotate(int8_t diff)
@@ -498,20 +482,17 @@ void showCorrection(int8_t ch_dir, uint32_t mask)
 void checkAlarm(void)
 {
 	static uint8_t firstCheck = 1;
+	static uint8_t rtcCorrected = 0;
 
 	rtcReadTime();
 
-	static uint8_t rtcCorrected = 0;
-
-	if (rtc.hour == 0 && rtc.min == 0 && rtc.sec == 0) {
-		if (eep.corr > 0) {
-			rtc.sec += eep.corr;
-			rtcCorrSec();
-		}
-		rtcCorrected = 0;
-	} else if (rtc.hour == 23 && rtc.min == 59 && rtc.sec == 59) {
-		if (eep.corr < 0) {
-			if (!rtcCorrected) {
+	if (!rtcCorrected) {
+		if (rtc.hour == 3 && rtc.min == 0) {
+			if ((rtc.sec == 0) && (eep.corr > 0)) {
+				rtc.sec += eep.corr;
+				rtcCorrSec();
+				rtcCorrected = 1;
+			} else if ((rtc.sec == 59) && (eep.corr < 0)) {
 				rtc.sec += eep.corr;
 				rtcCorrSec();
 				rtcCorrected = 1;
@@ -521,6 +502,7 @@ void checkAlarm(void)
 
 	// Once check if it's a new second
 	if (rtc.sec == 0) {
+		rtcCorrected = 0; // Clean correction flag
 		if (firstCheck) {
 			firstCheck = 0;
 			// Check alarm

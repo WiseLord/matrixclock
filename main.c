@@ -10,6 +10,7 @@
 #include "alarm.h"
 #include "bmp180.h"
 #include "dht22.h"
+#include "eeprom.h"
 
 void hwInit(void)
 {
@@ -147,17 +148,17 @@ int main(void)
 			}
 			break;
 		case BTN_0_LONG | BTN_1_LONG:
-			displaySwitchHourZero();
+			displaySwitchParam(EEPROM_HOURZERO);
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
 		case BTN_1_LONG | BTN_2_LONG:
-			displaySwitchBigNum();
+			displaySwitchParam(EEPROM_BIGNUM);
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
 		case BTN_0_LONG | BTN_2_LONG:
-			displaySwitchHourSignal();
+			displaySwitchParam(EEPROM_HOURSIGNAL);
 			dispMode = MODE_MAIN;
 			showTimeMasked();
 			break;
