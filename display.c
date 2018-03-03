@@ -489,6 +489,24 @@ void checkAlarm(void)
 
 	rtcReadTime();
 
+	static uint8_t rtcCorrected = 0;
+
+	if (rtc.hour == 0 && rtc.min == 0 && rtc.sec == 0) {
+		if (eep.corr > 0) {
+			rtc.sec += eep.corr;
+			rtcCorrSec();
+		}
+		rtcCorrected = 0;
+	} else if (rtc.hour == 23 && rtc.min == 59 && rtc.sec == 59) {
+		if (eep.corr < 0) {
+			if (!rtcCorrected) {
+				rtc.sec += eep.corr;
+				rtcCorrSec();
+				rtcCorrected = 1;
+			}
+		}
+	}
+
 	// Once check if it's a new second
 	if (rtc.sec == 0) {
 		if (firstCheck) {

@@ -63,6 +63,7 @@ typedef struct {
 	int8_t brMax;
 	uint8_t sensMask;
 	uint8_t alarmTimeout;
+	int8_t corr;
 } EE_Param;
 
 extern EE_Param eep;

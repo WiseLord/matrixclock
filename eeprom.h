@@ -15,6 +15,7 @@
 #define EEPROM_BR_MAX				0x15
 #define EEPROM_SENS_MASK			0x16
 #define EEPROM_ALARM_TIMEOUT		0x17
+#define EEPROM_CORRECTION			0x18
 
 // Text labels (maximum 15 byte followed by \0)
 #define EEPROM_LABELS				0x20

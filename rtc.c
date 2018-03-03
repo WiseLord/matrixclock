@@ -56,6 +56,14 @@ void rtcReadTime(void)
 	return;
 }
 
+void rtcCorrSec(void)
+{
+	I2CswStart(RTC_I2C_ADDR);
+	I2CswWriteByte(RTC_SEC);
+	I2CswWriteByte(rtcDecToBinDec(rtc.sec));
+	I2CswStop();
+}
+
 static void rtcSaveTime(void)
 {
 	uint8_t i;
