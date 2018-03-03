@@ -370,13 +370,15 @@ void showMainScreen(void)
 static void showParamEdit(int8_t value, uint8_t label, char icon)
 {
 	matrixSetX(0);
-//	if (aFlag) {
-//		matrixFbNewAddString(aFlag, NUM_NORMAL);
-//	} else  {
-		matrixFbNewAddString(mkNumberString(value, 2, ' '), NUM_NORMAL);
-//	}
+	char *num = mkNumberString(value, 2, ' ');
+	if (icon == ICON_ALARM && alarm.eam >= ALARM_MON) {
+		num[1] = value ? icon : ' ';
+	}
+	matrixFbNewAddString(num, NUM_NORMAL);
+
 	matrixSetX(13);
 	matrixFbNewAddStringEeprom(txtLabels[label]);
+
 #if MATRIX_CNT == 4
 	matrixSetX(27);
 	char iconStr[] = " ";
