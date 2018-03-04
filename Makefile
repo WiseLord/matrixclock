@@ -1,61 +1,87 @@
 LED_DRIVER = HT1632
 
 MCU = atmega8
-
-# Lowercase argument
-lc = $(shell echo $1 | tr A-Z a-z)
-
-TARG=matrixclock_$(call lc,$(LED_DRIVER))_$(MCU)
-
 F_CPU = 8000000L
 
-# Source files
-SRCS = $(wildcard *.c)
+TARG = matrixclock_$(MCU)_$(shell echo $(LED_DRIVER) | tr A-Z a-z)
 
+SRCS = main.c
+SRCS += mtimer.c i2csw.c rtc.c alarm.c
+SRCS += ds18x20.c bmp180.c dht22.c
+
+DEFINES = -D_$(MCU)
+
+# Display source files
+FONTS_SRC = $(wildcard font*.c)
+ifeq ($(LED_DRIVER), HT1632)
+  SRCS += ht1632.c
+else
+  SRCS +=max7219.c
+endif
+SRCS += display.c matrix.c $(FONTS_SRC)
+DEFINES += -D_$(LED_DRIVER)
+
+# Build directory
 BUILDDIR = build
 
-# Compiler options
-OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
-DEBUG = -g -Wall -Werror
-CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(@F).d
-LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding
+WARNLEVEL = -Wall -Werror
+CFLAGS = $(WARNLEVEL) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
+LDFLAGS = $(WARNLEVEL) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
 
-# AVR toolchain and flasher
+# Main definitions
+
 CC = avr-gcc
 OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
 
 AVRDUDE = avrdude
 AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V -B 0.5
+
+SUBDIRS =
 
 OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
 ELF = $(BUILDDIR)/$(TARG).elf
+HEX = flash/$(TARG).hex
 
-all: $(ELF) size
+all: $(HEX) size
+
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
 
 $(ELF): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	@mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
+	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
+	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:
-	@./size.sh $(ELF)
+size:   $(ELF)
+	@sh ./size.sh $(ELF)
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(LED_DRIVER) -D$(MCU) -c -o $@ $<
+	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
-.PHONY: clean
 clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: flash
-flash: $(ELF)
+flash:  $(HEX)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
+
+fuse:
+ifeq ($(MCU), atmega8)
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xd1:m
+else
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xe2:m -U hfuse:w:0xd1:m -U efuse:w:0xfc:m
+endif
+
+eeprom_by:
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_by.bin:r
 
 eeprom_en:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_en.bin:r
@@ -63,15 +89,8 @@ eeprom_en:
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ru.bin:r
 
-eeprom_by:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_by.bin:r
-
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ua.bin:r
 
-.PHONY: fuse
-fuse:
-	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xd1:m
-
 # Other dependencies
--include $(wildcard $(BUILDDIR)/*.d)
+-include $(OBJS:.o=.d)

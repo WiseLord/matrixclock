@@ -20,7 +20,7 @@ static volatile uint8_t cmdBuf;
 
 void mTimerInit(void)
 {
-#if defined(atmega8)
+#if defined(_atmega8)
 	TIMSK |= (1<<TOIE0);							// Enable Timer0 overflow interrupt
 	TCCR0 = (1<<CS02) | (0<<CS01) | (0<<CS00);		// Set timer prescaller to 256 (31250Hz)
 #else

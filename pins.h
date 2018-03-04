@@ -9,11 +9,11 @@
 #define PORT(x)				CONCAT(PORT,x)
 #define PIN(x)				CONCAT(PIN,x)
 
-#if !defined(HT1632) && !defined(MAX7219) && !defined(MAX7219_X3)
-#define HT1632
+#if !defined(_HT1632) && !defined(_MAX7219) && !defined(_MAX7219_X3)
+#define _HT1632
 #endif
 
-#if defined(HT1632)
+#if defined(_HT1632)
 
 #define ONE_WIRE			C
 #define ONE_WIRE_LINE		(1<<1)

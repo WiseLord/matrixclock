@@ -3,8 +3,8 @@
 
 #include <inttypes.h>
 
-#ifdef MAX7219_X3
-#define MAX7219
+#ifdef _MAX7219_X3
+#define _MAX7219
 #define MATRIX_CNT				3
 #endif
 

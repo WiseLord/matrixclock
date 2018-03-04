@@ -99,7 +99,7 @@ void matrixInit(void)
 void matrixSetBrightness(uint8_t brightness)
 {
 	if (scrollMode == MATRIX_SCROLL_OFF) {
-#if defined(HT1632)
+#if defined(_HT1632)
 		ht1632SendCmd(HT1632_CMD_DUTY | brightness);
 #else
 		max7219SendCmd(MAX7219_INTENSITY, brightness);
@@ -170,7 +170,7 @@ void matrixSetX(int16_t x)
 void matrixScrollAndADCInit(void)
 {
 	// Enable Timer2 overflow interrupt and set prescaler to 1024 (7812 Hz)
-#if defined(atmega8)
+#if defined(_atmega8)
 	TIMSK |= (1<<TOIE2);
 	TCCR2 = (1<<CS22) | (1<<CS21) | (1<<CS20);
 #else

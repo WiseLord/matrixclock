@@ -10,8 +10,8 @@ ds18x20.c
 ds18x20.h
 eeprom.h
 font-cp1251-08.c
-font-smallnum.c
 fonts.h
+font-smallnum.c
 ht1632.c
 ht1632.h
 i2csw.c

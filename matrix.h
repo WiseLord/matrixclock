@@ -26,7 +26,7 @@ enum {
 	MATRIX_EFFECT_SCROLL_BOTH = 2,
 };
 
-#if defined(HT1632)
+#if defined(_HT1632)
 #include "ht1632.h"
 #define matrixInitDriver() ht1632Init()
 #define matrixUpdate(buf) ht1632SendDataBuf(buf)
