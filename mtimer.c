@@ -22,37 +22,41 @@ static volatile uint8_t cmdBuf;
 void mTimerInit(void)
 {
 #if defined(_atmega8)
-    TIMSK |= (1 << TOIE0);                          // Enable Timer0 overflow interrupt
-    TCCR0 = (1 << CS02) | (0 << CS01) | (0 << CS00); // Set timer prescaller to 256 (31250Hz)
+    TIMSK |= (1 << TOIE0);                              // Enable Timer0 overflow interrupt
+    TCCR0 = (1 << CS02) | (0 << CS01) | (0 << CS00);    // Set timer prescaller to 256 (31250Hz)
 #else
-    TIMSK0 |= (1 << TOIE0);                         // Enable Timer0 overflow interrupt
-    TCCR0B = (1 << CS02) | (0 << CS01) | (0 << CS00); // Set timer prescaller to 256 (31250Hz)
+    TIMSK0 |= (1 << TOIE0);                             // Enable Timer0 overflow interrupt
+    TCCR0B = (1 << CS02) | (0 << CS01) | (0 << CS00);   // Set timer prescaller to 256 (31250Hz)
 #endif
 
-    DDR(BEEPER) |= BEEPER_LINE;
-    PORT(BEEPER) |= BEEPER_LINE;
+    OUT(BEEPER);
+    SET(BEEPER);
 
     // Setup buttons as inputs with pull-up resistors
-    DDR(BUTTONS) &= ~(BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
-    PORT(BUTTONS) |= (BUTTON_1_LINE | BUTTON_2_LINE | BUTTON_3_LINE);
+    IN(BUTTON_1);
+    IN(BUTTON_2);
+    IN(BUTTON_3);
+    SET(BUTTON_1);
+    SET(BUTTON_2);
+    SET(BUTTON_3);
 
     cmdBuf = BTN_STATE_0;
 }
 
-ISR (TIMER0_OVF_vect)                               // 31250 / (256 - 131) = 250 polls/sec
+ISR (TIMER0_OVF_vect)                                   // 31250 / (256 - 131) = 250 polls/sec
 {
     TCNT0 = 131;
 
-    static int16_t btnCnt = 0;                      // Buttons press duration value
-    static uint8_t btnPrev = 0;                     // Previous buttons state
+    static int16_t btnCnt = 0;                          // Buttons press duration value
+    static uint8_t btnPrev = 0;                         // Previous buttons state
 
     uint8_t btnNow = BTN_STATE_0;
 
-    if (~PIN(BUTTONS) & BUTTON_1_LINE)
+    if (!READ(BUTTON_1))
         btnNow |= BTN_0;
-    if (~PIN(BUTTONS) & BUTTON_2_LINE)
+    if (!READ(BUTTON_2))
         btnNow |= BTN_1;
-    if (~PIN(BUTTONS) & BUTTON_3_LINE)
+    if (!READ(BUTTON_3))
         btnNow |= BTN_2;
 
     // If button event has happened, place it to command buffer
@@ -95,9 +99,9 @@ ISR (TIMER0_OVF_vect)                               // 31250 / (256 - 131) = 250
 
     if ((beepTimer & 0x0E) > 8) {
         if (secTimer > TIME_SEC / 2)
-            PORT(BEEPER) &= ~BEEPER_LINE;
+            CLR(BEEPER);
     } else {
-        PORT(BEEPER) |= BEEPER_LINE;
+        SET(BEEPER);
     }
 }
 

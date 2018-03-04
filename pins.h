@@ -9,6 +9,12 @@
 #define PORT(x)             CONCAT(PORT,x)
 #define PIN(x)              CONCAT(PIN,x)
 
+#define OUT(x)              (DDR(x) |= x ## _LINE)
+#define IN(x)               (DDR(x) &= ~x ## _LINE)
+#define SET(x)              (PORT(x) |= x ## _LINE)
+#define CLR(x)              (PORT(x) &= ~x ## _LINE)
+#define READ(x)             (PIN(x) & x ## _LINE)
+
 #if !defined(_HT1632) && !defined(_MAX7219) && !defined(_MAX7219_X3)
 #define _HT1632
 #endif
@@ -21,9 +27,11 @@
 #define BEEPER              C
 #define BEEPER_LINE         (1<<0)
 
-#define BUTTONS             D
+#define BUTTON_1            D
 #define BUTTON_1_LINE       (1<<7)
+#define BUTTON_2            D
 #define BUTTON_2_LINE       (1<<6)
+#define BUTTON_3            D
 #define BUTTON_3_LINE       (1<<5)
 
 #define I2C_SCL             B
