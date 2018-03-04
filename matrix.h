@@ -3,27 +3,27 @@
 
 #include <inttypes.h>
 
-#define MATRIX_SCROLL_STOP			0
-#define MATRIX_SCROLL_START			1
+#define MATRIX_SCROLL_STOP          0
+#define MATRIX_SCROLL_START         1
 
-#define MATRIX_FONT_WIDTH			5
-#define MATRIX_SMALLNUM_WIDTH		3
-#define MATRIX_BIGNUM_WIDTH			5
-#define MATRIX_EXTRANUM_WIDTH		6
-#define MATRIX_BUFFER_SIZE			(MATRIX_CNT * 8)
-#define MATRIX_STRING_LEN			250
+#define MATRIX_FONT_WIDTH           5
+#define MATRIX_SMALLNUM_WIDTH       3
+#define MATRIX_BIGNUM_WIDTH         5
+#define MATRIX_EXTRANUM_WIDTH       6
+#define MATRIX_BUFFER_SIZE          (MATRIX_CNT * 8)
+#define MATRIX_STRING_LEN           250
 
 enum {
-	MATRIX_FONT_RAM = 0,
-	MATRIX_FONT_PROGMEM,
-	MATRIX_FONT_EEPROM,
+    MATRIX_FONT_RAM = 0,
+    MATRIX_FONT_PROGMEM,
+    MATRIX_FONT_EEPROM,
 };
 
 enum {
-	MATRIX_EFFECT_SCROLL_DOWN = -1,
-	MATRIX_EFFECT_NONE = 0,
-	MATRIX_EFFECT_SCROLL_UP = 1,
-	MATRIX_EFFECT_SCROLL_BOTH = 2,
+    MATRIX_EFFECT_SCROLL_DOWN = -1,
+    MATRIX_EFFECT_NONE = 0,
+    MATRIX_EFFECT_SCROLL_UP = 1,
+    MATRIX_EFFECT_SCROLL_BOTH = 2,
 };
 
 #if defined(_HT1632)
@@ -37,33 +37,33 @@ enum {
 #endif
 
 enum {
-	NUM_NORMAL = 0,
-	NUM_BIG,
-	NUM_SMALL,
+    NUM_NORMAL = 0,
+    NUM_BIG,
+    NUM_SMALL,
 
-	NUM_END,
+    NUM_END,
 };
 
 enum {
-	MATRIX_SCROLL_OFF = 0,
-	MATRIX_SCROLL_ON,
+    MATRIX_SCROLL_OFF = 0,
+    MATRIX_SCROLL_ON,
 };
 
-#define BIT_MIRROR				(1<<3)
-#define BIT_ROTATE				(1<<2)
-#define BIT_SCAN				(1<<1)
-#define BIT_SWAP				(1<<0)
+#define BIT_MIRROR              (1<<3)
+#define BIT_ROTATE              (1<<2)
+#define BIT_SCAN                (1<<1)
+#define BIT_SWAP                (1<<0)
 
 typedef struct {
-	uint8_t hourSignal;
-	uint8_t rotate;
-	uint8_t bigNum;
-	uint8_t hourZero;
-	uint8_t scrollInterval;
-	int8_t brMax;
-	uint8_t sensMask;
-	uint8_t alarmTimeout;
-	int8_t corr;
+    uint8_t hourSignal;
+    uint8_t rotate;
+    uint8_t bigNum;
+    uint8_t hourZero;
+    uint8_t scrollInterval;
+    int8_t brMax;
+    uint8_t sensMask;
+    uint8_t alarmTimeout;
+    int8_t corr;
 } EE_Param;
 
 extern EE_Param eep;

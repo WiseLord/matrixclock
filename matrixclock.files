@@ -1,3 +1,6 @@
+.astylerc
+Makefile
+
 alarm.c
 alarm.h
 bmp180.c
@@ -17,7 +20,6 @@ ht1632.h
 i2csw.c
 i2csw.h
 main.c
-Makefile
 matrix.c
 matrix.h
 max7219.c
