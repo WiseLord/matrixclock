@@ -52,7 +52,9 @@
 #define BEEPER              D
 #define BEEPER_LINE         (1<<5)
 
-#define BUTTONS             B
+#define BUTTON_1            B
+#define BUTTON_2            B
+#define BUTTON_3            B
 #define BUTTON_1_LINE       (1<<3)
 #define BUTTON_2_LINE       (1<<4)
 #define BUTTON_3_LINE       (1<<5)
