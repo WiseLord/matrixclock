@@ -1132,7 +1132,16 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuLang">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="actionLangAuto"/>
+    <addaction name="actionLangEnglish"/>
+    <addaction name="actionLangRussian"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuLang"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -1164,6 +1173,33 @@
   <action name="actionAboutQt">
    <property name="text">
     <string>A&amp;boutQt</string>
+   </property>
+  </action>
+  <action name="actionLangAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionLangEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionLangRussian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Russian</string>
    </property>
   </action>
  </widget>
@@ -1657,6 +1693,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLangAuto</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>644</x>
+     <y>159</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLangEnglish</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>641</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLangRussian</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -1678,5 +1762,6 @@
   <slot>setHoursignal()</slot>
   <slot>setAlarmTimeout(int)</slot>
   <slot>setCorrection(int)</slot>
+  <slot>setLanguage()</slot>
  </slots>
 </ui>

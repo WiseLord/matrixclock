@@ -2,7 +2,9 @@
 
 #include <QDebug>
 #include <QtWidgets>
+#include <QApplication>
 
+#include "defines.h"
 #include "aboutdialog.h"
 #include "fontpixel.h"
 
@@ -14,6 +16,20 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
 {
     setupUi(this);
+
+    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
+
+    QString lang = settings.value(SETTINGS_GENERAL_LANGUAGE, "auto").toString();
+    actionLangAuto->setChecked(lang.compare("auto") == 0);
+    actionLangEnglish->setChecked(lang.compare("en") == 0);
+    actionLangRussian->setChecked(lang.compare("ru") == 0);
+
+    retranslate(lang);
+
+    QActionGroup* langGroup = new QActionGroup(this);
+    actionLangAuto->setActionGroup(langGroup);
+    actionLangEnglish->setActionGroup(langGroup);
+    actionLangRussian->setActionGroup(langGroup);
 
     QFontDatabase::addApplicationFont("://fonts/LiberationMono-Bold.ttf");
     fontHex = QFont("Liberation Mono", 9, QFont::Bold);
@@ -454,3 +470,32 @@ void MainWindow::setAlarmTimeout(int value)
     updateHexTable(EEPROM_ALARM_TIMEOUT);
 }
 
+void MainWindow::setLanguage()
+{
+    QString lang;
+
+    if (actionLangEnglish->isChecked()) {
+        lang = "en";
+    } else if (actionLangRussian->isChecked()) {
+        lang = "ru";
+    } else {
+        lang = "auto";
+    }
+
+    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
+
+    settings.setValue(SETTINGS_GENERAL_LANGUAGE, lang);
+
+    retranslate(lang);
+}
+
+void MainWindow::retranslate(QString lang)
+{
+    if (lang.compare("auto") == 0) {
+        lang = QLocale::system().bcp47Name().remove(QRegExp("-.*"));
+    }
+    translator.load(":/ts/editor_" + lang);
+    qApp->removeTranslator(&translator);
+    qApp->installTranslator(&translator);
+    retranslateUi(this);
+}

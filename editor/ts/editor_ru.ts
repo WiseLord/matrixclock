@@ -11,7 +11,7 @@
     <message>
         <location filename="../aboutdialog.ui" line="51"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;About Matrixclock EEPROM editor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This program allows to edit eeprom binary files for &lt;a href=&quot;http://wiselord.github.io/matrixclock.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;matrixclock&lt;/span&gt;&lt;/a&gt; project.&lt;/p&gt;&lt;p&gt;Matrixclock project is a LED matrix clock with alarm support. It allows to measure temperature, atmospheric pressure and humidity.&lt;/p&gt;&lt;p&gt;It is based on ATmega8 MCU which can be replaced with ATmega168 or ATmega328.&lt;/p&gt;&lt;p&gt;Matrixclock project sources (GPL license) can be found on &lt;a href=&quot;https://github.com/WiseLord/matrixclock&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Project is created and maintained by WiseLord.&lt;/p&gt;&lt;p&gt;Email: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;О редакторе EEPROM Matrixclock&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Эта программа  позволяет редактировать бинарные файлы eeprom для проекта &lt;a href=&quot;http://wiselord.github.io/matrixclock.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;matrixclock&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Проект Matrixclock - это часы на светодиодных матрицей с поддержкой будильника. Он позволяет измерять температуру, атмосферное давление и влажность.&lt;/p&gt;&lt;p&gt;Основан на МК ATmega8 MCU, который можно заменить на ATmega168 или ATmega328.&lt;/p&gt;&lt;p&gt;Исходники проекта Matrixclock (лицензия GPL) можно взять на &lt;a href=&quot;https://github.com/WiseLord/matrixclock&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Проект создан и поддерживается WiseLord.&lt;/p&gt;&lt;p&gt;Почта: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;О редакторе EEPROM Matrixclock&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Эта программа  позволяет редактировать бинарные файлы eeprom для проекта &lt;a href=&quot;http://wiselord.github.io/matrixclock.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;matrixclock&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Проект Matrixclock - это часы на светодиодных матрицей с поддержкой будильника. Он позволяет измерять температуру, атмосферное давление и влажность.&lt;/p&gt;&lt;p&gt;Основан на МК ATmega8 MCU, который можно заменить на ATmega168 или ATmega328.&lt;/p&gt;&lt;p&gt;Исходники проекта Matrixclock (лицензия GPL) можно взять на &lt;a href=&quot;https://github.com/WiseLord/matrixclock&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Проект создан и поддерживается WiseLord.&lt;/p&gt;&lt;p&gt;Почта: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -423,72 +423,92 @@
         <translation>Справка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1141"/>
+        <location filename="../mainwindow.ui" line="1137"/>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="1150"/>
         <source>&amp;Open eeprom binary …</source>
         <translation>&amp;Открыть бинарный файл eeprom …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1146"/>
+        <location filename="../mainwindow.ui" line="1155"/>
         <source>&amp;Save eeprom binary</source>
         <translation>&amp;Сохранить бинарный файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1151"/>
+        <location filename="../mainwindow.ui" line="1160"/>
         <source>Save &amp;eeprom binary as …</source>
         <translation>Сохранить бинарный файл eeprom &amp;как …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1156"/>
+        <location filename="../mainwindow.ui" line="1165"/>
         <source>&amp;Load default eeprom</source>
         <translation>&amp;Загрузить eeprom по умолчанию</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1161"/>
+        <location filename="../mainwindow.ui" line="1170"/>
         <source>&amp;About</source>
         <translation>&amp;О программе</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1166"/>
+        <location filename="../mainwindow.ui" line="1175"/>
         <source>A&amp;boutQt</source>
         <translation>О &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="114"/>
+        <location filename="../mainwindow.ui" line="1186"/>
+        <source>Auto</source>
+        <translation>Авто</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="1194"/>
+        <source>English</source>
+        <translation>Английский</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="1202"/>
+        <source>Russian</source>
+        <translation>Русский</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="130"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="114"/>
+        <location filename="../mainwindow.cpp" line="130"/>
         <source>loaded</source>
         <translation>загружен</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="173"/>
+        <location filename="../mainwindow.cpp" line="189"/>
         <source>Can&apos;t save</source>
         <translation>Не удалось сохранить</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="178"/>
+        <location filename="../mainwindow.cpp" line="194"/>
         <source>Saved as</source>
         <translation>Сохранено как</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="266"/>
+        <location filename="../mainwindow.cpp" line="282"/>
         <source>Open eeprom binary</source>
         <translation>Открыть бинарный файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="268"/>
+        <location filename="../mainwindow.cpp" line="284"/>
         <source>EEPROM files (*.bin);;All files (*.*)</source>
         <translation>Файлы EEPROM (*.bin);;Все файлы (*.*)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="281"/>
+        <location filename="../mainwindow.cpp" line="297"/>
         <source>Save eeprom binary</source>
         <translation>Сохранить бинарный файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="283"/>
+        <location filename="../mainwindow.cpp" line="299"/>
         <source>EEPROM files (*.bin)</source>
         <translation>Файлы EEPROM (*.bin)</translation>
     </message>

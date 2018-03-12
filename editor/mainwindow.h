@@ -4,6 +4,8 @@
 #include "ui_mainwindow.h"
 #include "lcdconverter.h"
 
+#include <QTranslator>
+
 #define EEPROM_RESOURCE ":/res/matrixclock_en.bin"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
@@ -33,6 +35,8 @@ private:
     void loadFonts();
     void loadalarm();
 
+    QTranslator translator;
+
 private slots:
     void about();
     void aboutQt();
@@ -60,6 +64,9 @@ private slots:
     void setAlarmMinute(int value);
     void setAlarmDays();
     void setAlarmTimeout(int value);
+
+    void setLanguage();
+    void retranslate(QString lang);
 };
 
 #endif // MAINWINDOW_H

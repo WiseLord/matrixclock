@@ -3,6 +3,7 @@
 
 #include <QApplication>
 #include <QTranslator>
+#include <QSettings>
 
 int main(int argc, char *argv[])
 {
@@ -12,10 +13,18 @@ int main(int argc, char *argv[])
 
     QApplication a(argc, argv);
 
-    QTranslator translator;
-    translator.load(":/ts/editor_" + QLocale::system().bcp47Name().remove(QRegExp("-.*")));
-    a.installTranslator(&translator);
+    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
 
+    QString lang = settings.value(SETTINGS_GENERAL_LANGUAGE, "auto").toString();
+
+    if (lang.compare("auto") == 0) {
+        lang = QLocale::system().bcp47Name().remove(QRegExp("-.*"));
+    }
+/*
+    QTranslator translator;
+    translator.load(":/ts/editor_" + lang);
+    a.installTranslator(&translator);
+*/
     MainWindow w;
     w.show();
 
