@@ -586,7 +586,7 @@
         <item>
          <widget class="QCheckBox" name="cbxHourzero">
           <property name="text">
-           <string>Show X:YZ time as 0X:YZ</string>
+           <string>Show H:MM time as 0H:MM</string>
           </property>
          </widget>
         </item>
@@ -919,7 +919,7 @@
               </font>
              </property>
              <property name="text">
-              <string> : </string>
+              <string notr="true"> : </string>
              </property>
             </widget>
            </item>
