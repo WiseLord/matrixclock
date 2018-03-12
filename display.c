@@ -455,7 +455,7 @@ void checkAlarm(void)
     rtcReadTime();
 
     if (!rtcCorrected) {
-        if (rtc.hour == 3 && rtc.min == 0) {
+        if (rtc.wday == 1 && rtc.hour == 3 && rtc.min == 0) {
             if ((rtc.sec == 0) && (eep.corr > 0)) {
                 rtc.sec += eep.corr;
                 rtcCorrSec();
