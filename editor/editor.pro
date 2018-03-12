@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,24 +14,24 @@ TARGET = matrixclockeditor
 TEMPLATE = app
 
 SOURCES += main.cpp\
-	mainwindow.cpp \
-	lcdconverter.cpp \
-	aboutdialog.cpp \
-	fontpixel.cpp
+    mainwindow.cpp \
+    lcdconverter.cpp \
+    aboutdialog.cpp \
+    fontpixel.cpp
 
 HEADERS  += mainwindow.h \
-	lcdconverter.h \
-	aboutdialog.h \
-	fontpixel.h \
-	timespinbox.h
-#    defines.h
+    lcdconverter.h \
+    aboutdialog.h \
+    fontpixel.h \
+    timespinbox.h \
+    defines.h
 
 FORMS    += mainwindow.ui \
-	aboutdialog.ui
+    aboutdialog.ui
 
 RESOURCES += \
-	res.qrc \
-	ts.qrc
+    res.qrc \
+    ts.qrc
 
 TRANSLATIONS += \
     ts/editor_ru.ts \

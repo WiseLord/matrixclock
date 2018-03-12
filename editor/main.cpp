@@ -12,19 +12,6 @@ int main(int argc, char *argv[])
     QCoreApplication::setApplicationName(APPLICATION_NAME);
 
     QApplication a(argc, argv);
-
-    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
-
-    QString lang = settings.value(SETTINGS_GENERAL_LANGUAGE, "auto").toString();
-
-    if (lang.compare("auto") == 0) {
-        lang = QLocale::system().bcp47Name().remove(QRegExp("-.*"));
-    }
-/*
-    QTranslator translator;
-    translator.load(":/ts/editor_" + lang);
-    a.installTranslator(&translator);
-*/
     MainWindow w;
     w.show();
 
