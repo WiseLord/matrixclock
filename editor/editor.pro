@@ -34,7 +34,8 @@ RESOURCES += \
 	ts.qrc
 
 TRANSLATIONS += \
-    ts/editor_ru.ts
+    ts/editor_ru.ts \
+    ts/editor_by.ts
 
 tr.commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
 commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"

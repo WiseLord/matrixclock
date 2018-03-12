@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QString lang = settings.value(SETTINGS_GENERAL_LANGUAGE, "auto").toString();
     actionLangAuto->setChecked(lang.compare("auto") == 0);
+    actionLangBelarusian->setChecked(lang.compare("by") == 0);
     actionLangEnglish->setChecked(lang.compare("en") == 0);
     actionLangRussian->setChecked(lang.compare("ru") == 0);
 
@@ -28,6 +29,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QActionGroup* langGroup = new QActionGroup(this);
     actionLangAuto->setActionGroup(langGroup);
+    actionLangBelarusian->setActionGroup(langGroup);
     actionLangEnglish->setActionGroup(langGroup);
     actionLangRussian->setActionGroup(langGroup);
 
@@ -474,7 +476,9 @@ void MainWindow::setLanguage()
 {
     QString lang;
 
-    if (actionLangEnglish->isChecked()) {
+    if (actionLangBelarusian->isChecked()) {
+        lang = "by";
+    } else if (actionLangEnglish->isChecked()) {
         lang = "en";
     } else if (actionLangRussian->isChecked()) {
         lang = "ru";
