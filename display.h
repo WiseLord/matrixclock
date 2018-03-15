@@ -74,20 +74,24 @@ void displayInit(void);
 void displaySwitchHourSignal(void);
 void displaySwitchHourZero(void);
 void displaySwitchBigNum(void);
-void displayChangeRotate(int8_t diff);
+void displayChangeRotate();
+void displaySetDirection(int8_t dir);
+void displayChangeTime();
+void displayChangeAlarm();
+
 void startScroll(uint8_t type);
 
 void showTime(uint32_t mask);
 void showTimeMasked(void);
 void showMainScreen(void);
-void showTimeEdit(int8_t ch_dir);
-void showAlarmEdit(int8_t ch_dir);
+void showTimeEdit();
+void showAlarmEdit();
 void showTest(void);
 
-void changeBrightness(int8_t diff);
-void changeCorrection(int8_t diff);
-void showBrightness(int8_t ch_dir, uint32_t mask);
-void showCorrection(int8_t ch_dir, uint32_t mask);
+void changeBrightness();
+void changeCorrection();
+void showBrightness(uint32_t mask);
+void showCorrection(uint32_t mask);
 void checkAlarm(void);
 void calcBrightness(void);
 

@@ -18,6 +18,7 @@ uint8_t *txtLabels[LABEL_END];              // Array with text label pointers
 static uint8_t paramOld = PARAM_FF;
 static uint8_t firstSensor;
 static uint8_t scrollType;
+static int8_t direction = PARAM_UP;
 
 static char *mkNumberString(int16_t value, uint8_t width, uint8_t lead)
 {
@@ -251,10 +252,24 @@ void displaySwitchBigNum(void)
     saveEeParam();
 }
 
-void displayChangeRotate(int8_t diff)
+void displayChangeRotate()
 {
-    eep.rotate += diff;
+    eep.rotate += direction;
     saveEeParam();
+}
+
+void displaySetDirection(int8_t dir)
+{
+    direction = dir;
+}
+
+void displayChangeTime()
+{
+    rtcChangeTime(direction);
+}
+void displayChangeAlarm()
+{
+    alarmChange(direction);
 }
 
 void startScroll(uint8_t type)
@@ -371,7 +386,7 @@ static void showParamEdit(int8_t value, uint8_t label, char icon)
 #endif
 }
 
-static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon, int8_t effect)
+static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon)
 {
     static char oldIcon = '=';
 
@@ -381,11 +396,11 @@ static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon, int
         mask |= MASK_ICON;
         oldIcon = icon;
     }
-    matrixSwitchBuf(mask, effect);
+    matrixSwitchBuf(mask, direction);
     paramOld = value;
 }
 
-void showTimeEdit(int8_t ch_dir)
+void showTimeEdit()
 {
     uint32_t mask = MASK_NONE;
 
@@ -394,12 +409,12 @@ void showTimeEdit(int8_t ch_dir)
     if (paramOld != rtc.etm)
         mask = MASK_ALL;
 
-    showParam(mask, time, LABEL_SECOND + rtc.etm, ICON_TIME, ch_dir);
+    showParam(mask, time, LABEL_SECOND + rtc.etm, ICON_TIME);
 
     paramOld = rtc.etm;
 }
 
-void showAlarmEdit(int8_t ch_dir)
+void showAlarmEdit()
 {
     uint32_t mask = MASK_NONE;
 
@@ -416,7 +431,7 @@ void showAlarmEdit(int8_t ch_dir)
     if (paramOld != alarm.eam)
         mask = MASK_ALL;
 
-    showParam(mask, alrm, label, ICON_ALARM, ch_dir);
+    showParam(mask, alrm, label, ICON_ALARM);
 
     paramOld = alarm.eam;
 }
@@ -432,17 +447,17 @@ void showTest(void)
     matrixSwitchBuf(MASK_ALL, MATRIX_EFFECT_NONE);
 }
 
-void changeBrightness(int8_t diff)
+void changeBrightness()
 {
-    eep.brMax += diff;
+    eep.brMax += direction;
     eep.brMax &= 0x0F;
 
     saveEeParam();
 }
 
-void changeCorrection(int8_t diff)
+void changeCorrection()
 {
-    eep.corr += diff;
+    eep.corr += direction;
     if (eep.corr > 55 || eep.corr < -55) {
         eep.corr = 0;
     }
@@ -450,14 +465,14 @@ void changeCorrection(int8_t diff)
     saveEeParam();
 }
 
-void showBrightness(int8_t ch_dir, uint32_t mask)
+void showBrightness(uint32_t mask)
 {
-    showParam(mask, eep.brMax, LABEL_BRIGHTNESS, ICON_BRIGHTNESS, ch_dir);
+    showParam(mask, eep.brMax, LABEL_BRIGHTNESS, ICON_BRIGHTNESS);
 
     matrixSetBrightness(eep.brMax);
 }
 
-void showCorrection(int8_t ch_dir, uint32_t mask)
+void showCorrection(uint32_t mask)
 {
     int8_t val = eep.corr;
 
@@ -466,7 +481,7 @@ void showCorrection(int8_t ch_dir, uint32_t mask)
     if (val < 0)
         val = -val;
 
-    showParam(mask, val, LABEL_CORRECTION, sign, ch_dir);
+    showParam(mask, val, LABEL_CORRECTION, sign);
 }
 
 void checkAlarm(void)

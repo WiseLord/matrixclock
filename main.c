@@ -40,8 +40,6 @@ int main(void)
     uint8_t cmd;
     uint8_t dispMode = MODE_MAIN;
 
-    static int8_t direction = PARAM_UP;
-
     hwInit();
 
     showTimeMasked();
@@ -81,10 +79,11 @@ int main(void)
         if (cmd != BTN_STATE_0)
             matrixHwScroll(MATRIX_SCROLL_STOP);
 
+        displaySetDirection(PARAM_UP);
+
         // Handle command
         switch (cmd) {
         case BTN_0:
-            direction = PARAM_UP;
             switch (dispMode) {
             case MODE_EDIT_TIME:
                 rtcNextEditParam();
@@ -95,28 +94,28 @@ int main(void)
             }
             break;
         case BTN_1:
-            direction = PARAM_UP;
         case BTN_2:
-            if (cmd == BTN_2)
-                direction = PARAM_DOWN;
+            if (cmd == BTN_2) {
+                displaySetDirection(PARAM_DOWN);
+            }
             switch (dispMode) {
             case MODE_MAIN:
                 startScroll(cmd - BTN_1);
                 break;
             case MODE_EDIT_TIME:
-                rtcChangeTime(direction);
+                displayChangeTime();
                 break;
             case MODE_EDIT_ALARM:
-                alarmChange(direction);
+                displayChangeAlarm();
                 break;
             case MODE_BRIGHTNESS:
-                changeBrightness(direction);
+                changeBrightness();
                 break;
             case MODE_CORRECTION:
-                changeCorrection(direction);
+                changeCorrection();
                 break;
             case MODE_TEST:
-                displayChangeRotate(direction);
+                displayChangeRotate();
                 break;
             }
             break;
@@ -141,10 +140,10 @@ int main(void)
         case BTN_2_LONG:
             if (dispMode == MODE_MAIN || dispMode == MODE_CORRECTION) {
                 dispMode = MODE_BRIGHTNESS;
-                showBrightness(direction, MASK_ALL);
+                showBrightness(MASK_ALL);
             } else if (dispMode == MODE_BRIGHTNESS) {
                 dispMode = MODE_CORRECTION;
-                showCorrection(direction, MASK_ALL);
+                showCorrection(MASK_ALL);
             }
             break;
         case BTN_0_LONG | BTN_1_LONG:
@@ -173,16 +172,16 @@ int main(void)
             showMainScreen();
             break;
         case MODE_EDIT_TIME:
-            showTimeEdit(direction);
+            showTimeEdit();
             break;
         case MODE_EDIT_ALARM:
-            showAlarmEdit(direction);
+            showAlarmEdit();
             break;
         case MODE_BRIGHTNESS:
-            showBrightness(direction, MASK_NONE);
+            showBrightness(MASK_NONE);
             break;
         case MODE_CORRECTION:
-            showCorrection(direction, MASK_NONE);
+            showCorrection(MASK_NONE);
             break;
         case MODE_TEST:
             showTest();
