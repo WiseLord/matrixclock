@@ -39,6 +39,9 @@ enum {
 enum {
     NUM_NORMAL = 0,
     NUM_BIG,
+#if MATRIX_CNT == 4
+    NUM_EXTRA,
+#endif
     NUM_SMALL,
 
     NUM_END,

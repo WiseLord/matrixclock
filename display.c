@@ -129,20 +129,20 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 
     if ((oldHour ^ hour) & 0xF0) {
         if (numSize == NUM_BIG)
-#if MATRIX_CNT == 4
-            mask |= MASK_EXTRAHOUR_TENS;
-#else
             mask |= MASK_BIGHOUR_TENS;
+#if MATRIX_CNT == 4
+        else if (numSize == NUM_EXTRA)
+            mask |= MASK_EXTRAHOUR_TENS;
 #endif
         else
             mask |= MASK_HOUR_TENS;
     }
     if ((oldHour ^ hour) & 0x0F) {
         if (numSize == NUM_BIG)
-#if MATRIX_CNT == 4
-            mask |= MASK_EXTRAHOUR_UNITS;
-#else
             mask |= MASK_BIGHOUR_UNITS;
+#if MATRIX_CNT == 4
+        else if (numSize == NUM_EXTRA)
+            mask |= MASK_EXTRAHOUR_UNITS;
 #endif
         else
             mask |= MASK_HOUR_UNITS;
@@ -151,20 +151,20 @@ static uint32_t updateMask(uint32_t mask, uint8_t numSize, uint8_t hour, uint8_t
 
     if ((oldMin ^ min) & 0xF0) {
         if (numSize == NUM_BIG)
-#if MATRIX_CNT == 4
-            mask |= MASK_EXTRAMIN_TENS;
-#else
             mask |= MASK_BIGMIN_TENS;
+#if MATRIX_CNT == 4
+        else if (numSize == NUM_EXTRA)
+            mask |= MASK_EXTRAMIN_TENS;
 #endif
         else
             mask |= MASK_MIN_TENS;
     }
     if ((oldMin ^ min) & 0x0F) {
         if (numSize == NUM_BIG)
-#if MATRIX_CNT == 4
-            mask |= MASK_EXTRAMIN_UNITS;
-#else
             mask |= MASK_BIGMIN_UNITS;
+#if MATRIX_CNT == 4
+        else if (numSize == NUM_EXTRA)
+            mask |= MASK_EXTRAMIN_UNITS;
 #endif
         else
             mask |= MASK_MIN_UNITS;
@@ -184,13 +184,13 @@ static void updateColon(void)
     uint8_t digit = rtc.sec & 0x01;
 
     if (eep.bigNum == NUM_BIG) {
+        fb[11] = (!digit) << 7;
+        fb[12] = digit << 7;
 #if MATRIX_CNT == 4
+    } else if (eep.bigNum == NUM_EXTRA) {
         colon = pgm_read_byte(&colonCode[digit + 2]);
         fb[15] = colon;
         fb[16] = colon;
-#else
-        fb[11] = (!digit) << 7;
-        fb[12] = digit << 7;
 #endif
     } else {
         colon = pgm_read_byte(&colonCode[digit]);
@@ -232,11 +232,22 @@ void displayInit(void)
     }
 }
 
-void displaySwitchParam(uint8_t eeParam)
+void displaySwitchHourSignal(void)
 {
-    uint8_t *param = &eep.hourSignal + (eeParam - EEPROM_HOURSIGNAL);
+    eep.hourSignal = !eep.hourSignal;
+    saveEeParam();
+}
 
-    *param = !(*param);
+void displaySwitchHourZero(void)
+{
+    eep.hourSignal = !eep.hourSignal;
+    saveEeParam();
+}
+
+void displaySwitchBigNum(void)
+{
+    if (++eep.bigNum >= NUM_SMALL)
+        eep.bigNum = NUM_NORMAL;
     saveEeParam();
 }
 
@@ -271,18 +282,21 @@ void showTime(uint32_t mask)
     matrixFbNewAddString(mkNumberString(rtc.hour, 2, eep.hourZero ? '0' : ' '), eep.bigNum);
 
     if (eep.bigNum == NUM_BIG)
-#if MATRIX_CNT == 4
-        matrixSetX(19);
-#else
         matrixSetX(13);
+#if MATRIX_CNT == 4
+    else if (eep.bigNum == NUM_EXTRA)
+        matrixSetX(19);
 #endif
     else
         matrixSetX(13);
     matrixFbNewAddString(mkNumberString(rtc.min, 2, '0'), eep.bigNum);
 
 #if MATRIX_CNT == 4
-    if (eep.bigNum == NUM_NORMAL) {
-        matrixSetX(SECONDS_POS);
+    if (eep.bigNum != NUM_EXTRA) {
+        if (eep.bigNum == NUM_NORMAL)
+            matrixSetX(SECONDS_POS);
+        else
+            matrixSetX(SECONDS_POS_BIG);
         matrixFbNewAddString(mkNumberString(rtc.sec, 2, '0'), NUM_SMALL);
     }
 #endif
@@ -290,12 +304,20 @@ void showTime(uint32_t mask)
     mask = updateMask(mask, eep.bigNum, rtcDecToBinDec(rtc.hour), rtcDecToBinDec(rtc.min));
 
 #if MATRIX_CNT == 4
-    if (eep.bigNum == NUM_NORMAL) {
+    if (eep.bigNum != NUM_EXTRA) {
         digit = rtcDecToBinDec(rtc.sec);
-        if ((oldSec ^ digit) & 0xF0)
-            mask |= MASK_SEC_TENS;
-        if ((oldSec ^ digit) & 0x0F)
-            mask |= MASK_SEC_UNITS;
+        if ((oldSec ^ digit) & 0xF0) {
+            if (eep.bigNum == NUM_NORMAL)
+                mask |= MASK_SEC_TENS;
+            else
+                mask |= MASK_SEC_TENS_BIG;
+        }
+        if ((oldSec ^ digit) & 0x0F) {
+            if (eep.bigNum == NUM_NORMAL)
+                mask |= MASK_SEC_UNITS;
+            else
+                mask |= MASK_SEC_UNITS_BIG;
+        }
         oldSec = digit;
     }
 #endif

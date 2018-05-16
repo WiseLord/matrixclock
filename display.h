@@ -38,10 +38,11 @@ enum {
 #define MASK_SEC_TENS           0x03C00000UL
 #define MASK_SEC_UNITS          0x3C000000UL
 #define SECONDS_POS             23
+#define MASK_SEC_TENS_BIG       0x0F000000UL
+#define MASK_SEC_UNITS_BIG      0xF0000000UL
+#define SECONDS_POS_BIG         25
 #define WEEKDAY_POS             31
 #else
-#define MASK_SEC_TENS           0x0F000000UL
-#define MASK_SEC_UNITS          0xF0000000UL
 #define WEEKDAY_POS             23
 #endif
 
@@ -70,7 +71,9 @@ enum {
 };
 
 void displayInit(void);
-void displaySwitchParam(uint8_t eeParam);
+void displaySwitchHourSignal(void);
+void displaySwitchHourZero(void);
+void displaySwitchBigNum(void);
 void displayChangeRotate(int8_t diff);
 void startScroll(uint8_t type);
 

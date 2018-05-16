@@ -45,16 +45,16 @@ static void matrixLoadCharFb(uint8_t code, uint8_t numSize)
     if (numSize == NUM_SMALL) {
         font = font_smallnum;
         width = MATRIX_SMALLNUM_WIDTH;
-    } else if (numSize == NUM_BIG) {
 #if MATRIX_CNT == 4
+    } else if (numSize == NUM_EXTRA) {
         font = (uint8_t *)EEPROM_EXTRA_NUM_FONT;
         width = MATRIX_EXTRANUM_WIDTH;
         memType = MATRIX_FONT_EEPROM;
-#else
+#endif
+    } else if (numSize == NUM_BIG) {
         font = (uint8_t *)EEPROM_BIG_NUM_FONT;
         width = MATRIX_BIGNUM_WIDTH;
         memType = MATRIX_FONT_EEPROM;
-#endif
     } else {
         chOft = code - ' ';
         // TODO: Remove it with full font

@@ -148,17 +148,17 @@ int main(void)
             }
             break;
         case BTN_0_LONG | BTN_1_LONG:
-            displaySwitchParam(EEPROM_HOURZERO);
+            displaySwitchHourZero();
             dispMode = MODE_MAIN;
             showTimeMasked();
             break;
         case BTN_1_LONG | BTN_2_LONG:
-            displaySwitchParam(EEPROM_BIGNUM);
+            displaySwitchBigNum();
             dispMode = MODE_MAIN;
             showTimeMasked();
             break;
         case BTN_0_LONG | BTN_2_LONG:
-            displaySwitchParam(EEPROM_HOURSIGNAL);
+            displaySwitchHourSignal();
             dispMode = MODE_MAIN;
             showTimeMasked();
             break;
