@@ -56,7 +56,7 @@ static void loadDateString(void)
     matrixScrollAddString(", ");
     matrixScrollAddString(mkNumberString(rtc.date, 3, 0x7F));
     matrixScrollAddString(" ");
-    matrixScrollAddStringEeprom(txtLabels[LABEL_DECEMBER + rtc.month % 12]);
+    matrixScrollAddStringEeprom(txtLabels[LABEL_DECEMBER + (rtc.month >= 12 ? 0 : rtc.month)]);
     matrixScrollAddString(mkNumberString(2000 + rtc.year, 5, ' '));
     matrixScrollAddString(" ");
     matrixScrollAddStringEeprom(txtLabels[LABEL_Y]);
