@@ -300,7 +300,7 @@ void showTime(uint32_t mask)
         matrixSetX(13);
 #if MATRIX_CNT == 4
     else if (eep.bigNum == NUM_EXTRA)
-        matrixSetX(19);
+        matrixSetX(17);
 #endif
     else
         matrixSetX(13);

@@ -276,39 +276,43 @@ inline uint8_t swapBits(uint8_t data)
 
 void matrixWrite(void)
 {
-    uint8_t m, mp, mn;
-    uint8_t r, rp, rn;
+//    uint8_t m, mp, mn;
+//    uint8_t r, rp, rn;
 
-    uint8_t data;
-    uint8_t *pRaw = fbRaw;
+//    uint8_t data;
+//    uint8_t *pRaw = fbRaw;
 
-    uint8_t bit;
+//    uint8_t bit;
 
-    // Rotate magic
+//    // Rotate magic
 
-    for (mp = 0, mn = MATRIX_CNT - 1; mp < MATRIX_CNT; mp++, mn--) {
-        m = (eep.rotate & BIT_MIRROR) ? mn : mp;
+//    for (mp = 0, mn = MATRIX_CNT - 1; mp < MATRIX_CNT; mp++, mn--) {
+//        m = (eep.rotate & BIT_MIRROR) ? mn : mp;
 
-        for (rp = 0, rn = 7; rp < 8; rp++, rn--) {
-            r = (eep.rotate & BIT_SCAN) ? rn : rp;
+//        for (rp = 0, rn = 7; rp < 8; rp++, rn--) {
+//            r = (eep.rotate & BIT_SCAN) ? rn : rp;
 
-            if (eep.rotate & BIT_ROTATE) {
-                data = 0;
-                uint8_t bs = 0x01;
-                for (bit = 0; bit < 8; bit++) {
-                    if (fb[m * 8 + bit] & (1 << r))
-                        data |= bs;
-                    bs <<= 1;
-                }
-            } else {
-                data = fb[m * 8 + r];
-            }
+//            if (eep.rotate & BIT_ROTATE) {
+//                data = 0;
+//                uint8_t bs = 0x01;
+//                for (bit = 0; bit < 8; bit++) {
+//                    if (fb[m * 8 + bit] & (1 << r))
+//                        data |= bs;
+//                    bs <<= 1;
+//                }
+//            } else {
+//                data = fb[m * 8 + r];
+//            }
 
-            if (eep.rotate & BIT_SWAP)
-                data = swapBits(data);
+//            if (eep.rotate & BIT_SWAP)
+//                data = swapBits(data);
 
-            *pRaw++ = data;
-        }
+//            *pRaw++ = data;
+//        }
+//    }
+
+    for (uint8_t i = 0; i < 32; i++) {
+        fbRaw[i] = fb[i];
     }
 
     matrixUpdate(fbRaw);
