@@ -95,12 +95,10 @@ int main(void)
             break;
         case BTN_1:
         case BTN_2:
-            if (cmd == BTN_2) {
-                displaySetDirection(PARAM_DOWN);
-            }
+            displaySetDirection(cmd == BTN_1 ? PARAM_UP : PARAM_DOWN);
             switch (dispMode) {
             case MODE_MAIN:
-                startScroll(cmd - BTN_1);
+                startScroll(cmd == BTN_1 ? SCROLL_DATE : SCROLL_TEMP);
                 break;
             case MODE_EDIT_TIME:
                 displayChangeTime();
