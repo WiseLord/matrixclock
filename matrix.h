@@ -57,20 +57,6 @@ enum {
 #define BIT_SCAN                (1<<1)
 #define BIT_SWAP                (1<<0)
 
-typedef struct {
-    uint8_t hourSignal;
-    uint8_t rotate;
-    uint8_t bigNum;
-    uint8_t hourZero;
-    uint8_t scrollInterval;
-    int8_t brMax;
-    uint8_t sensMask;
-    uint8_t alarmTimeout;
-    int8_t corr;
-} EE_Param;
-
-extern EE_Param eep;
-
 extern uint8_t fb[MATRIX_BUFFER_SIZE];
 
 void matrixInit(void);

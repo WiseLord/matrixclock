@@ -27,6 +27,18 @@
 
 #define EEPROM_SIZE                 0x200
 
+typedef struct {
+    uint8_t hourSignal;
+    uint8_t rotate;
+    uint8_t bigNum;
+    uint8_t hourZero;
+    uint8_t scrollInterval;
+    int8_t brMax;
+    uint8_t sensMask;
+    uint8_t alarmTimeout;
+    int8_t corr;
+} EE_Param;
+
 enum {
     LABEL_MONDAY,
     LABEL_TUESDAY,
@@ -84,5 +96,16 @@ enum {
 
     LABEL_END
 };
+
+EE_Param *eeParamGet();
+
+void saveEeParam();
+
+void changeCorrection(int8_t direction);
+void displaySwitchHourSignal(void);
+void displaySwitchHourZero(void);
+void displaySwitchBigNum(void);
+void displayChangeRotate(int8_t direction);
+void changeBrightness(int8_t direction);
 
 #endif // EEPROM_H

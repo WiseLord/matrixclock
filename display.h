@@ -71,10 +71,6 @@ enum {
 };
 
 void displayInit(void);
-void displaySwitchHourSignal(void);
-void displaySwitchHourZero(void);
-void displaySwitchBigNum(void);
-void displayChangeRotate();
 void displaySetDirection(int8_t dir);
 void displayChangeTime();
 void displayChangeAlarm();
@@ -88,8 +84,6 @@ void showTimeEdit();
 void showAlarmEdit();
 void showTest(void);
 
-void changeBrightness();
-void changeCorrection();
 void showBrightness(uint8_t masked);
 void showCorrection(uint8_t masked);
 void checkAlarm(void);

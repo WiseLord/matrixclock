@@ -11,6 +11,7 @@ display.c
 display.h
 ds18x20.c
 ds18x20.h
+eeprom.c
 eeprom.h
 font-cp1251-08.c
 fonts.h

@@ -49,7 +49,7 @@ int main(void)
 
     while (1) {
         // Update sensors with SENSOR_POLL_INTERVAL period
-        if (!sensTimer == 0) {
+        if (!sensTimer) {
             sensTimer = SENSOR_POLL_INTERVAL;
             ds18x20Process();
             if (bmp180HaveSensor())
@@ -79,7 +79,8 @@ int main(void)
         if (cmd != BTN_STATE_0)
             matrixHwScroll(MATRIX_SCROLL_STOP);
 
-        displaySetDirection(PARAM_UP);
+        int8_t direction = PARAM_UP;
+        displaySetDirection(direction);
 
         // Handle command
         switch (cmd) {
@@ -95,7 +96,8 @@ int main(void)
             break;
         case BTN_1:
         case BTN_2:
-            displaySetDirection(cmd == BTN_1 ? PARAM_UP : PARAM_DOWN);
+            direction = cmd == BTN_1 ? PARAM_UP : PARAM_DOWN;
+            displaySetDirection(direction);
             switch (dispMode) {
             case MODE_MAIN:
                 startScroll(cmd == BTN_1 ? SCROLL_DATE : SCROLL_TEMP);
@@ -107,13 +109,13 @@ int main(void)
                 displayChangeAlarm();
                 break;
             case MODE_BRIGHTNESS:
-                changeBrightness();
+                changeBrightness(direction);
                 break;
             case MODE_CORRECTION:
-                changeCorrection();
+                changeCorrection(direction);
                 break;
             case MODE_TEST:
-                displayChangeRotate();
+                displayChangeRotate(direction);
                 break;
             }
             break;

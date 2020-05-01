@@ -11,8 +11,6 @@
 #include <avr/eeprom.h>
 #include <avr/interrupt.h>
 
-EE_Param eep;
-
 static int16_t _col;                        // Current position
 
 uint8_t fb[MATRIX_BUFFER_SIZE];
@@ -90,7 +88,7 @@ static void matrixLoadScrollChar(uint8_t ch)
 void matrixInit(void)
 {
     matrixInitDriver();
-    scrollTimer = eep.scrollInterval;
+    scrollTimer = eeParamGet()->scrollInterval;
 }
 
 void matrixSetBrightness(uint8_t brightness)
@@ -202,7 +200,7 @@ ISR (TIMER2_OVF_vect)
             matrixWrite();
         } else {
             scrollMode = MATRIX_SCROLL_OFF;
-            scrollTimer = eep.scrollInterval;
+            scrollTimer = eeParamGet()->scrollInterval;
         }
     } else {
         ptrStr = fbStr;
@@ -225,7 +223,7 @@ void matrixHwScroll(uint8_t status)
         matrixLoadScrollChar(' ');
 
     scrollMode = status;
-    scrollTimer = eep.scrollInterval;
+    scrollTimer = eeParamGet()->scrollInterval;
 }
 
 uint8_t matrixGetScrollMode(void)
@@ -285,14 +283,15 @@ void matrixWrite(void)
     uint8_t bit;
 
     // Rotate magic
+    uint8_t rotate = eeParamGet()->rotate;
 
     for (mp = 0, mn = MATRIX_CNT - 1; mp < MATRIX_CNT; mp++, mn--) {
-        m = (eep.rotate & BIT_MIRROR) ? mn : mp;
+        m = (rotate & BIT_MIRROR) ? mn : mp;
 
         for (rp = 0, rn = 7; rp < 8; rp++, rn--) {
-            r = (eep.rotate & BIT_SCAN) ? rn : rp;
+            r = (rotate & BIT_SCAN) ? rn : rp;
 
-            if (eep.rotate & BIT_ROTATE) {
+            if (rotate & BIT_ROTATE) {
                 data = 0;
                 uint8_t bs = 0x01;
                 for (bit = 0; bit < 8; bit++) {
@@ -304,7 +303,7 @@ void matrixWrite(void)
                 data = fb[m * 8 + r];
             }
 
-            if (eep.rotate & BIT_SWAP)
+            if (rotate & BIT_SWAP)
                 data = swapBits(data);
 
             *pRaw++ = data;

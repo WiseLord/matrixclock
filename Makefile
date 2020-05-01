@@ -6,7 +6,7 @@ F_CPU = 8000000L
 TARG = matrixclock_$(MCU)_$(shell echo $(LED_DRIVER) | tr A-Z a-z)
 
 SRCS = main.c
-SRCS += mtimer.c i2csw.c rtc.c alarm.c
+SRCS += mtimer.c i2csw.c rtc.c alarm.c eeprom.c
 SRCS += ds18x20.c bmp180.c dht22.c
 
 DEFINES = -D_$(MCU)
