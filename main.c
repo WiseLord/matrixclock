@@ -138,10 +138,10 @@ int main(void)
         case BTN_2_LONG:
             if (dispMode == MODE_MAIN || dispMode == MODE_CORRECTION) {
                 dispMode = MODE_BRIGHTNESS;
-                showBrightness(MASK_ALL);
+                showBrightness(1);
             } else if (dispMode == MODE_BRIGHTNESS) {
                 dispMode = MODE_CORRECTION;
-                showCorrection(MASK_ALL);
+                showCorrection(1);
             }
             break;
         case BTN_0_LONG | BTN_1_LONG:
@@ -176,10 +176,10 @@ int main(void)
             showAlarmEdit();
             break;
         case MODE_BRIGHTNESS:
-            showBrightness(MASK_NONE);
+            showBrightness(0);
             break;
         case MODE_CORRECTION:
-            showCorrection(MASK_NONE);
+            showCorrection(0);
             break;
         case MODE_TEST:
             showTest();

@@ -25,7 +25,7 @@ DEFINES += -D_$(LED_DRIVER)
 BUILDDIR = build
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding -flto
-WARNLEVEL = -Wall -Werror
+WARNLEVEL = -Wall
 CFLAGS = $(WARNLEVEL) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(WARNLEVEL) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
@@ -59,10 +59,10 @@ $(ELF): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:   $(ELF)
+size: $(ELF)
 	@sh ./size.sh $(ELF)
 
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 

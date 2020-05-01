@@ -90,8 +90,8 @@ void showTest(void);
 
 void changeBrightness();
 void changeCorrection();
-void showBrightness(uint32_t mask);
-void showCorrection(uint32_t mask);
+void showBrightness(uint8_t masked);
+void showCorrection(uint8_t masked);
 void checkAlarm(void);
 void calcBrightness(void);
 

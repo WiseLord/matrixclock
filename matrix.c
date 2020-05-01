@@ -267,9 +267,9 @@ void matrixFbNewAddStringEeprom(uint8_t *string)
 inline uint8_t swapBits(uint8_t data) __attribute__((always_inline));
 inline uint8_t swapBits(uint8_t data)
 {
-    data = (data & 0xF0) >> 4 | (data & 0x0F) << 4;
-    data = (data & 0xCC) >> 2 | (data & 0x33) << 2;
-    data = (data & 0xAA) >> 1 | (data & 0x55) << 1;
+    data = ((data >> 4) & 0x0F) | ((data << 4) & 0xF0);
+    data = ((data >> 2) & 0x33) | ((data << 2) & 0xCC);
+    data = ((data >> 1) & 0x55) | ((data << 1) & 0xAA);
 
     return data;
 }

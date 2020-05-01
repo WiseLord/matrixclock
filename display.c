@@ -242,7 +242,7 @@ void displaySwitchHourSignal(void)
 
 void displaySwitchHourZero(void)
 {
-    eep.hourSignal = !eep.hourSignal;
+    eep.hourZero = !eep.hourZero;
     saveEeParam();
 }
 
@@ -389,9 +389,11 @@ static void showParamEdit(int8_t value, uint8_t label, char icon)
 #endif
 }
 
-static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon)
+static void showParam(uint8_t masked, int8_t value, uint8_t label, char icon)
 {
     static char oldIcon = '=';
+
+    uint32_t mask = masked ? MASK_ALL : MASK_NONE;
 
     showParamEdit(value, label, icon);
     mask = updateMask(mask, NUM_NORMAL, rtcDecToBinDec(value), 0);
@@ -405,22 +407,17 @@ static void showParam(uint32_t mask, int8_t value, uint8_t label, char icon)
 
 void showTimeEdit()
 {
-    uint32_t mask = MASK_NONE;
-
     int8_t time = *((int8_t *)&rtc + rtc.etm);
 
-    if (paramOld != rtc.etm)
-        mask = MASK_ALL;
+    uint8_t masked = (paramOld != rtc.etm);
 
-    showParam(mask, time, LABEL_SECOND + rtc.etm, ICON_TIME);
+    showParam(masked, time, LABEL_SECOND + rtc.etm, ICON_TIME);
 
     paramOld = rtc.etm;
 }
 
 void showAlarmEdit()
 {
-    uint32_t mask = MASK_NONE;
-
     int8_t alrm = *((int8_t *)&alarm + alarm.eam);
 
     uint8_t label;
@@ -431,10 +428,9 @@ void showAlarmEdit()
         label = LABEL_HOUR - alarm.eam;
     }
 
-    if (paramOld != alarm.eam)
-        mask = MASK_ALL;
+    uint8_t masked = (paramOld != alarm.eam);
 
-    showParam(mask, alrm, label, ICON_ALARM);
+    showParam(masked, alrm, label, ICON_ALARM);
 
     paramOld = alarm.eam;
 }
@@ -468,14 +464,14 @@ void changeCorrection()
     saveEeParam();
 }
 
-void showBrightness(uint32_t mask)
+void showBrightness(uint8_t masked)
 {
-    showParam(mask, eep.brMax, LABEL_BRIGHTNESS, ICON_BRIGHTNESS);
+    showParam(masked, eep.brMax, LABEL_BRIGHTNESS, ICON_BRIGHTNESS);
 
     matrixSetBrightness(eep.brMax);
 }
 
-void showCorrection(uint32_t mask)
+void showCorrection(uint8_t masked)
 {
     int8_t val = eep.corr;
 
@@ -484,7 +480,7 @@ void showCorrection(uint32_t mask)
     if (val < 0)
         val = -val;
 
-    showParam(mask, val, LABEL_CORRECTION, sign);
+    showParam(masked, val, LABEL_CORRECTION, sign);
 }
 
 void checkAlarm(void)
