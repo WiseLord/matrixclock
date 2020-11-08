@@ -1,0 +1,3 @@
+(fp_lib_table
+  (lib (name matrixclock)(type KiCad)(uri /home/AVR/Projects/matrixclock/kicad/matrixclock.pretty)(options "")(descr ""))
+)

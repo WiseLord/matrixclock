@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name matrixclock)(type Legacy)(uri /home/AVR/Projects/matrixclock/kicad/matrixclock.lib)(options "")(descr ""))
+)

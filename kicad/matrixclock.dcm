@@ -1,0 +1,9 @@
+EESchema-DOCLIB  Version 2.0
+#
+$CMP GNM-19881-BSG
+D 4 digit 7 segment high efficiency red LED, common cathode
+K display LED 7-segment
+F http://www.kingbrightusa.com/images/catalog/SPEC/CA56-12EWA.pdf
+$ENDCMP
+#
+#End Doc Library
