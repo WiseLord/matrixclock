@@ -8,9 +8,9 @@
 #include "aboutdialog.h"
 #include "fontpixel.h"
 
-#include "../eeprom.h"
-#include "../matrix.h"
-#include "../display.h"
+#include "eeprom.h"
+#include "matrix.h"
+#include "display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -104,11 +104,11 @@ void MainWindow::updateHexTable(int pos)
     QTableWidgetItem *item = wgtHexTable->item(pos / 16, pos % 16);
     item->setText(eep.mid(pos, 1).toHex().toUpper());
     if (item->text() == "FF")
-        item->setTextColor(Qt::gray);
+        item->setForeground(QBrush(Qt::gray));
     else if (item->text() == "00" && (pos) >= EEPROM_LABELS)
-        item->setTextColor(Qt::blue);
+        item->setForeground(QBrush(Qt::blue));
     else
-        item->setTextColor(Qt::black);
+        item->setForeground(QBrush(Qt::black));
 }
 
 void MainWindow::updateHexTable()

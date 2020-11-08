@@ -22,7 +22,7 @@ SRCS += display.c matrix.c $(FONTS_SRC)
 DEFINES += -D_$(LED_DRIVER)
 
 # Build directory
-BUILDDIR = build
+BUILDDIR = ../build
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding -flto
 WARNLEVEL = -Wall
@@ -47,7 +47,7 @@ SUBDIRS =
 
 OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
 ELF = $(BUILDDIR)/$(TARG).elf
-HEX = flash/$(TARG).hex
+HEX = ../flash/$(TARG).hex
 
 all: $(HEX) size
 
@@ -55,7 +55,7 @@ $(HEX): $(ELF)
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
 
 $(ELF): $(OBJS)
-	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
+	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) ../flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
@@ -71,7 +71,7 @@ clean:
 
 .PHONY: flash
 flash:  $(HEX)
-	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:$(HEX):i
 
 fuse:
 ifeq ($(MCU), atmega8)
@@ -81,16 +81,16 @@ else
 endif
 
 eeprom_by:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_by.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:../eeprom/matrixclock_by.bin:r
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:../eeprom/matrixclock_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:../eeprom/matrixclock_ru.bin:r
 
 eeprom_ua:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/matrixclock_ua.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:../eeprom/matrixclock_ua.bin:r
 
 # Other dependencies
 -include $(OBJS:.o=.d)
